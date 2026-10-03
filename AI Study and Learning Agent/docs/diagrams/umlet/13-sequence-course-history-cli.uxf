@@ -1,0 +1,1423 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>40</x>
+      <y>15</y>
+      <w>813</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*SD11 - Course Management and Learning History via CLI (F01, F16 | UC01, UC16)*
+fontsize=18</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>430</x>
+      <y>581</y>
+      <w>1977</w>
+      <h>592</h>
+    </coordinates>
+    <panel_attributes>alt
+layer=-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>484</x>
+      <y>583</y>
+      <w>369</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[duplicate course code OR exam date in the past]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>420</x>
+      <y>729</y>
+      <w>1997</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-2</panel_attributes>
+    <additional_attributes>10.0;10.0;1987.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>438</x>
+      <y>742</y>
+      <w>64</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[valid]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>430</x>
+      <y>1694</y>
+      <w>456</w>
+      <h>166</h>
+    </coordinates>
+    <panel_attributes>alt
+layer=-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>484</x>
+      <y>1696</y>
+      <w>162</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[no events in range]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>420</x>
+      <y>1768</y>
+      <w>476</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-2</panel_attributes>
+    <additional_attributes>10.0;10.0;465.6;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLActor</id>
+    <coordinates>
+      <x>38</x>
+      <y>70</y>
+      <w>75</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>Student</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1812</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1801.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>414</x>
+      <y>88</y>
+      <w>129</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+:CLIApplication
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>468</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1812</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1801.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>472</x>
+      <y>253</y>
+      <w>12</w>
+      <h>956</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>472</x>
+      <y>1292</y>
+      <w>12</w>
+      <h>605</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>834</x>
+      <y>107</y>
+      <w>144</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:CommandParser
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>897</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1812</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1801.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>901</x>
+      <y>336</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>901</x>
+      <y>1376</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1019</x>
+      <y>88</y>
+      <w>139</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;control&gt;&gt;
+:LearningFacade
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1078</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1812</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1801.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1082</x>
+      <y>456</y>
+      <w>12</w>
+      <h>650</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1082</x>
+      <y>1496</y>
+      <w>12</w>
+      <h>185</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1416</x>
+      <y>107</y>
+      <w>129</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:CourseService
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1471</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1812</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1801.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1475</x>
+      <y>493</y>
+      <w>12</w>
+      <h>428</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1775</x>
+      <y>776</y>
+      <w>90</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:Course
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1810</x>
+      <y>798</y>
+      <w>20</w>
+      <h>1143</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1133.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1905</x>
+      <y>88</y>
+      <w>152</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;repository&gt;&gt;
+:CourseRepository
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1971</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1812</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1801.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1975</x>
+      <y>530</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1975</x>
+      <y>848</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2097</x>
+      <y>107</y>
+      <w>147</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:MemoryManager
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2161</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1812</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1801.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2165</x>
+      <y>958</y>
+      <w>12</w>
+      <h>111</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2165</x>
+      <y>1532</y>
+      <w>12</w>
+      <h>111</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2284</x>
+      <y>88</y>
+      <w>214</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;repository&gt;&gt;
+:LearningHistoryRepository
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2381</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1812</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1801.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2385</x>
+      <y>996</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2385</x>
+      <y>1570</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>30</x>
+      <y>163</y>
+      <w>2478</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-
+lw=2
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;2468.1;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1206</x>
+      <y>158</y>
+      <w>126</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>*course create*
+valign=center
+bg=#EEEEEE
+layer=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>243</y>
+      <w>417</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;406.6;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>82</x>
+      <y>211</y>
+      <w>314</w>
+      <h>46</h>
+    </coordinates>
+    <panel_attributes>1. study course create --code EECS2030
+--title "Advanced OOP" --exam 2026-12-12
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>263</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>526</x>
+      <y>267</y>
+      <w>99</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>2. run(args)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>326</y>
+      <w>436</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;426.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>490</x>
+      <y>313</y>
+      <w>114</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>3. parse(args)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>363</y>
+      <w>436</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>426.4;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>490</x>
+      <y>350</y>
+      <w>264</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>4. ParsedCommand(course, create)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>383</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>526</x>
+      <y>387</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>5. dispatch(cmd)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>446</y>
+      <w>618</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;608.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>490</x>
+      <y>433</y>
+      <w>365</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>6. createCourse(studentId, code, title, examDate)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1084</x>
+      <y>483</y>
+      <w>401</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;390.7;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1100</x>
+      <y>470</y>
+      <w>365</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>7. createCourse(studentId, code, title, examDate)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1477</x>
+      <y>520</y>
+      <w>508</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;498.5;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1493</x>
+      <y>507</y>
+      <w>211</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>8. findByStudent(studentId)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1477</x>
+      <y>557</y>
+      <w>508</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>498.5;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1493</x>
+      <y>544</y>
+      <w>147</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>9. existing courses
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1084</x>
+      <y>628</y>
+      <w>401</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>390.7;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1100</x>
+      <y>615</y>
+      <w>146</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>10. ValidationError
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>665</y>
+      <w>618</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>608.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>490</x>
+      <y>652</y>
+      <w>77</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>11. error
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>685</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>526</x>
+      <y>689</y>
+      <w>324</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>12. print("course EECS2030 already exists")
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1477</x>
+      <y>782</y>
+      <w>308</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;298.5;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1493</x>
+      <y>769</y>
+      <w>266</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>13. &lt;&lt;create&gt;&gt;(code, title, examDate)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1477</x>
+      <y>838</y>
+      <w>508</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;498.5;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1493</x>
+      <y>824</y>
+      <w>133</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>14. save(course)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1477</x>
+      <y>874</y>
+      <w>508</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>498.5;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1493</x>
+      <y>862</y>
+      <w>43</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>15. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1084</x>
+      <y>912</y>
+      <w>401</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>390.7;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1100</x>
+      <y>898</y>
+      <w>90</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>16. course
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1084</x>
+      <y>948</y>
+      <w>1091</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;1080.7;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1100</x>
+      <y>936</y>
+      <w>269</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>17. recordEvent(COURSE_CREATED)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2167</x>
+      <y>986</y>
+      <w>228</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;218.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>2183</x>
+      <y>972</y>
+      <w>146</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>18. append(event)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2167</x>
+      <y>1022</y>
+      <w>228</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>218.4;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>2183</x>
+      <y>1010</y>
+      <w>43</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>19. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1084</x>
+      <y>1060</y>
+      <w>1091</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>1080.7;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1100</x>
+      <y>1046</y>
+      <w>43</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>20. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>1096</y>
+      <w>618</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>608.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>490</x>
+      <y>1084</y>
+      <w>90</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>21. course
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>1116</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>526</x>
+      <y>1120</y>
+      <w>360</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>22. print("created EECS2030 (exam in 71 days)")
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>1200</y>
+      <w>417</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>406.6;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>82</x>
+      <y>1186</y>
+      <w>131</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>23. confirmation
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>30</x>
+      <y>1222</y>
+      <w>2478</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-
+lw=2
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;2468.1;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1210</x>
+      <y>1216</y>
+      <w>119</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>*history show*
+valign=center
+bg=#EEEEEE
+layer=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>1282</y>
+      <w>417</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;406.6;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>82</x>
+      <y>1270</y>
+      <w>375</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>24. study history show --course EECS2030 --last 7d
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>1302</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>526</x>
+      <y>1306</y>
+      <w>107</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>25. run(args)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>1366</y>
+      <w>436</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;426.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>490</x>
+      <y>1352</y>
+      <w>123</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>26. parse(args)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>1402</y>
+      <w>436</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>426.4;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>490</x>
+      <y>1390</y>
+      <w>266</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>27. ParsedCommand(history, show)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>1422</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>526</x>
+      <y>1426</y>
+      <w>144</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>28. dispatch(cmd)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>1486</y>
+      <w>618</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;608.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>490</x>
+      <y>1472</y>
+      <w>234</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>29. getHistory(studentId, filter)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1084</x>
+      <y>1522</y>
+      <w>1091</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;1080.7;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1100</x>
+      <y>1510</y>
+      <w>234</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>30. getHistory(studentId, filter)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2167</x>
+      <y>1560</y>
+      <w>228</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;218.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>2183</x>
+      <y>1546</y>
+      <w>188</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>31. find(studentId, filter)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2167</x>
+      <y>1596</y>
+      <w>228</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>218.4;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>2183</x>
+      <y>1584</y>
+      <w>90</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>32. events
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1084</x>
+      <y>1634</y>
+      <w>1091</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>1080.7;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1100</x>
+      <y>1620</y>
+      <w>90</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>33. events
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>1670</y>
+      <w>618</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>608.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>490</x>
+      <y>1658</y>
+      <w>90</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>34. events
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>1724</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>526</x>
+      <y>1728</y>
+      <w>360</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>35. print("no learning activity in the last 7 days")
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>474</x>
+      <y>1804</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>526</x>
+      <y>1808</y>
+      <w>281</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>36. print(table: date | activity | detail)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>1888</y>
+      <w>417</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>406.6;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>82</x>
+      <y>1874</y>
+      <w>152</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>37. learning history
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -1,0 +1,122 @@
+@startuml 05-sequence-quiz
+title SD03 - Quiz Generation, Grading and Answer Explanation (F08, F09, F10, F13 | UC08, UC09, UC10)
+!include seq-style.iuml
+actor Student
+boundary ":QuizView" as V
+control ":LearningFacade" as F
+participant ":LearningAgent" as A
+participant ":RetrievalTool" as RT
+participant ":ContextBuilder" as CB
+participant ":QuizGenerationTool" as QGT
+participant "<<interface>>\n:LLMClient" as LLM
+participant "<<Creator>>\n:QuestionFactory" as QF
+database ":QuizRepository" as QR
+participant ":GradingService" as GS
+participant "q:Question" as Q
+participant "<<Subject>>\n:ProgressTracker" as PT
+database ":ProgressRepository" as PR
+participant ":ConceptMastery" as CM
+participant "<<Observer>>\n:ProgressDashboardView" as PDV
+
+== Part A - AI quiz generation ==
+Student -> V ++ : choose topics, 10 questions, mixed types
+V -> V : requestQuiz()
+V -> F ++ : generateQuiz(request)
+F -> A ++ : generateQuiz(request)
+note over A : loadLearnerContext() and createPlan() as in SD01;\nplan = [retrieve-material, generate-questions]
+A -> RT ++ : execute(input: requested concepts)
+RT --> A -- : ToolResult(chunks)
+A -> CB ++ : build(GENERATE_QUIZ, ctx)
+CB --> A -- : llmRequest
+A -> QGT ++ : execute(input: llmRequest, count, types, difficulty)
+loop until count valid questions OR 2 generation rounds
+  QGT -> LLM ++ : generateStructured(llmRequest, questionSpecSchema)
+  LLM --> QGT -- : JSON list of QuestionSpec
+  loop for each spec
+    QGT -> QF ++ : build(spec)
+    note right of QF : factory chosen by spec.type:\nMultipleChoice / TrueFalse / ShortAnswer
+    QF -> QF : createQuestion(spec)
+    alt spec invalid (e.g. correctIndex out of range, empty prompt, unknown concept)
+      QF --> QGT : rejected
+    else valid
+      QF --> QGT -- : question
+    end
+  end
+end
+QGT --> A -- : ToolResult(questions)
+create ":Quiz" as QZ
+A -> QZ : <<create>>(questions, difficulty)
+A --> F -- : quiz
+F -> QR ++ : save(quiz)
+QR --> F --
+F --> V -- : quiz
+V --> Student -- : quiz displayed
+
+== Part B - Grading (deterministic for objective questions) ==
+Student -> V ++ : answer questions, click Submit
+V -> V : submitAnswers()
+V -> F ++ : submitQuiz(quizId, responses)
+F -> QR ++ : findById(quizId)
+QR --> F -- : quiz
+F -> GS ++ : grade(quiz, responses)
+loop for each question q in quiz
+  GS -> GS : gradeResponse(q, response)
+  alt q.isObjective()
+    GS -> Q ++ : grade(response)
+    Q --> GS -- : gradeResult (exact match, deterministic)
+  else ShortAnswerQuestion
+    GS -> GS : gradeWithRubric(q, response)
+    GS -> LLM ++ : generateStructured(rubricRequest, gradeSchema)
+    alt LLM unavailable
+      LLM --> GS : error
+      note right of GS : result flagged "needs review",\nexcluded from mastery update
+    else
+      LLM --> GS -- : rubric score + feedback
+    end
+  end
+end
+create ":QuizAttempt" as QA
+GS -> QA : <<create>>(responses, results)
+GS -> QA ++ : computeScore()
+QA --> GS -- : score
+GS --> F -- : attempt
+F -> QR ++ : saveAttempt(attempt)
+QR --> F --
+F -> PT ++ : recordAttempt(attempt)
+PT -> PR ++ : savePerformance(records)
+PR --> PT --
+loop for each assessed concept
+  PT -> CM ++ : applyResult(result)
+  CM --> PT --
+  PT -> PR ++ : saveMastery(mastery)
+  PR --> PT --
+end
+PT -> PT : notifyObservers(progressEvent)
+PT -> PDV ++ : onProgressChanged(event)
+PDV --> PT --
+PT --> F --
+F --> V -- : attempt
+V -> V : displayResult(attempt)
+V --> Student -- : score, per-question correctness
+
+== Part C - Answer explanation (UC10 extends UC09) ==
+opt student requests an explanation for a question
+  Student -> V ++ : click "Explain" on question
+  V -> V : requestExplanation(questionId)
+  V -> F ++ : explainAnswer(attemptId, questionId)
+  F -> QR ++ : findAttempt(attemptId)
+  QR --> F -- : attempt (question + student response)
+  F -> A ++ : explainAnswer(question, response)
+  A -> RT ++ : execute(input: question concept)
+  RT --> A -- : ToolResult(chunks)
+  A -> CB ++ : build(EXPLAIN_ANSWER, ctx)
+  CB --> A -- : llmRequest (correct answer, student answer, sources)
+  A -> LLM ++ : generate(llmRequest)
+  LLM --> A -- : explanation text
+  create ":Explanation" as EX
+  A -> EX : <<create>>(text, sourceRefs)
+  A --> F -- : explanation
+  F --> V -- : explanation
+  V --> Student -- : why the answer is right/wrong,\nwith source reference
+end
+@enduml

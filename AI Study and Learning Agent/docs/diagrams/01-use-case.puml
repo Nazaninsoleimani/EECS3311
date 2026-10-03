@@ -1,0 +1,74 @@
+@startuml 01-use-case
+title AI Study and Learning Agent - Use-Case Diagram
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 18
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #F7FBFF
+  BorderColor #335
+}
+
+actor Student as S
+actor "LLM Provider\n(external AI service)" as L
+actor "Notification Service" as N
+
+rectangle "AI Study and Learning Agent" {
+  usecase "UC01 Manage Courses" as UC01
+  usecase "UC02 Upload Learning Material" as UC02
+  usecase "UC03 Summarize Material" as UC03
+  usecase "UC04 Extract Concepts" as UC04
+  usecase "UC05 Ask Questions about Material" as UC05
+  usecase "UC06 Generate Study Plan" as UC06
+  usecase "UC07 Generate and Review Flashcards" as UC07
+  usecase "UC08 Generate Quiz" as UC08
+  usecase "UC09 Take and Grade Quiz\n--\nextension points:\nreview results" as UC09
+  usecase "UC10 Review Answer Explanation" as UC10
+  usecase "UC11 Analyze Weak Topics" as UC11
+  usecase "UC12 Start Adaptive Learning Session" as UC12
+  usecase "UC13 View Learning Progress" as UC13
+  usecase "UC14 Manage Study Reminders" as UC14
+  usecase "UC15 Explore Concept Map" as UC15
+  usecase "UC16 View Learning History" as UC16
+  usecase "UC17 Retrieve Relevant Material" as UC17
+}
+
+S -- UC01
+S -- UC02
+S -- UC03
+S -- UC04
+S -- UC05
+S -- UC06
+S -- UC07
+S -- UC08
+S -- UC09
+S -- UC11
+S -- UC12
+S -- UC13
+S -- UC14
+S -- UC15
+S -- UC16
+
+UC02 ..> UC04 : <<include>>
+UC05 ..> UC17 : <<include>>
+UC06 ..> UC17 : <<include>>
+UC07 ..> UC17 : <<include>>
+UC08 ..> UC17 : <<include>>
+UC06 ..> UC11 : <<include>>
+UC12 ..> UC11 : <<include>>
+UC10 ..> UC09 : <<extend>>\n(review results)
+
+UC03 -- L
+UC04 -- L
+UC05 -- L
+UC06 -- L
+UC07 -- L
+UC08 -- L
+UC09 -- L
+UC10 -- L
+UC11 -- L
+UC12 -- L
+UC14 -- N
+@enduml

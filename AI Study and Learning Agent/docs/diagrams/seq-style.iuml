@@ -1,0 +1,10 @@
+skinparam shadowing false
+skinparam sequenceMessageAlign left
+skinparam responseMessageBelowArrow true
+skinparam maxMessageSize 260
+skinparam sequence {
+  LifeLineBorderColor #555555
+  ParticipantBackgroundColor #FEFEFE
+  GroupBackgroundColor #EEF3FA
+}
+autonumber "<b>0."

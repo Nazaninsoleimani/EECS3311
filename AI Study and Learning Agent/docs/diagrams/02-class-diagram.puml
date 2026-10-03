@@ -1,0 +1,5 @@
+@startuml 02-class-diagram
+title AI Study and Learning Agent - Complete Specification-Level Class Diagram
+!include class-model.iuml
+left to right direction
+@enduml

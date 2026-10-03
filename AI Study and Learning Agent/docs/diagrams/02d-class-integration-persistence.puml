@@ -1,0 +1,10 @@
+@startuml 02d-class-integration-persistence
+title Class Diagram View D - AI/Integration and Persistence Layers (Adapter)
+!include class-model.iuml
+left to right direction
+remove $pres
+remove $app
+remove $agent
+remove $tools
+remove $domain
+@enduml

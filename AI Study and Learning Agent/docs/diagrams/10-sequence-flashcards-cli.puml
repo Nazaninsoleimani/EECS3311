@@ -1,0 +1,70 @@
+@startuml 10-sequence-flashcards-cli
+title SD08 - Flashcard Generation via CLI and Flashcard Review via GUI (F07 | UC07 includes UC17)
+!include seq-style.iuml
+actor Student
+boundary ":CLIApplication" as CLI
+participant ":CommandParser" as CP
+boundary ":FlashcardView" as FV
+control ":LearningFacade" as F
+participant ":LearningAgent" as A
+participant ":RetrievalTool" as RT
+participant ":ContextBuilder" as CB
+participant ":FlashcardGenerationTool" as FGT
+participant "<<interface>>\n:LLMClient" as LLM
+participant ":ResponseValidator" as RV
+database ":FlashcardRepository" as FR
+participant "card:Flashcard" as C
+participant "<<Subject>>\n:ProgressTracker" as PT
+
+== Generation from the CLI (same facade as the GUI) ==
+Student -> CLI ++ : study flashcards generate --course EECS2030\n--topic polymorphism --count 15
+CLI -> CLI : run(args)
+CLI -> CP ++ : parse(args)
+CP --> CLI -- : ParsedCommand(group=flashcards, action=generate)
+alt unknown command or missing --course
+  CLI -> CLI : print(usage help)
+else valid command
+  CLI -> CLI : dispatch(cmd)
+  CLI -> F ++ : generateFlashcards(request)
+  F -> A ++ : generateFlashcards(request)
+  A -> RT ++ : execute(input: topic)
+  RT --> A -- : ToolResult(chunks)
+  alt no relevant material retrieved
+    A --> F : AgentError("no material on this topic")
+    F --> CLI : error
+  else
+    A -> CB ++ : build(GENERATE_FLASHCARDS, ctx)
+    CB --> A -- : llmRequest
+    A -> FGT ++ : execute(input: llmRequest, count)
+    FGT -> LLM ++ : generateStructured(llmRequest, flashcardSchema)
+    LLM --> FGT -- : front/back pairs + concept names
+    FGT --> A -- : ToolResult(cards)
+    A -> RV ++ : validate(response, flashcardSchema)
+    RV --> A -- : validationResult (drops empty / duplicate cards)
+    create ":FlashcardDeck" as D
+    A -> D : <<create>>(title, cards)
+    A --> F -- : deck
+    F -> FR ++ : saveDeck(deck)
+    FR --> F --
+    F --> CLI -- : deck
+  end
+  CLI -> CLI : print(deck summary table)
+end
+CLI --> Student -- : "15 flashcards created (deck id ...)"
+
+== Spaced-repetition review in the GUI (deterministic) ==
+Student -> FV ++ : flip card, rate "Hard"
+FV -> FV : rateCard(cardId, rating)
+FV -> F ++ : reviewFlashcard(cardId, rating)
+F -> FR ++ : findCard(cardId)
+FR --> F -- : card
+F -> C ++ : recordReview(rating)
+note right of C : Leitner rule: GOOD/EASY -> box+1,\nAGAIN/HARD -> box = 1;\nnextReview = today + interval(box)
+C --> F --
+F -> FR ++ : saveCard(card)
+FR --> F --
+F -> PT ++ : recordResult(studentId, result derived from rating)
+PT --> F --
+F --> FV -- : next due card
+FV --> Student -- : next card
+@enduml

@@ -1,0 +1,86 @@
+@startuml 09-sequence-material-upload
+title SD07 - Material Upload, Indexing and Concept Extraction (F02, F04 | UC02 includes UC04)
+!include seq-style.iuml
+actor Student
+boundary ":MaterialView" as V
+control ":LearningFacade" as F
+participant ":MaterialService" as MS
+participant "<<interface>>\n:DocumentParser" as DP
+participant ":Chunker" as CH
+participant ":RetrievalService" as RS
+participant "<<interface>>\n:EmbeddingService" as ES
+participant "<<interface>>\n:VectorStore" as VS
+database ":MaterialRepository" as MR
+participant ":LearningAgent" as A
+participant ":ConceptExtractionTool" as CET
+participant "<<interface>>\n:LLMClient" as LLM
+participant ":ResponseValidator" as RV
+database ":ConceptRepository" as CR
+
+Student -> V ++ : choose file "Week 5 - Inheritance.pdf"
+V -> V : uploadFile(path)
+V -> F ++ : uploadMaterial(courseId, file)
+F -> MS ++ : upload(courseId, file)
+MS -> MS : findParser(fileType)
+loop for each registered parser until one matches
+  MS -> DP ++ : supports(fileType)
+  DP --> MS -- : boolean
+end
+alt no parser supports the file type (e.g. .pptx, .png)
+  MS --> F : UnsupportedFileTypeError
+  F --> V : error
+  V -> V : showError("supported: PDF, DOCX, TXT, MD")
+else supported
+  MS -> DP ++ : parse(file)
+  DP --> MS -- : parsedDocument
+  create ":CourseMaterial" as CM
+  MS -> CM : <<create>>(title, fileType, status=UPLOADED)
+  alt extracted text is empty or file is corrupted
+    MS -> CM : markFailed(reason)
+    MS -> MR ++ : save(material)
+    MR --> MS --
+    MS --> F : MaterialProcessingError
+    F --> V : error
+    V -> V : showError("no readable text found")
+  else text extracted
+    MS -> CH ++ : chunk(parsedDocument, materialId)
+    CH --> MS -- : List<DocumentChunk>
+    MS -> RS ++ : index(material, chunks)
+    RS -> ES ++ : embed(chunk texts)
+    ES --> RS -- : vectors
+    RS -> VS ++ : upsert(chunks, vectors)
+    VS --> RS --
+    RS --> MS --
+    MS -> CM : markIndexed()
+    MS -> MR ++ : save(material)
+    MR --> MS --
+    MS --> F -- : material
+
+    == UC04 Extract Concepts (included) ==
+    F -> A ++ : extractConcepts(material)
+    A -> CET ++ : execute(input: chunks)
+    loop for each chunk batch
+      CET -> LLM ++ : generateStructured(request, conceptSchema)
+      LLM --> CET -- : concepts + relations (PREREQUISITE_OF,\nPART_OF, RELATED_TO)
+    end
+    CET --> A -- : ToolResult(raw concepts, relations)
+    A -> RV ++ : validate(response, conceptSchema)
+    RV --> A -- : validationResult
+    alt LLM unavailable or output invalid
+      A --> F : ConceptGraph(empty) + warning
+      note over F : material stays usable for Q&A and summaries;\nstudent can re-run "Extract Concepts" later
+    else
+      create ":ConceptGraph" as CG
+      A -> CG : <<create>>(concepts, relations)
+      A --> F -- : conceptGraph
+      F -> CR ++ : saveAll(courseId, concepts)
+      note right of CR : merges by normalized concept\nname (no duplicates across files)
+      CR --> F --
+      F -> CR ++ : saveRelations(courseId, relations)
+      CR --> F --
+    end
+    F --> V -- : material + extracted concepts
+  end
+end
+V --> Student -- : material listed as "Indexed",\nconcepts shown
+@enduml

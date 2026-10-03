@@ -1,0 +1,60 @@
+@startuml 13-sequence-course-history-cli
+title SD11 - Course Management and Learning History via CLI (F01, F16 | UC01, UC16)
+!include seq-style.iuml
+actor Student
+boundary ":CLIApplication" as CLI
+participant ":CommandParser" as CP
+control ":LearningFacade" as F
+participant ":CourseService" as CS
+database ":CourseRepository" as CR
+participant ":MemoryManager" as M
+database ":LearningHistoryRepository" as LHR
+
+== course create ==
+Student -> CLI ++ : study course create --code EECS2030\n--title "Advanced OOP" --exam 2026-12-12
+CLI -> CLI : run(args)
+CLI -> CP ++ : parse(args)
+CP --> CLI -- : ParsedCommand(course, create)
+CLI -> CLI : dispatch(cmd)
+CLI -> F ++ : createCourse(studentId, code, title, examDate)
+F -> CS ++ : createCourse(studentId, code, title, examDate)
+CS -> CR ++ : findByStudent(studentId)
+CR --> CS -- : existing courses
+alt duplicate course code OR exam date in the past
+  CS --> F : ValidationError
+  F --> CLI : error
+  CLI -> CLI : print("course EECS2030 already exists")
+else valid
+  create ":Course" as C
+  CS -> C : <<create>>(code, title, examDate)
+  CS -> CR ++ : save(course)
+  CR --> CS --
+  CS --> F -- : course
+  F -> M ++ : recordEvent(COURSE_CREATED)
+  M -> LHR ++ : append(event)
+  LHR --> M --
+  M --> F --
+  F --> CLI -- : course
+  CLI -> CLI : print("created EECS2030 (exam in 71 days)")
+end
+CLI --> Student -- : confirmation
+
+== history show ==
+Student -> CLI ++ : study history show --course EECS2030 --last 7d
+CLI -> CLI : run(args)
+CLI -> CP ++ : parse(args)
+CP --> CLI -- : ParsedCommand(history, show)
+CLI -> CLI : dispatch(cmd)
+CLI -> F ++ : getHistory(studentId, filter)
+F -> M ++ : getHistory(studentId, filter)
+M -> LHR ++ : find(studentId, filter)
+LHR --> M -- : events
+M --> F -- : events
+F --> CLI -- : events
+alt no events in range
+  CLI -> CLI : print("no learning activity in the last 7 days")
+else
+  CLI -> CLI : print(table: date | activity | detail)
+end
+CLI --> Student -- : learning history
+@enduml

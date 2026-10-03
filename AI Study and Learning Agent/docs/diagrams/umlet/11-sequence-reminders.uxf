@@ -1,0 +1,1366 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>40</x>
+      <y>15</y>
+      <w>700</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*SD09 - Study Reminder Management and Dispatch (F14 | UC14)*
+fontsize=18</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>349</x>
+      <y>368</y>
+      <w>1113</w>
+      <h>342</h>
+    </coordinates>
+    <panel_attributes>alt
+layer=-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>403</x>
+      <y>370</y>
+      <w>316</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[dueAt is in the past or recurrence invalid]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>339</x>
+      <y>516</y>
+      <w>1133</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-2</panel_attributes>
+    <additional_attributes>10.0;10.0;1122.5;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>357</x>
+      <y>529</y>
+      <w>64</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[valid]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>783</x>
+      <y>807</y>
+      <w>1253</w>
+      <h>784</h>
+    </coordinates>
+    <panel_attributes>loop
+layer=-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>849</x>
+      <y>809</y>
+      <w>290</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[every 60 s while the application runs]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>793</x>
+      <y>961</y>
+      <w>1233</w>
+      <h>564</h>
+    </coordinates>
+    <panel_attributes>loop
+layer=-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>859</x>
+      <y>963</y>
+      <w>167</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[for each reminder r]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>815</x>
+      <y>1143</y>
+      <w>999</w>
+      <h>362</h>
+    </coordinates>
+    <panel_attributes>alt
+layer=-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>869</x>
+      <y>1145</y>
+      <w>130</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[delivery failed]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>805</x>
+      <y>1278</y>
+      <w>1019</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-2</panel_attributes>
+    <additional_attributes>10.0;10.0;1009.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>823</x>
+      <y>1291</y>
+      <w>96</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[delivered]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>810</x>
+      <y>1688</y>
+      <w>652</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>opt
+layer=-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>869</x>
+      <y>1690</y>
+      <w>462</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[event.newMastery &lt; 0.4 AND student has reminders enabled]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLActor</id>
+    <coordinates>
+      <x>38</x>
+      <y>70</y>
+      <w>75</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>Student</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1808</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1798.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>333</x>
+      <y>88</y>
+      <w>129</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+:ReminderView
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>387</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1808</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1798.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>391</x>
+      <y>234</y>
+      <w>12</w>
+      <h>513</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>595</x>
+      <y>88</y>
+      <w>139</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;control&gt;&gt;
+:LearningFacade
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>654</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1808</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1798.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>658</x>
+      <y>317</y>
+      <w>12</w>
+      <h>373</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>780</x>
+      <y>88</y>
+      <w>166</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Observer&gt;&gt;
+:ReminderScheduler
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>853</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1808</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1798.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>857</x>
+      <y>354</y>
+      <w>12</w>
+      <h>299</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>857</x>
+      <y>865</y>
+      <w>12</w>
+      <h>698</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>857</x>
+      <y>1674</y>
+      <w>12</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1225</x>
+      <y>1728</y>
+      <w>96</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:Reminder
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1263</x>
+      <y>1752</y>
+      <w>20</w>
+      <h>187</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;177.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1361</x>
+      <y>88</y>
+      <w>171</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;repository&gt;&gt;
+:ReminderRepository
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1436</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1808</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1798.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1440</x>
+      <y>579</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1440</x>
+      <y>910</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1440</x>
+      <y>1448</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1440</x>
+      <y>1800</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1571</x>
+      <y>107</y>
+      <w>102</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>r:Reminder
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1612</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1808</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1798.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1616</x>
+      <y>1018</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1713</x>
+      <y>88</y>
+      <w>171</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+:NotificationGateway
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1788</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1808</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1798.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1792</x>
+      <y>1092</y>
+      <w>12</w>
+      <h>249</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLActor</id>
+    <coordinates>
+      <x>1922</x>
+      <y>70</y>
+      <w>156</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>Notification Service</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1990</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1808</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1798.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2116</x>
+      <y>88</y>
+      <w>139</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Subject&gt;&gt;
+:ProgressTracker
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2176</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1808</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1798.5</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>30</x>
+      <y>163</y>
+      <w>2235</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-
+lw=2
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;2225.2;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1075</x>
+      <y>158</y>
+      <w>145</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>*Create reminder*
+valign=center
+bg=#EEEEEE
+layer=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>224</y>
+      <w>336</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;325.8;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>82</x>
+      <y>211</y>
+      <w>294</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>1. "Daily 7 pm - review EECS2030 plan"
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>393</x>
+      <y>244</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>445</x>
+      <y>248</y>
+      <w>157</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>2. createReminder()
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>393</x>
+      <y>307</y>
+      <w>275</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;264.6;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>409</x>
+      <y>294</y>
+      <w>239</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>3. scheduleReminder(reminder)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>660</x>
+      <y>344</y>
+      <w>207</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;197.2;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>676</x>
+      <y>331</y>
+      <w>171</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>4. schedule(reminder)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>660</x>
+      <y>415</y>
+      <w>207</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>197.2;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>676</x>
+      <y>402</y>
+      <w>137</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>5. ValidationError
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>393</x>
+      <y>452</y>
+      <w>275</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>264.6;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>409</x>
+      <y>439</y>
+      <w>68</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>6. error
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>393</x>
+      <y>472</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>445</x>
+      <y>476</y>
+      <w>178</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>7. showError(message)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>569</y>
+      <w>591</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;580.8;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>556</y>
+      <w>141</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>8. save(reminder)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>606</y>
+      <w>591</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>580.8;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>593</y>
+      <w>34</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>9. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>660</x>
+      <y>643</y>
+      <w>207</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>197.2;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>676</x>
+      <y>630</y>
+      <w>106</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>10. reminder
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>393</x>
+      <y>680</y>
+      <w>275</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>264.6;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>409</x>
+      <y>667</y>
+      <w>106</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>11. reminder
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>737</y>
+      <w>336</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>325.8;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>82</x>
+      <y>724</y>
+      <w>149</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>12. reminder listed
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>30</x>
+      <y>759</y>
+      <w>2235</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-
+lw=2
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;2225.2;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>928</x>
+      <y>754</y>
+      <w>440</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>*Time-triggered dispatch (background timer, every minute)*
+valign=center
+bg=#EEEEEE
+layer=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>853</x>
+      <y>837</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;16.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>905</x>
+      <y>841</y>
+      <w>170</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>13. dispatchDue(now)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>900</y>
+      <w>591</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;580.8;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>887</y>
+      <w>137</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>14. findDue(now)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>937</y>
+      <w>591</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>580.8;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>924</y>
+      <w>144</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>15. dueReminders
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1008</y>
+      <w>767</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;756.9;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>995</y>
+      <w>122</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>16. isDue(now)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1045</y>
+      <w>767</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>756.9;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>1032</y>
+      <w>71</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>17. true
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1082</y>
+      <w>943</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;933.1;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>1069</y>
+      <w>229</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>18. send(title, body, recipient)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1794</x>
+      <y>1119</y>
+      <w>216</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;205.8;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1810</x>
+      <y>1106</y>
+      <w>174</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>19. deliver notification
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1190</y>
+      <w>943</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>933.1;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>1177</y>
+      <w>76</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>20. false
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>879</x>
+      <y>1218</y>
+      <w>187</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>status stays PENDING;
+retried on the next tick
+bg=#FFFDE7
+layer=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1331</y>
+      <w>943</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>933.1;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>1318</y>
+      <w>71</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>21. true
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>879</x>
+      <y>1359</y>
+      <w>267</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>one-off -&gt; SENT;
+recurring -&gt; next dueAt computed
+bg=#FFFDE7
+layer=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1438</y>
+      <w>591</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;580.8;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>1425</y>
+      <w>92</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>22. save(r)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1475</y>
+      <w>591</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>580.8;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>1462</y>
+      <w>43</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>23. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1535</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>911</x>
+      <y>1539</y>
+      <w>43</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>24. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>30</x>
+      <y>1603</y>
+      <w>2235</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-
+lw=2
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;2225.2;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1004</x>
+      <y>1598</y>
+      <w>287</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>*Progress-driven reminder (Observer)*
+valign=center
+bg=#EEEEEE
+layer=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1664</y>
+      <w>1337</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>1326.6;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>1651</y>
+      <w>233</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>25. onProgressChanged(event)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1735</y>
+      <w>375</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;365.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>1722</y>
+      <w>333</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>26. &lt;&lt;create&gt;&gt;("Review &lt;concept&gt; tomorrow")
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1790</y>
+      <w>591</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;580.8;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>1778</y>
+      <w>183</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>27. save(newReminder)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1828</y>
+      <w>591</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>580.8;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>1814</y>
+      <w>43</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>28. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>859</x>
+      <y>1884</y>
+      <w>1337</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;1326.6;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>875</x>
+      <y>1872</y>
+      <w>43</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>29. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

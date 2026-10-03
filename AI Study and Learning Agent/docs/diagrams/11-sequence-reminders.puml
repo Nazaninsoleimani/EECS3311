@@ -1,0 +1,63 @@
+@startuml 11-sequence-reminders
+title SD09 - Study Reminder Management and Dispatch (F14 | UC14)
+!include seq-style.iuml
+actor Student
+boundary ":ReminderView" as V
+control ":LearningFacade" as F
+participant "<<Observer>>\n:ReminderScheduler" as RS
+database ":ReminderRepository" as RR
+participant "r:Reminder" as R
+participant "<<interface>>\n:NotificationGateway" as NG
+actor "Notification Service" as NS
+participant "<<Subject>>\n:ProgressTracker" as PT
+
+== Create reminder ==
+Student -> V ++ : "Daily 7 pm - review EECS2030 plan"
+V -> V : createReminder()
+V -> F ++ : scheduleReminder(reminder)
+F -> RS ++ : schedule(reminder)
+alt dueAt is in the past or recurrence invalid
+  RS --> F : ValidationError
+  F --> V : error
+  V -> V : showError(message)
+else valid
+  RS -> RR ++ : save(reminder)
+  RR --> RS --
+  RS --> F -- : reminder
+  F --> V -- : reminder
+end
+V --> Student -- : reminder listed
+
+== Time-triggered dispatch (background timer, every minute) ==
+loop every 60 s while the application runs
+  RS -> RS ++ : dispatchDue(now)
+  RS -> RR ++ : findDue(now)
+  RR --> RS -- : dueReminders
+  loop for each reminder r
+    RS -> R ++ : isDue(now)
+    R --> RS -- : true
+    RS -> NG ++ : send(title, body, recipient)
+    NG -> NS : deliver notification
+    alt delivery failed
+      NG --> RS : false
+      note right of RS : status stays PENDING;\nretried on the next tick
+    else delivered
+      NG --> RS -- : true
+      note right of RS : one-off -> SENT;\nrecurring -> next dueAt computed
+      RS -> RR ++ : save(r)
+      RR --> RS --
+    end
+  end
+  RS --> RS --
+end
+
+== Progress-driven reminder (Observer) ==
+PT -> RS ++ : onProgressChanged(event)
+opt event.newMastery < 0.4 AND student has reminders enabled
+  create ":Reminder" as NR
+  RS -> NR : <<create>>("Review <concept> tomorrow")
+  RS -> RR ++ : save(newReminder)
+  RR --> RS --
+end
+RS --> PT --
+@enduml

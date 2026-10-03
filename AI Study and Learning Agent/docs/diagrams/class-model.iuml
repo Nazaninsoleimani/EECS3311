@@ -1,0 +1,948 @@
+' =====================================================================
+' AI Study and Learning Agent - shared class model (single source of truth)
+' Included by 02-class-diagram.puml and the 02a-02d view diagrams.
+' Tags: $pres $app $agent $tools $domain $integ $persist
+' =====================================================================
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 25
+skinparam ranksep 40
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor #FEFEFE
+  BorderColor #444444
+}
+hide empty members
+
+' ---------------------------------------------------------------- Presentation
+package "Presentation Layer" as P $pres {
+  abstract class BaseView $pres {
+    # facade : LearningFacade
+    + render()
+    + showError(message : String)
+  }
+  class DashboardView $pres {
+    + loadOverview()
+  }
+  class CourseView $pres {
+    + createCourse()
+    + deleteCourse(courseId : String)
+  }
+  class MaterialView $pres {
+    + uploadFile(path : Path)
+    + requestSummary(materialId : String, length : SummaryLength)
+    + displaySummary(summary : Summary)
+  }
+  class StudyPlannerView $pres {
+    + submitPlanRequest()
+    + displayPlan(plan : StudyPlan)
+    + markTaskComplete(taskId : String)
+  }
+  class TutorChatView $pres {
+    + sendQuestion(text : String)
+    + displayAnswer(answer : Answer)
+  }
+  class QuizView $pres {
+    + requestQuiz()
+    + submitAnswers()
+    + requestExplanation(questionId : String)
+    + displayResult(attempt : QuizAttempt)
+  }
+  class FlashcardView $pres {
+    + requestDeck()
+    + rateCard(cardId : String, rating : ReviewRating)
+  }
+  class LearningSessionView $pres {
+    + startSession()
+    + submitActivityAnswer()
+    + displayActivity(question : Question)
+  }
+  class ProgressDashboardView $pres {
+    + loadProgress()
+    + loadWeakTopics()
+    + onProgressChanged(event : ProgressEvent)
+  }
+  class ConceptMapView $pres {
+    + loadConceptMap(courseId : String)
+    + selectConcept(conceptId : String)
+  }
+  class ReminderView $pres {
+    + createReminder()
+    + cancelReminder(reminderId : String)
+  }
+  class HistoryView $pres {
+    + loadHistory(filter : HistoryFilter)
+  }
+  class CLIApplication $pres {
+    - parser : CommandParser
+    - facade : LearningFacade
+    + run(args : String[])
+    - dispatch(cmd : ParsedCommand) : String
+    - print(output : String)
+  }
+  class CommandParser $pres {
+    + parse(args : String[]) : ParsedCommand
+  }
+  class ParsedCommand $pres {
+    + group : String
+    + action : String
+    + options : Map<String,String>
+  }
+}
+
+' ---------------------------------------------------------------- Application
+package "Application Layer" as A $app {
+  class LearningFacade <<Facade>> $app {
+    - activeSessions : Map<String,AdaptiveLearningSession>
+    + createCourse(studentId : String, code : String, title : String, examDate : LocalDate) : Course
+    + listCourses(studentId : String) : List<Course>
+    + updateCourse(course : Course) : Course
+    + deleteCourse(courseId : String)
+    + uploadMaterial(courseId : String, file : Path) : CourseMaterial
+    + deleteMaterial(materialId : String)
+    + summarizeMaterial(materialId : String, options : SummaryOptions) : Summary
+    + extractConcepts(materialId : String) : ConceptGraph
+    + askQuestion(sessionId : String, courseId : String, question : String) : Answer
+    + generateStudyPlan(request : StudyPlanRequest) : StudyPlan
+    + completeStudyTask(taskId : String)
+    + generateFlashcards(request : FlashcardRequest) : FlashcardDeck
+    + reviewFlashcard(cardId : String, rating : ReviewRating)
+    + generateQuiz(request : QuizRequest) : Quiz
+    + submitQuiz(quizId : String, responses : List<QuestionResponse>) : QuizAttempt
+    + explainAnswer(attemptId : String, questionId : String) : Explanation
+    + analyzeWeakTopics(studentId : String, courseId : String) : WeakTopicReport
+    + startAdaptiveSession(studentId : String, courseId : String) : AdaptiveLearningSession
+    + submitActivityResult(sessionId : String, response : QuestionResponse) : Question
+    + getProgress(studentId : String, courseId : String) : LearningProgress
+    + scheduleReminder(reminder : Reminder) : Reminder
+    + cancelReminder(reminderId : String)
+    + getConceptMap(studentId : String, courseId : String) : ConceptGraph
+    + getHistory(studentId : String, filter : HistoryFilter) : List<LearningEvent>
+  }
+  class CourseService $app {
+    + createCourse(studentId : String, code : String, title : String, examDate : LocalDate) : Course
+    + updateCourse(course : Course) : Course
+    + deleteCourse(courseId : String)
+    + listCourses(studentId : String) : List<Course>
+  }
+  class MaterialService $app {
+    - parsers : List<DocumentParser>
+    - chunker : Chunker
+    + upload(courseId : String, file : Path) : CourseMaterial
+    + delete(materialId : String)
+    - findParser(type : FileType) : DocumentParser
+  }
+  class GradingService $app {
+    - llm : LLMClient
+    + grade(quiz : Quiz, responses : List<QuestionResponse>) : QuizAttempt
+    + gradeResponse(question : Question, response : QuestionResponse) : GradeResult
+    - gradeWithRubric(q : ShortAnswerQuestion, r : QuestionResponse) : GradeResult
+  }
+  class ProgressTracker <<Subject>> $app {
+    - observers : List<ProgressObserver>
+    + attach(o : ProgressObserver)
+    + detach(o : ProgressObserver)
+    + recordAttempt(attempt : QuizAttempt)
+    + recordResult(studentId : String, result : GradeResult)
+    + getProgress(studentId : String, courseId : String) : LearningProgress
+    - notifyObservers(event : ProgressEvent)
+  }
+  interface ProgressObserver <<interface>> <<Observer>> $app {
+    + onProgressChanged(event : ProgressEvent)
+  }
+  class StudyPlanMonitor $app {
+    - agent : LearningAgent
+    + onProgressChanged(event : ProgressEvent)
+    - needsRevision(plan : StudyPlan, event : ProgressEvent) : boolean
+  }
+  class ReminderScheduler $app {
+    - gateway : NotificationGateway
+    + schedule(reminder : Reminder) : Reminder
+    + cancel(reminderId : String)
+    + dispatchDue(now : LocalDateTime)
+    + onProgressChanged(event : ProgressEvent)
+  }
+  class ConceptMapService $app {
+    + buildGraph(studentId : String, courseId : String) : ConceptGraph
+  }
+}
+
+' ---------------------------------------------------------------- Agent
+package "Agent Layer" as G $agent {
+  class LearningAgent $agent {
+    - planner : Planner
+    - tools : ToolRegistry
+    - memory : MemoryManager
+    - contextBuilder : ContextBuilder
+    - validator : ResponseValidator
+    - llm : LLMClient
+    + generateStudyPlan(request : StudyPlanRequest) : StudyPlan
+    + revisePlan(plan : StudyPlan, event : ProgressEvent) : StudyPlan
+    + answerQuestion(sessionId : String, courseId : String, question : String) : Answer
+    + summarize(material : CourseMaterial, options : SummaryOptions) : Summary
+    + extractConcepts(material : CourseMaterial) : ConceptGraph
+    + generateFlashcards(request : FlashcardRequest) : FlashcardDeck
+    + generateQuiz(request : QuizRequest) : Quiz
+    + explainAnswer(question : Question, response : QuestionResponse) : Explanation
+    + diagnoseWeakTopics(studentId : String, courseId : String) : WeakTopicReport
+    + nextAdaptiveActivity(session : AdaptiveLearningSession) : Question
+    - executePlan(plan : AgentPlan, ctx : AgentContext) : AgentContext
+  }
+  class Planner $agent {
+    - llm : LLMClient
+    + createPlan(goal : AgentGoal, ctx : AgentContext) : AgentPlan
+    + revise(plan : AgentPlan, observation : ToolResult) : AgentPlan
+  }
+  class AgentGoal $agent {
+    + type : GoalType
+    + description : String
+    + parameters : Map<String,Object>
+  }
+  class AgentPlan $agent {
+    - goal : AgentGoal
+    + nextStep() : PlanStep
+    + isComplete() : boolean
+  }
+  class PlanStep $agent {
+    + toolName : String
+    + input : ToolInput
+    + rationale : String
+    + status : StepStatus
+  }
+  class AgentContext $agent {
+    + learner : LearnerContext
+    + retrieved : List<RetrievedChunk>
+    + results : Map<String,ToolResult>
+    + add(stepName : String, result : ToolResult)
+  }
+  class ToolRegistry $agent {
+    - tools : Map<String,Tool>
+    + register(tool : Tool)
+    + getTool(name : String) : Tool
+    + describeTools() : List<String>
+  }
+  class MemoryManager $agent {
+    - sessions : Map<String,SessionMemory>
+    + loadLearnerContext(studentId : String, courseId : String) : LearnerContext
+    + getSessionMemory(sessionId : String) : SessionMemory
+    + appendToSession(sessionId : String, turn : ConversationTurn)
+    + recordEvent(event : LearningEvent)
+    + getHistory(studentId : String, filter : HistoryFilter) : List<LearningEvent>
+  }
+  class SessionMemory $agent {
+    - sessionId : String
+    - turns : List<ConversationTurn>
+    - maxTurns : int = 20
+    + add(turn : ConversationTurn)
+    + recent(n : int) : List<ConversationTurn>
+  }
+  class LearnerContext $agent {
+    + profile : StudentProfile
+    + masteries : List<ConceptMastery>
+    + recentEvents : List<LearningEvent>
+    + examDate : LocalDate
+  }
+  class ContextBuilder $agent {
+    - tokenBudget : int
+    + build(task : PromptTask, ctx : AgentContext) : LLMRequest
+    - rankAndTrim(chunks : List<RetrievedChunk>) : List<RetrievedChunk>
+  }
+  class ResponseValidator $agent {
+    + validate(response : LLMResponse, schema : OutputSchema) : ValidationResult
+    + checkGrounding(answer : String, sources : List<RetrievedChunk>) : boolean
+  }
+  class ConversationTurn $agent {
+    + question : String
+    + answer : String
+    + timestamp : LocalDateTime
+  }
+  class OutputSchema $agent {
+    + name : String
+    + jsonSchema : String
+  }
+  class ValidationResult $agent {
+    + valid : boolean
+    + errors : List<String>
+  }
+}
+
+' ---------------------------------------------------------------- Tools / Strategy / Factory Method / State
+package "Agent Tools" as T $tools {
+  interface Tool <<interface>> $tools {
+    + getName() : String
+    + getDescription() : String
+    + execute(input : ToolInput) : ToolResult
+  }
+  class ToolInput $tools {
+    + parameters : Map<String,Object>
+  }
+  class ToolResult $tools {
+    + success : boolean
+    + payload : Object
+    + message : String
+  }
+  class RetrievalTool $tools {
+    - retrieval : RetrievalService
+    + execute(input : ToolInput) : ToolResult
+  }
+  class SummarizationTool $tools {
+    - llm : LLMClient
+    + execute(input : ToolInput) : ToolResult
+  }
+  class ConceptExtractionTool $tools {
+    - llm : LLMClient
+    + execute(input : ToolInput) : ToolResult
+  }
+  class QuizGenerationTool $tools {
+    - llm : LLMClient
+    - factories : Map<QuestionType,QuestionFactory>
+    + execute(input : ToolInput) : ToolResult
+  }
+  class FlashcardGenerationTool $tools {
+    - llm : LLMClient
+    + execute(input : ToolInput) : ToolResult
+  }
+  class ProgressAnalysisTool $tools {
+    + execute(input : ToolInput) : ToolResult
+    - rankTopics(m : List<ConceptMastery>) : List<TopicPriority>
+  }
+  class StudyScheduleTool $tools {
+    - strategy : StudyPlanningStrategy
+    + execute(input : ToolInput) : ToolResult
+    - selectStrategy(request : StudyPlanRequest) : StudyPlanningStrategy
+  }
+  class ReminderTool $tools {
+    - scheduler : ReminderScheduler
+    + execute(input : ToolInput) : ToolResult
+  }
+
+  interface StudyPlanningStrategy <<interface>> <<Strategy>> $tools {
+    + buildSchedule(request : StudyPlanRequest, priorities : List<TopicPriority>) : List<StudyTask>
+  }
+  class ExamCramStrategy $tools {
+    + buildSchedule(request : StudyPlanRequest, priorities : List<TopicPriority>) : List<StudyTask>
+  }
+  class SpacedRepetitionStrategy $tools {
+    + buildSchedule(request : StudyPlanRequest, priorities : List<TopicPriority>) : List<StudyTask>
+  }
+  class BalancedReviewStrategy $tools {
+    + buildSchedule(request : StudyPlanRequest, priorities : List<TopicPriority>) : List<StudyTask>
+  }
+
+  abstract class QuestionFactory <<Creator>> $tools {
+    + build(spec : QuestionSpec) : Question
+    # {abstract} createQuestion(spec : QuestionSpec) : Question
+  }
+  class MultipleChoiceQuestionFactory $tools {
+    # createQuestion(spec : QuestionSpec) : Question
+  }
+  class TrueFalseQuestionFactory $tools {
+    # createQuestion(spec : QuestionSpec) : Question
+  }
+  class ShortAnswerQuestionFactory $tools {
+    # createQuestion(spec : QuestionSpec) : Question
+  }
+
+  interface DifficultyState <<interface>> <<State>> $tools {
+    + getLevel() : DifficultyLevel
+    + onResult(session : AdaptiveLearningSession, result : GradeResult)
+    + preferredQuestionTypes() : List<QuestionType>
+  }
+  class FoundationState $tools {
+    + getLevel() : DifficultyLevel
+    + onResult(session : AdaptiveLearningSession, result : GradeResult)
+    + preferredQuestionTypes() : List<QuestionType>
+  }
+  class IntermediateState $tools {
+    + getLevel() : DifficultyLevel
+    + onResult(session : AdaptiveLearningSession, result : GradeResult)
+    + preferredQuestionTypes() : List<QuestionType>
+  }
+  class AdvancedState $tools {
+    + getLevel() : DifficultyLevel
+    + onResult(session : AdaptiveLearningSession, result : GradeResult)
+    + preferredQuestionTypes() : List<QuestionType>
+  }
+}
+
+' ---------------------------------------------------------------- Domain
+package "Domain Layer" as D $domain {
+  class Student $domain {
+    - id : String
+    - name : String
+    - email : String
+  }
+  class StudentProfile $domain {
+    - preferredSessionMinutes : int
+    - weeklyAvailability : Map<DayOfWeek,Integer>
+    - preferredDifficulty : DifficultyLevel
+    - remindersEnabled : boolean
+  }
+  class Course $domain {
+    - id : String
+    - code : String
+    - title : String
+    - examDate : LocalDate
+    + daysUntilExam() : int
+  }
+  class CourseMaterial $domain {
+    - id : String
+    - title : String
+    - fileType : FileType
+    - status : MaterialStatus
+    - uploadedAt : LocalDateTime
+    + markIndexed()
+    + markFailed(reason : String)
+  }
+  class DocumentChunk $domain {
+    - id : String
+    - index : int
+    - text : String
+    - pageRef : String
+  }
+  class Summary $domain {
+    - length : SummaryLength
+    - text : String
+    - keyPoints : List<String>
+    - sourceRefs : List<String>
+  }
+  class Concept $domain {
+    - id : String
+    - name : String
+    - definition : String
+  }
+  class ConceptRelation $domain {
+    - type : RelationType
+  }
+  class ConceptGraph $domain {
+    + nodes : List<Concept>
+    + edges : List<ConceptRelation>
+    + neighbours(conceptId : String) : List<Concept>
+  }
+  class StudyPlanRequest $domain {
+    + studentId : String
+    + courseId : String
+    + examDate : LocalDate
+    + dailyMinutes : int
+    + focusTopics : List<String>
+  }
+  class StudyPlan $domain {
+    - id : String
+    - createdAt : LocalDateTime
+    - strategyName : String
+    - rationale : String
+    - status : PlanStatus
+    + completionRate() : double
+    + tasksFor(date : LocalDate) : List<StudyTask>
+  }
+  class StudyTask $domain {
+    - id : String
+    - date : LocalDate
+    - durationMinutes : int
+    - activity : ActivityType
+    - objective : String
+    - status : TaskStatus
+    + complete()
+  }
+  class TopicPriority $domain {
+    + concept : Concept
+    + priority : double
+    + reason : String
+  }
+  class Quiz $domain {
+    - id : String
+    - difficulty : DifficultyLevel
+    - createdAt : LocalDateTime
+  }
+  abstract class Question $domain {
+    # id : String
+    # prompt : String
+    # difficulty : DifficultyLevel
+    + {abstract} grade(r : QuestionResponse) : GradeResult
+    + {abstract} isObjective() : boolean
+  }
+  class MultipleChoiceQuestion $domain {
+    - options : List<String>
+    - correctIndex : int
+    + grade(r : QuestionResponse) : GradeResult
+    + isObjective() : boolean
+  }
+  class TrueFalseQuestion $domain {
+    - correctValue : boolean
+    + grade(r : QuestionResponse) : GradeResult
+    + isObjective() : boolean
+  }
+  class ShortAnswerQuestion $domain {
+    - modelAnswer : String
+    - rubric : List<String>
+    + grade(r : QuestionResponse) : GradeResult
+    + isObjective() : boolean
+  }
+  class QuizAttempt $domain {
+    - id : String
+    - submittedAt : LocalDateTime
+    - /score : double
+    + computeScore() : double
+  }
+  class QuestionResponse $domain {
+    + questionId : String
+    + answerText : String
+  }
+  class GradeResult $domain {
+    + questionId : String
+    + conceptId : String
+    + correct : boolean
+    + score : double
+    + feedback : String
+  }
+  class Explanation $domain {
+    + text : String
+    + sourceRefs : List<String>
+  }
+  class Answer $domain {
+    + text : String
+    + citations : List<String>
+    + grounded : boolean
+  }
+  class FlashcardDeck $domain {
+    - id : String
+    - title : String
+  }
+  class Flashcard $domain {
+    - id : String
+    - front : String
+    - back : String
+    - box : int = 1
+    - nextReview : LocalDate
+    + recordReview(rating : ReviewRating)
+  }
+  class ConceptMastery $domain {
+    - mastery : double
+    - attempts : int
+    - lastPracticed : LocalDateTime
+    + applyResult(result : GradeResult)
+  }
+  class PerformanceRecord $domain {
+    - correct : boolean
+    - difficulty : DifficultyLevel
+    - source : ActivityType
+    - timestamp : LocalDateTime
+  }
+  class LearningProgress $domain {
+    + /averageMastery : double
+    + /quizAverage : double
+    + /planCompletion : double
+    + /conceptsMastered : int
+  }
+  class WeakTopicReport $domain {
+    + sufficientData : boolean
+    + generatedAt : LocalDateTime
+  }
+  class WeakTopic $domain {
+    + mastery : double
+    + diagnosis : String
+    + recommendedActivity : ActivityType
+  }
+  class LearningSession $domain {
+    - id : String
+    - type : SessionType
+    - startedAt : LocalDateTime
+    - endedAt : LocalDateTime
+    + end()
+  }
+  class AdaptiveLearningSession <<Context>> $domain {
+    - state : DifficultyState
+    - streak : int
+    - currentQuestion : Question
+    + recordOutcome(result : GradeResult)
+    + setState(s : DifficultyState)
+    + getState() : DifficultyState
+  }
+  class LearningHistory $domain {
+    + filter(f : HistoryFilter) : List<LearningEvent>
+  }
+  class LearningEvent $domain {
+    - type : EventType
+    - timestamp : LocalDateTime
+    - summary : String
+    - refId : String
+  }
+  class Reminder $domain {
+    - id : String
+    - message : String
+    - dueAt : LocalDateTime
+    - recurrence : Recurrence
+    - status : ReminderStatus
+    + isDue(now : LocalDateTime) : boolean
+  }
+  class ProgressEvent $domain {
+    + studentId : String
+    + conceptId : String
+    + oldMastery : double
+    + newMastery : double
+  }
+  class QuizRequest $domain {
+    + courseId : String
+    + conceptIds : List<String>
+    + count : int
+    + types : List<QuestionType>
+    + difficulty : DifficultyLevel
+  }
+  class FlashcardRequest $domain {
+    + courseId : String
+    + conceptIds : List<String>
+    + count : int
+  }
+  class QuestionSpec $domain {
+    + type : QuestionType
+    + prompt : String
+    + options : List<String>
+    + answer : String
+    + conceptName : String
+    + difficulty : DifficultyLevel
+  }
+  class SummaryOptions $domain {
+    + length : SummaryLength
+  }
+  class HistoryFilter $domain {
+    + courseId : String
+    + from : LocalDate
+    + to : LocalDate
+    + eventTypes : List<EventType>
+  }
+  enum DifficultyLevel $domain {
+    FOUNDATION
+    INTERMEDIATE
+    ADVANCED
+  }
+  enum QuestionType $domain {
+    MULTIPLE_CHOICE
+    TRUE_FALSE
+    SHORT_ANSWER
+  }
+}
+
+' ---------------------------------------------------------------- AI / Integration
+package "AI / Integration Layer" as I $integ {
+  interface LLMClient <<interface>> <<Target>> $integ {
+    + generate(request : LLMRequest) : LLMResponse
+    + generateStructured(request : LLMRequest, schema : OutputSchema) : LLMResponse
+    + getModelName() : String
+  }
+  class GeminiLLMAdapter <<Adapter>> $integ {
+    - sdk : GeminiSdkClient
+    - model : String
+    + generate(request : LLMRequest) : LLMResponse
+    + generateStructured(request : LLMRequest, schema : OutputSchema) : LLMResponse
+    + getModelName() : String
+  }
+  class OpenAILLMAdapter <<Adapter>> $integ {
+    - sdk : OpenAISdkClient
+    - model : String
+    + generate(request : LLMRequest) : LLMResponse
+    + generateStructured(request : LLMRequest, schema : OutputSchema) : LLMResponse
+    + getModelName() : String
+  }
+  class GeminiSdkClient <<Adaptee, external>> $integ {
+    + generateContent(model : String, contents : Object) : Object
+  }
+  class OpenAISdkClient <<Adaptee, external>> $integ {
+    + createChatCompletion(params : Object) : Object
+  }
+  class LLMRequest $integ {
+    + systemPrompt : String
+    + messages : List<String>
+    + temperature : double
+    + maxTokens : int
+  }
+  class LLMResponse $integ {
+    + text : String
+    + tokensUsed : int
+    + finishReason : String
+  }
+  interface EmbeddingService <<interface>> $integ {
+    + embed(texts : List<String>) : List<float[]>
+  }
+  interface VectorStore <<interface>> $integ {
+    + upsert(chunks : List<DocumentChunk>, vectors : List<float[]>)
+    + search(vector : float[], k : int, filter : Map<String,String>) : List<RetrievedChunk>
+    + deleteByMaterial(materialId : String)
+  }
+  class RetrievalService $integ {
+    - minScore : double = 0.55
+    + index(material : CourseMaterial, chunks : List<DocumentChunk>)
+    + retrieve(query : String, courseId : String, k : int) : List<RetrievedChunk>
+    + removeMaterial(materialId : String)
+  }
+  class RetrievedChunk $integ {
+    + chunk : DocumentChunk
+    + score : double
+  }
+  interface DocumentParser <<interface>> $integ {
+    + supports(type : FileType) : boolean
+    + parse(file : Path) : ParsedDocument
+  }
+  class PdfParser $integ {
+    + supports(type : FileType) : boolean
+    + parse(file : Path) : ParsedDocument
+  }
+  class DocxParser $integ {
+    + supports(type : FileType) : boolean
+    + parse(file : Path) : ParsedDocument
+  }
+  class PlainTextParser $integ {
+    + supports(type : FileType) : boolean
+    + parse(file : Path) : ParsedDocument
+  }
+  class ParsedDocument $integ {
+    + text : String
+    + pageTexts : List<String>
+  }
+  class Chunker $integ {
+    - chunkSize : int = 800
+    - overlap : int = 100
+    + chunk(doc : ParsedDocument, materialId : String) : List<DocumentChunk>
+  }
+  interface NotificationGateway <<interface>> $integ {
+    + send(title : String, body : String, recipient : String) : boolean
+  }
+  class DesktopNotificationGateway $integ {
+    + send(title : String, body : String, recipient : String) : boolean
+  }
+}
+
+' ---------------------------------------------------------------- Persistence
+package "Persistence Layer" as R $persist {
+  interface StudentRepository <<interface>> $persist {
+    + findById(id : String) : Student
+    + save(s : Student)
+  }
+  interface CourseRepository <<interface>> $persist {
+    + save(c : Course)
+    + findById(id : String) : Course
+    + findByStudent(studentId : String) : List<Course>
+    + delete(id : String)
+  }
+  interface MaterialRepository <<interface>> $persist {
+    + save(m : CourseMaterial)
+    + findById(id : String) : CourseMaterial
+    + findByCourse(courseId : String) : List<CourseMaterial>
+    + findChunks(materialId : String) : List<DocumentChunk>
+    + saveSummary(materialId : String, s : Summary)
+    + delete(id : String)
+  }
+  interface ConceptRepository <<interface>> $persist {
+    + saveAll(courseId : String, concepts : List<Concept>)
+    + saveRelations(courseId : String, rels : List<ConceptRelation>)
+    + findByCourse(courseId : String) : List<Concept>
+    + findRelations(courseId : String) : List<ConceptRelation>
+  }
+  interface StudyPlanRepository <<interface>> $persist {
+    + save(p : StudyPlan)
+    + findActive(courseId : String) : StudyPlan
+    + findTask(taskId : String) : StudyTask
+  }
+  interface QuizRepository <<interface>> $persist {
+    + save(q : Quiz)
+    + findById(id : String) : Quiz
+    + saveAttempt(a : QuizAttempt)
+    + findAttempt(id : String) : QuizAttempt
+  }
+  interface FlashcardRepository <<interface>> $persist {
+    + saveDeck(d : FlashcardDeck)
+    + findCard(id : String) : Flashcard
+    + saveCard(c : Flashcard)
+  }
+  interface ProgressRepository <<interface>> $persist {
+    + findMastery(studentId : String, courseId : String) : List<ConceptMastery>
+    + saveMastery(m : ConceptMastery)
+    + savePerformance(records : List<PerformanceRecord>)
+    + findPerformance(studentId : String, courseId : String) : List<PerformanceRecord>
+  }
+  interface LearningHistoryRepository <<interface>> $persist {
+    + append(e : LearningEvent)
+    + find(studentId : String, f : HistoryFilter) : List<LearningEvent>
+  }
+  interface ReminderRepository <<interface>> $persist {
+    + save(r : Reminder)
+    + findDue(now : LocalDateTime) : List<Reminder>
+    + delete(id : String)
+  }
+}
+
+' =====================================================================
+' Relationships
+' =====================================================================
+
+' --- presentation
+BaseView <|-- DashboardView
+BaseView <|-- CourseView
+BaseView <|-- MaterialView
+BaseView <|-- StudyPlannerView
+BaseView <|-- TutorChatView
+BaseView <|-- QuizView
+BaseView <|-- FlashcardView
+BaseView <|-- LearningSessionView
+BaseView <|-- ProgressDashboardView
+BaseView <|-- ConceptMapView
+BaseView <|-- ReminderView
+BaseView <|-- HistoryView
+BaseView "0..*" --> "1" LearningFacade : uses
+CLIApplication "1" *-- "1" CommandParser
+CLIApplication ..> ParsedCommand
+CommandParser ..> ParsedCommand : <<create>>
+CLIApplication "1" --> "1" LearningFacade : uses
+ProgressObserver <|.. ProgressDashboardView
+
+' --- application
+LearningFacade "1" --> "1" CourseService
+LearningFacade "1" --> "1" MaterialService
+LearningFacade "1" --> "1" GradingService
+LearningFacade "1" --> "1" ProgressTracker
+LearningFacade "1" --> "1" ReminderScheduler
+LearningFacade "1" --> "1" ConceptMapService
+LearningFacade "1" --> "1" LearningAgent
+LearningFacade "1" --> "1" MemoryManager
+LearningFacade ..> QuizRepository
+LearningFacade ..> StudyPlanRepository
+LearningFacade ..> FlashcardRepository
+ProgressTracker "1" o-- "0..*" ProgressObserver : observers
+ProgressObserver <|.. StudyPlanMonitor
+ProgressObserver <|.. ReminderScheduler
+StudyPlanMonitor --> "1" LearningAgent
+StudyPlanMonitor ..> StudyPlanRepository
+ProgressTracker ..> ProgressRepository
+ProgressTracker ..> ProgressEvent : <<create>>
+ProgressTracker ..> LearningProgress : <<create>>
+CourseService ..> CourseRepository
+MaterialService "1" o-- "1..*" DocumentParser
+MaterialService "1" *-- "1" Chunker
+MaterialService --> "1" RetrievalService
+MaterialService ..> MaterialRepository
+GradingService --> "1" LLMClient
+GradingService ..> QuizAttempt : <<create>>
+ReminderScheduler --> "1" NotificationGateway
+ReminderScheduler ..> ReminderRepository
+ConceptMapService ..> ConceptRepository
+ConceptMapService ..> ProgressRepository
+ConceptMapService ..> ConceptGraph : <<create>>
+
+' --- agent
+LearningAgent "1" *-- "1" Planner
+LearningAgent "1" *-- "1" ToolRegistry
+LearningAgent "1" *-- "1" ContextBuilder
+LearningAgent "1" *-- "1" ResponseValidator
+LearningAgent "1" --> "1" MemoryManager
+LearningAgent "1" --> "1" LLMClient
+LearningAgent ..> AgentContext : <<create>>
+Planner --> "1" LLMClient
+Planner ..> AgentPlan : <<create>>
+AgentPlan "1" *-- "1" AgentGoal
+AgentPlan "1" *-- "1..*" PlanStep
+AgentContext "1" o-- "1" LearnerContext
+AgentContext "1" o-- "0..*" ToolResult
+ToolRegistry "1" o-- "1..*" Tool
+MemoryManager "1" *-- "0..*" SessionMemory
+MemoryManager ..> LearningHistoryRepository
+MemoryManager ..> ProgressRepository
+MemoryManager ..> StudentRepository
+ContextBuilder ..> LLMRequest : <<create>>
+ResponseValidator ..> LLMResponse
+
+' --- tools
+Tool <|.. RetrievalTool
+Tool <|.. SummarizationTool
+Tool <|.. ConceptExtractionTool
+Tool <|.. QuizGenerationTool
+Tool <|.. FlashcardGenerationTool
+Tool <|.. ProgressAnalysisTool
+Tool <|.. StudyScheduleTool
+Tool <|.. ReminderTool
+Tool ..> ToolResult
+RetrievalTool --> "1" RetrievalService
+SummarizationTool --> "1" LLMClient
+ConceptExtractionTool --> "1" LLMClient
+QuizGenerationTool --> "1" LLMClient
+FlashcardGenerationTool --> "1" LLMClient
+ProgressAnalysisTool ..> ProgressRepository
+ReminderTool --> "1" ReminderScheduler
+QuizGenerationTool "1" o-- "1..*" QuestionFactory
+StudyScheduleTool "1" --> "1" StudyPlanningStrategy : current
+StudyPlanningStrategy <|.. ExamCramStrategy
+StudyPlanningStrategy <|.. SpacedRepetitionStrategy
+StudyPlanningStrategy <|.. BalancedReviewStrategy
+StudyPlanningStrategy ..> StudyTask : <<create>>
+QuestionFactory <|-- MultipleChoiceQuestionFactory
+QuestionFactory <|-- TrueFalseQuestionFactory
+QuestionFactory <|-- ShortAnswerQuestionFactory
+QuestionFactory ..> Question : <<create>>
+DifficultyState <|.. FoundationState
+DifficultyState <|.. IntermediateState
+DifficultyState <|.. AdvancedState
+AdaptiveLearningSession "1" --> "1" DifficultyState : state
+
+' --- domain
+Student "1" *-- "1" StudentProfile
+Student "1" -- "0..*" Course : enrolled in >
+Student "1" *-- "1" LearningHistory
+LearningHistory "1" *-- "0..*" LearningEvent
+Student "1" -- "0..*" LearningSession : participates >
+Student "1" -- "0..*" ConceptMastery : has >
+Student "1" -- "0..*" Reminder : owns >
+Course "1" *-- "0..*" CourseMaterial
+CourseMaterial "1" *-- "0..*" DocumentChunk
+CourseMaterial "1" *-- "0..1" Summary
+Course "1" *-- "0..*" Concept
+Course "1" *-- "0..*" ConceptRelation
+ConceptRelation "0..*" --> "1" Concept : source
+ConceptRelation "0..*" --> "1" Concept : target
+CourseMaterial "1..*" -- "0..*" Concept : covers >
+Course "1" *-- "0..*" StudyPlan
+StudyPlan "1" *-- "1..*" StudyTask
+StudyTask "0..*" --> "1..*" Concept : targets
+Course "1" *-- "0..*" Quiz
+Quiz "1" *-- "1..*" Question
+Question <|-- MultipleChoiceQuestion
+Question <|-- TrueFalseQuestion
+Question <|-- ShortAnswerQuestion
+Question "0..*" --> "1" Concept : assesses
+Quiz "1" *-- "0..*" QuizAttempt
+QuizAttempt "1" *-- "1..*" QuestionResponse
+QuizAttempt "1" *-- "1..*" GradeResult
+Course "1" *-- "0..*" FlashcardDeck
+FlashcardDeck "1" *-- "1..*" Flashcard
+Flashcard "0..*" --> "1" Concept
+ConceptMastery "0..*" --> "1" Concept
+ConceptMastery "1" o-- "0..*" PerformanceRecord : evidence
+LearningSession <|-- AdaptiveLearningSession
+LearningSession "0..*" --> "1" Course
+WeakTopicReport "1" *-- "0..*" WeakTopic
+WeakTopic "0..*" --> "1" Concept
+Reminder "0..*" --> "0..1" StudyTask : about
+ConceptGraph "1" o-- "0..*" Concept
+ConceptGraph "1" o-- "0..*" ConceptRelation
+
+' --- integration
+LLMClient <|.. GeminiLLMAdapter
+LLMClient <|.. OpenAILLMAdapter
+GeminiLLMAdapter "1" --> "1" GeminiSdkClient : adapts
+OpenAILLMAdapter "1" --> "1" OpenAISdkClient : adapts
+LLMClient ..> LLMRequest
+LLMClient ..> LLMResponse
+RetrievalService "1" --> "1" EmbeddingService
+RetrievalService "1" --> "1" VectorStore
+RetrievalService ..> RetrievedChunk : <<create>>
+DocumentParser <|.. PdfParser
+DocumentParser <|.. DocxParser
+DocumentParser <|.. PlainTextParser
+NotificationGateway <|.. DesktopNotificationGateway
+
+' --- value objects used as parameters
+Tool ..> ToolInput
+SessionMemory "1" *-- "0..*" ConversationTurn
+ResponseValidator ..> ValidationResult : <<create>>
+ResponseValidator ..> OutputSchema
+DocumentParser ..> ParsedDocument : <<create>>
+Chunker ..> ParsedDocument
+QuestionFactory ..> QuestionSpec

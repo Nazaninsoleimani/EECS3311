@@ -1,0 +1,79 @@
+@startuml 00-architecture
+title AI Study and Learning Agent - Layered Component Architecture
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+left to right direction
+
+actor Student
+cloud "LLM Provider\n(Google Gemini / OpenAI)" as LLMP
+cloud "Notification Service\n(OS desktop notifications)" as NS
+
+package "Presentation Layer" {
+  [GUI Views\n(DashboardView, StudyPlannerView,\nTutorChatView, QuizView, ...)] as GUI
+  [CLIApplication\n+ CommandParser] as CLI
+}
+package "Application Layer" {
+  [LearningFacade <<Facade>>] as F
+  [CourseService] as CS
+  [MaterialService] as MS
+  [GradingService] as GS
+  [ProgressTracker <<Subject>>] as PT
+  [StudyPlanMonitor / ReminderScheduler\n<<Observers>>] as OBS
+  [ConceptMapService] as CMS
+}
+package "Agent Layer" {
+  [LearningAgent] as LA
+  [Planner] as PL
+  [ToolRegistry + Tools] as TR
+  [MemoryManager\n(SessionMemory, LearnerContext)] as MM
+  [ContextBuilder] as CB
+  [ResponseValidator] as RV
+}
+package "Domain Layer" {
+  [Course, CourseMaterial, Concept,\nStudyPlan, Quiz, Question,\nConceptMastery, LearningHistory, ...] as DOM
+}
+package "AI / Integration Layer" {
+  [LLMClient <<interface>>\nGeminiLLMAdapter / OpenAILLMAdapter] as LLM
+  [RetrievalService\nEmbeddingService / VectorStore] as RET
+  [DocumentParser / Chunker] as DP
+  [NotificationGateway] as NG
+}
+package "Persistence Layer" {
+  [Repository interfaces\n(Course, Material, Concept, StudyPlan,\nQuiz, Flashcard, Progress, History, Reminder)] as REPO
+  database "SQLite DB\n+ local vector index" as DB
+}
+
+Student --> GUI
+Student --> CLI
+GUI --> F
+CLI --> F
+F --> CS
+F --> MS
+F --> GS
+F --> PT
+F --> CMS
+F --> LA
+PT --> OBS : notify
+OBS --> LA : revisePlan()
+LA --> PL
+LA --> TR
+LA --> MM
+LA --> CB
+LA --> RV
+LA --> LLM
+TR --> RET
+TR --> LLM
+MS --> DP
+MS --> RET
+GS --> LLM
+CS --> REPO
+MM --> REPO
+PT --> REPO
+OBS --> NG
+LA ..> DOM
+F ..> DOM
+REPO --> DB
+LLM --> LLMP
+NG --> NS
+@enduml

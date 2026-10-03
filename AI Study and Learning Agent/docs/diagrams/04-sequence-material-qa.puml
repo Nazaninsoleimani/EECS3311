@@ -1,0 +1,76 @@
+@startuml 04-sequence-material-qa
+title SD02 - Question Answering over Course Materials (F05 | UC05 includes UC17)
+!include seq-style.iuml
+actor Student
+boundary ":TutorChatView" as V
+control ":LearningFacade" as F
+participant ":LearningAgent" as A
+participant ":MemoryManager" as M
+participant ":SessionMemory" as SM
+participant ":Planner" as P
+participant ":ToolRegistry" as TR
+participant ":RetrievalTool" as RT
+participant ":RetrievalService" as RS
+participant "<<interface>>\n:EmbeddingService" as ES
+participant "<<interface>>\n:VectorStore" as VS
+participant ":ContextBuilder" as CB
+participant "<<interface>>\n:LLMClient" as LLM
+participant ":ResponseValidator" as RV
+database ":LearningHistoryRepository" as LHR
+
+Student -> V ++ : types "Why can't a subclass reduce\nthe visibility of an overridden method?"
+V -> V : sendQuestion(text)
+V -> F ++ : askQuestion(sessionId, courseId, question)
+F -> A ++ : answerQuestion(sessionId, courseId, question)
+A -> M ++ : getSessionMemory(sessionId)
+M --> A -- : sessionMemory
+A -> SM ++ : recent(6)
+SM --> A -- : previous turns (resolves follow-ups like "and in Python?")
+A -> P ++ : createPlan(goal ANSWER_QUESTION, ctx)
+P --> A -- : plan = [retrieve-material, answer-with-citations]
+A -> TR ++ : getTool("retrieval")
+TR --> A -- : tool
+A -> RT ++ : execute(input: question + recent turns)
+RT -> RS ++ : retrieve(query, courseId, k=5)
+RS -> ES ++ : embed([query])
+ES --> RS -- : queryVector
+RS -> VS ++ : search(queryVector, 5, {courseId})
+VS --> RS -- : candidate chunks + scores
+note right of RS : keep only chunks with\nscore >= minScore (0.55)
+RS --> RT -- : List<RetrievedChunk>
+RT --> A -- : ToolResult(chunks)
+
+alt no chunk reaches minScore (relevant material not found)
+  create ":Answer" as ANS
+  A -> ANS : <<create>>(notice "not found in your\ncourse materials", grounded=false)
+  note over A : no LLM call is made; the GUI offers to\nupload material or ask for a clearly-labelled\ngeneral explanation
+else relevant chunks found
+  A -> CB ++ : build(ANSWER_WITH_CITATIONS, ctx)
+  CB -> CB : rankAndTrim(chunks)
+  CB --> A -- : llmRequest (system rule: answer only\nfrom numbered sources, cite [n])
+  A -> LLM ++ : generate(llmRequest)
+  alt LLM provider error / timeout
+    LLM --> A : error
+    A --> F : AgentError("AI service unavailable")
+  else response received
+    LLM --> A -- : llmResponse
+    A -> RV ++ : checkGrounding(answerText, chunks)
+    RV --> A -- : grounded?
+    opt not grounded (cites missing sources)
+      A -> LLM ++ : generate(stricterRequest)
+      LLM --> A -- : llmResponse
+    end
+    A -> ANS : <<create>>(text, citations, grounded)
+  end
+end
+A -> M ++ : appendToSession(sessionId, turn)
+M --> A --
+A -> M ++ : recordEvent(QUESTION_ASKED)
+M -> LHR ++ : append(event)
+LHR --> M --
+M --> A --
+A --> F -- : answer
+F --> V -- : answer
+V -> V : displayAnswer(answer)
+V --> Student -- : answer with source citations\n(lecture/page references)
+@enduml

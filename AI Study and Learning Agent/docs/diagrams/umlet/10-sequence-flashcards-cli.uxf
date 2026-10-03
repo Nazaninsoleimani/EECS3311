@@ -1,0 +1,1698 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>40</x>
+      <y>15</y>
+      <w>934</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*SD08 - Flashcard Generation via CLI and Flashcard Review via GUI (F07 | UC07 includes UC17)*
+fontsize=18</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>400</x>
+      <y>387</y>
+      <w>2957</w>
+      <h>1022</h>
+    </coordinates>
+    <panel_attributes>alt
+layer=-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>454</x>
+      <y>389</y>
+      <w>307</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[unknown command or missing --course]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>390</x>
+      <y>461</y>
+      <w>2977</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-2</panel_attributes>
+    <additional_attributes>10.0;10.0;2966.6;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>408</x>
+      <y>474</y>
+      <w>139</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[valid command]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>410</x>
+      <y>695</y>
+      <w>2937</w>
+      <h>648</h>
+    </coordinates>
+    <panel_attributes>alt
+layer=-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>464</x>
+      <y>697</y>
+      <w>241</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>[no relevant material retrieved]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>400</x>
+      <y>797</y>
+      <w>2957</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-2</panel_attributes>
+    <additional_attributes>10.0;10.0;2946.6;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLActor</id>
+    <coordinates>
+      <x>38</x>
+      <y>70</y>
+      <w>75</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>Student</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>393</x>
+      <y>88</y>
+      <w>129</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+:CLIApplication
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>448</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>452</x>
+      <y>253</y>
+      <w>12</w>
+      <h>1192</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>828</x>
+      <y>107</y>
+      <w>144</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:CommandParser
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>891</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>895</x>
+      <y>336</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1013</x>
+      <y>88</y>
+      <w>129</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+:FlashcardView
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1067</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1071</x>
+      <y>1528</y>
+      <w>12</w>
+      <h>542</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1297</x>
+      <y>88</y>
+      <w>139</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;control&gt;&gt;
+:LearningFacade
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1357</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1361</x>
+      <y>570</y>
+      <w>12</w>
+      <h>752</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1361</x>
+      <y>1612</y>
+      <w>12</w>
+      <h>422</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1643</x>
+      <y>107</y>
+      <w>131</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:LearningAgent
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1698</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1702</x>
+      <y>607</y>
+      <w>12</w>
+      <h>604</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1925</x>
+      <y>1140</y>
+      <w>131</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:FlashcardDeck
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1981</x>
+      <y>1162</y>
+      <w>20</w>
+      <h>952</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;942.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2097</x>
+      <y>107</y>
+      <w>118</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:RetrievalTool
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2146</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2150</x>
+      <y>644</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2255</x>
+      <y>107</y>
+      <w>133</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:ContextBuilder
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2311</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2315</x>
+      <y>860</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2428</x>
+      <y>107</y>
+      <w>201</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:FlashcardGenerationTool
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2519</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2523</x>
+      <y>934</y>
+      <w>12</w>
+      <h>111</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2904</x>
+      <y>88</y>
+      <w>104</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+:LLMClient
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2945</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>2949</x>
+      <y>971</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>3047</x>
+      <y>107</y>
+      <w>158</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>:ResponseValidator
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>3116</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>3120</x>
+      <y>1082</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>3245</x>
+      <y>88</y>
+      <w>171</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;repository&gt;&gt;
+:FlashcardRepository
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>3321</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>3325</x>
+      <y>1248</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>3325</x>
+      <y>1648</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>3325</x>
+      <y>1886</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>3456</x>
+      <y>107</y>
+      <w>127</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>card:Flashcard
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>3509</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>3513</x>
+      <y>1722</y>
+      <w>12</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>3761</x>
+      <y>88</y>
+      <w>139</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Subject&gt;&gt;
+:ProgressTracker
+valign=center
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>3821</x>
+      <y>130</y>
+      <w>20</w>
+      <h>1984</h>
+    </coordinates>
+    <panel_attributes>lt=.
+layer=-1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;1974.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>3825</x>
+      <y>1960</y>
+      <w>12</w>
+      <h>37</h>
+    </coordinates>
+    <panel_attributes>bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>30</x>
+      <y>163</y>
+      <w>3880</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-
+lw=2
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;3870.2;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1779</x>
+      <y>158</y>
+      <w>381</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>*Generation from the CLI (same facade as the GUI)*
+valign=center
+bg=#EEEEEE
+layer=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>243</y>
+      <w>396</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;386.3;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>82</x>
+      <y>211</y>
+      <w>354</w>
+      <h>46</h>
+    </coordinates>
+    <panel_attributes>1. study flashcards generate --course EECS2030
+--topic polymorphism --count 15
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>454</x>
+      <y>263</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>506</x>
+      <y>267</y>
+      <w>99</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>2. run(args)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>454</x>
+      <y>326</y>
+      <w>451</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;440.7;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>470</x>
+      <y>313</y>
+      <w>114</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>3. parse(args)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>454</x>
+      <y>363</y>
+      <w>451</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>440.7;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>470</x>
+      <y>350</y>
+      <w>415</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>4. ParsedCommand(group=flashcards, action=generate)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>454</x>
+      <y>417</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>506</x>
+      <y>421</y>
+      <w>155</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>5. print(usage help)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>454</x>
+      <y>497</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>506</x>
+      <y>501</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>6. dispatch(cmd)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>454</x>
+      <y>560</y>
+      <w>917</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;907.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>470</x>
+      <y>547</y>
+      <w>236</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>7. generateFlashcards(request)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>597</y>
+      <w>349</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;339.2;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>584</y>
+      <w>236</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>8. generateFlashcards(request)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1704</x>
+      <y>634</y>
+      <w>456</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;445.8;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1720</x>
+      <y>621</y>
+      <w>180</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>9. execute(input: topic)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1704</x>
+      <y>671</y>
+      <w>456</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>445.8;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1720</x>
+      <y>658</y>
+      <w>174</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>10. ToolResult(chunks)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>742</y>
+      <w>349</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>339.2;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>729</y>
+      <w>313</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>11. AgentError("no material on this topic")
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>454</x>
+      <y>779</y>
+      <w>917</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>907.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>470</x>
+      <y>766</y>
+      <w>77</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>12. error
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1704</x>
+      <y>850</y>
+      <w>621</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;611.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1720</x>
+      <y>837</y>
+      <w>293</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>13. build(GENERATE_FLASHCARDS, ctx)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1704</x>
+      <y>887</y>
+      <w>621</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>611.4;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1720</x>
+      <y>874</y>
+      <w>121</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>14. llmRequest
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1704</x>
+      <y>924</y>
+      <w>829</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;818.6;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1720</x>
+      <y>911</y>
+      <w>281</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>15. execute(input: llmRequest, count)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2525</x>
+      <y>961</y>
+      <w>435</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;424.8;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>2541</x>
+      <y>948</y>
+      <w>399</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>16. generateStructured(llmRequest, flashcardSchema)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2525</x>
+      <y>998</y>
+      <w>435</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>424.8;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>2541</x>
+      <y>985</y>
+      <w>281</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>17. front/back pairs + concept names
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1704</x>
+      <y>1035</y>
+      <w>829</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>818.6;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1720</x>
+      <y>1022</y>
+      <w>162</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>18. ToolResult(cards)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1704</x>
+      <y>1072</y>
+      <w>1426</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;1416.2;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1720</x>
+      <y>1059</y>
+      <w>303</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>19. validate(response, flashcardSchema)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1704</x>
+      <y>1109</y>
+      <w>1426</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>1416.2;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1720</x>
+      <y>1096</y>
+      <w>380</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>20. validationResult (drops empty / duplicate cards)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1704</x>
+      <y>1146</y>
+      <w>231</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;221.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1720</x>
+      <y>1133</y>
+      <w>189</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>21. &lt;&lt;create&gt;&gt;(title, cards)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>1202</y>
+      <w>349</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>339.2;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>1188</y>
+      <w>76</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>22. deck
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>1238</y>
+      <w>1972</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;1961.7;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>1226</y>
+      <w>155</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>23. saveDeck(deck)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>1276</y>
+      <w>1972</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>1961.7;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>1262</y>
+      <w>43</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>24. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>454</x>
+      <y>1312</y>
+      <w>917</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>907.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>470</x>
+      <y>1300</y>
+      <w>76</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>25. deck
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>454</x>
+      <y>1352</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>506</x>
+      <y>1356</y>
+      <w>230</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>26. print(deck summary table)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>1436</y>
+      <w>396</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>386.3;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>82</x>
+      <y>1422</y>
+      <w>291</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>27. "15 flashcards created (deck id ...)"
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>30</x>
+      <y>1458</y>
+      <w>3880</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-
+lw=2
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;3870.2;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1777</x>
+      <y>1452</y>
+      <w>387</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>*Spaced-repetition review in the GUI (deterministic)*
+valign=center
+bg=#EEEEEE
+layer=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>1518</y>
+      <w>1016</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;1005.9;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>82</x>
+      <y>1506</y>
+      <w>188</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>28. flip card, rate "Hard"
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1073</x>
+      <y>1538</y>
+      <w>56</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;46.0;10.0;46.0;28.0;10.0;28.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1125</x>
+      <y>1542</y>
+      <w>209</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>29. rateCard(cardId, rating)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1073</x>
+      <y>1602</y>
+      <w>297</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;287.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1089</x>
+      <y>1588</y>
+      <w>261</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>30. reviewFlashcard(cardId, rating)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>1638</y>
+      <w>1972</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;1961.7;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>1626</y>
+      <w>157</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>31. findCard(cardId)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>1676</y>
+      <w>1972</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>1961.7;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>1662</y>
+      <w>73</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>32. card
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>1712</y>
+      <w>2160</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;2150.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>1700</y>
+      <w>190</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>33. recordReview(rating)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>3535</x>
+      <y>1740</y>
+      <w>278</w>
+      <h>71</h>
+    </coordinates>
+    <panel_attributes>Leitner rule: GOOD/EASY -&gt; box+1,
+AGAIN/HARD -&gt; box = 1;
+nextReview = today + interval(box)
+bg=#FFFDE7
+layer=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>1838</y>
+      <w>2160</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>2150.4;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>1826</y>
+      <w>43</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>34. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>1876</y>
+      <w>1972</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;1961.7;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>1862</y>
+      <w>150</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>35. saveCard(card)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>1912</y>
+      <w>1972</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>1961.7;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>1900</y>
+      <w>43</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>36. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>1950</y>
+      <w>2472</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+layer=5</panel_attributes>
+    <additional_attributes>10.0;10.0;2462.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>1936</y>
+      <w>397</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>37. recordResult(studentId, result derived from rating)
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1363</x>
+      <y>1986</y>
+      <w>2472</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>2462.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1379</x>
+      <y>1974</y>
+      <w>43</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>38. 
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1073</x>
+      <y>2024</y>
+      <w>297</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>287.4;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1089</x>
+      <y>2010</y>
+      <w>140</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>39. next due card
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>66</x>
+      <y>2060</y>
+      <w>1016</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+layer=5</panel_attributes>
+    <additional_attributes>1005.9;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>82</x>
+      <y>2048</y>
+      <w>109</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>40. next card
+layer=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

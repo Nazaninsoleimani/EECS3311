@@ -1,0 +1,103 @@
+@startuml 03-sequence-study-plan
+title SD01 - Personalized Study Plan Generation (F06, F11 | UC06 includes UC11, UC17)
+!include seq-style.iuml
+actor Student
+boundary ":StudyPlannerView" as V
+control ":LearningFacade" as F
+participant ":LearningAgent" as A
+participant ":MemoryManager" as M
+database ":ProgressRepository" as PR
+participant ":Planner" as P
+participant ":ToolRegistry" as TR
+participant ":ProgressAnalysisTool" as PAT
+participant ":RetrievalTool" as RT
+participant ":RetrievalService" as RS
+participant "<<interface>>\n:VectorStore" as VS
+participant ":ContextBuilder" as CB
+participant "<<interface>>\n:LLMClient" as LLM
+participant ":ResponseValidator" as RV
+participant ":StudyScheduleTool" as SST
+participant "<<Strategy>>\n:StudyPlanningStrategy" as STR
+participant ":ReminderTool" as RMT
+database ":StudyPlanRepository" as SPR
+
+Student -> V ++ : enter exam date, daily minutes, focus topics;\nclick "Generate Plan"
+V -> V : submitPlanRequest()
+V -> F ++ : generateStudyPlan(request)
+alt examDate is in the past OR dailyMinutes <= 0 (deterministic validation)
+  F --> V : ValidationError
+  V -> V : showError(message)
+else valid request
+  F -> A ++ : generateStudyPlan(request)
+  A -> M ++ : loadLearnerContext(studentId, courseId)
+  M -> PR ++ : findMastery(studentId, courseId)
+  PR --> M -- : masteries
+  M --> A -- : learnerContext
+  note right of A : builds AgentGoal(GENERATE_STUDY_PLAN)\nand AgentContext(learnerContext)
+  A -> P ++ : createPlan(goal, ctx)
+  P --> A -- : plan = [analyze-progress, retrieve-material,\nprioritize(LLM), schedule, set-reminders]
+
+  group executePlan(plan, ctx) - steps unrolled; each step: tools.getTool(step.toolName).execute(step.input)
+    A -> TR ++ : getTool("progress-analysis")
+    TR --> A -- : tool
+    A -> PAT ++ : execute(input)
+    PAT -> PR ++ : findPerformance(studentId, courseId)
+    PR --> PAT -- : records
+    PAT -> PAT : rankTopics(masteries)
+    PAT --> A -- : ToolResult(List<TopicPriority>)
+
+    A -> TR ++ : getTool("retrieval")
+    TR --> A -- : tool
+    A -> RT ++ : execute(input: weak + focus topics)
+    RT -> RS ++ : retrieve(query, courseId, k=8)
+    RS -> VS ++ : search(vector, 8, {courseId})
+    VS --> RS -- : candidates
+    RS --> RT -- : chunks with score >= minScore
+    RT --> A -- : ToolResult(chunks)
+
+    alt retrieved chunks are empty (insufficient course material)
+      A -> P ++ : revise(plan, observation)
+      P --> A -- : revised plan (ungrounded mode:\nconcept names only, warning flag set)
+    end
+
+    A -> CB ++ : build(PRIORITIZE_TOPICS, ctx)
+    CB --> A -- : llmRequest
+    loop at most 2 attempts while response invalid
+      A -> LLM ++ : generateStructured(llmRequest, prioritySchema)
+      LLM --> A -- : llmResponse (priorities, objectives, rationale)
+      A -> RV ++ : validate(llmResponse, prioritySchema)
+      RV --> A -- : validationResult
+    end
+    opt still invalid after retries
+      note over A : fall back to deterministic priorities\nfrom ProgressAnalysisTool
+    end
+
+    A -> TR ++ : getTool("study-schedule")
+    TR --> A -- : tool
+    A -> SST ++ : execute(input: request, priorities)
+    SST -> SST : selectStrategy(request)
+    note right of SST : <= 7 days: ExamCramStrategy\nlong horizon: SpacedRepetitionStrategy\notherwise: BalancedReviewStrategy
+    SST -> STR ++ : buildSchedule(request, priorities)
+    STR --> SST -- : List<StudyTask>
+    SST --> A -- : ToolResult(tasks)
+
+    create ":StudyPlan" as SP
+    A -> SP : <<create>>(tasks, strategyName, rationale)
+
+    opt learner.profile.remindersEnabled
+      A -> TR ++ : getTool("reminder")
+      TR --> A -- : tool
+      A -> RMT ++ : execute(input: plan tasks)
+      RMT --> A -- : ToolResult(reminders scheduled)
+    end
+  end
+  A -> M ++ : recordEvent(PLAN_GENERATED)
+  M --> A --
+  A --> F -- : studyPlan
+  F -> SPR ++ : save(studyPlan)
+  SPR --> F --
+  F --> V -- : studyPlan
+  V -> V : displayPlan(studyPlan)
+end
+V --> Student -- : day-by-day plan with rationale\n(+ warning if ungrounded)
+@enduml

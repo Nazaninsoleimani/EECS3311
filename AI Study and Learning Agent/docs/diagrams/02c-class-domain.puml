@@ -1,0 +1,10 @@
+@startuml 02c-class-domain
+title Class Diagram View C - Domain Model
+!include class-model.iuml
+remove $pres
+remove $app
+remove $agent
+remove $tools
+remove $integ
+remove $persist
+@enduml
