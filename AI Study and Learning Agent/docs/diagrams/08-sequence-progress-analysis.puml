@@ -1,0 +1,66 @@
+@startuml 08-sequence-progress-analysis
+title SD06 - Learning Progress and Weak-Topic Analysis (F13, F11 | UC13, UC11)
+!include seq-style.iuml
+actor Student
+boundary ":ProgressDashboardView" as V
+control ":LearningFacade" as F
+participant "<<Subject>>\n:ProgressTracker" as PT
+database ":ProgressRepository" as PR
+participant ":LearningAgent" as A
+participant ":MemoryManager" as M
+participant ":ToolRegistry" as TR
+participant ":ProgressAnalysisTool" as PAT
+participant ":RetrievalTool" as RT
+participant ":ContextBuilder" as CB
+participant "<<interface>>\n:LLMClient" as LLM
+participant ":ResponseValidator" as RV
+
+Student -> V ++ : open Progress Dashboard
+V -> V : loadProgress()
+V -> F ++ : getProgress(studentId, courseId)
+F -> PT ++ : getProgress(studentId, courseId)
+PT -> PR ++ : findMastery(studentId, courseId)
+PR --> PT -- : masteries
+PT -> PR ++ : findPerformance(studentId, courseId)
+PR --> PT -- : records
+create ":LearningProgress" as LP
+PT -> LP : <<create>>(derived: averageMastery, quizAverage,\nplanCompletion, conceptsMastered)
+PT --> F -- : progress
+F --> V -- : progress
+V --> Student : mastery chart, quiz trend, plan completion
+
+V -> V : loadWeakTopics()
+V -> F ++ : analyzeWeakTopics(studentId, courseId)
+F -> A ++ : diagnoseWeakTopics(studentId, courseId)
+A -> M ++ : loadLearnerContext(studentId, courseId)
+M --> A -- : learnerContext
+A -> TR ++ : getTool("progress-analysis")
+TR --> A -- : tool
+A -> PAT ++ : execute(input: masteries, records)
+PAT -> PAT : rankTopics(masteries)
+PAT --> A -- : ToolResult(ranked TopicPriority list)
+alt fewer than 5 graded attempts (insufficient data)
+  create ":WeakTopicReport" as WR
+  A -> WR : <<create>>(sufficientData=false,\nrecommend diagnostic quiz)
+else enough evidence
+  loop for each of the 3 weakest concepts
+    A -> RT ++ : execute(input: concept)
+    RT --> A -- : ToolResult(chunks)
+  end
+  A -> CB ++ : build(DIAGNOSE_WEAKNESS, ctx: wrong answers + sources)
+  CB --> A -- : llmRequest
+  A -> LLM ++ : generateStructured(llmRequest, diagnosisSchema)
+  LLM --> A -- : misconception diagnosis + recommended activity
+  A -> RV ++ : validate(response, diagnosisSchema)
+  RV --> A -- : validationResult
+  alt invalid or LLM unavailable
+    note over A : report keeps deterministic ranking only\n(diagnosis = "not available")
+  end
+  A -> WR : <<create>>(weakTopics with mastery, diagnosis,\nrecommendedActivity)
+end
+A -> M ++ : recordEvent(WEAK_TOPICS_ANALYZED)
+M --> A --
+A --> F -- : report
+F --> V -- : report
+V --> Student -- : weak topics with explanation and\n"Practise now" actions (-> SD04)
+@enduml

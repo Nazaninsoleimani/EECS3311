@@ -1,0 +1,25 @@
+# Build output
+/build/
+/out/
+/target/
+*.class
+*.jar
+!/lib/*.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Secrets and local data
+.env
+*.env
+config/local.*
+data/
+*.db
+*.sqlite
+
+# Python (tooling)
+__pycache__/
+.venv/

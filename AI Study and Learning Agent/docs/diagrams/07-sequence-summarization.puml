@@ -1,0 +1,62 @@
+@startuml 07-sequence-summarization
+title SD05 - Material Summarization (F03 | UC03)
+!include seq-style.iuml
+actor Student
+boundary ":MaterialView" as V
+control ":LearningFacade" as F
+database ":MaterialRepository" as MR
+participant ":LearningAgent" as A
+participant ":Planner" as P
+participant ":ToolRegistry" as TR
+participant ":SummarizationTool" as ST
+participant "<<interface>>\n:LLMClient" as LLM
+participant ":ResponseValidator" as RV
+participant ":MemoryManager" as M
+
+Student -> V ++ : select "Week 5 - Inheritance.pdf",\nlength = DETAILED
+V -> V : requestSummary(materialId, length)
+V -> F ++ : summarizeMaterial(materialId, options)
+F -> MR ++ : findById(materialId)
+MR --> F -- : material
+alt material not found
+  F --> V : NotFoundError
+  V -> V : showError("material no longer exists")
+else material.status != INDEXED (unsupported, failed or empty extraction)
+  F --> V : MaterialNotProcessedError
+  V -> V : showError("no extractable text - re-upload a\ntext-based PDF/DOCX/TXT/MD file")
+else material ready
+  F -> MR ++ : findChunks(materialId)
+  MR --> F -- : chunks
+  F -> A ++ : summarize(material, options)
+  A -> P ++ : createPlan(goal SUMMARIZE, ctx)
+  P --> A -- : plan (single pass if chunks fit token budget,\notherwise map-reduce over chunk groups)
+  A -> TR ++ : getTool("summarization")
+  TR --> A -- : tool
+  A -> ST ++ : execute(input: chunks, length)
+  loop for each chunk group (map step)
+    ST -> LLM ++ : generate(sectionRequest)
+    LLM --> ST -- : section summary
+  end
+  ST -> LLM ++ : generate(reduceRequest)
+  alt LLM provider error / timeout
+    LLM --> ST : error
+    ST --> A : ToolResult(success=false)
+    A --> F : AgentError("summary unavailable, retry later")
+  else
+    LLM --> ST -- : summary + key points (with page refs)
+    ST --> A -- : ToolResult(draft)
+    A -> RV ++ : validate(response, summarySchema)
+    RV --> A -- : validationResult
+    create ":Summary" as SUM
+    A -> SUM : <<create>>(text, keyPoints, sourceRefs)
+    A -> M ++ : recordEvent(MATERIAL_SUMMARIZED)
+    M --> A --
+    A --> F -- : summary
+    F -> MR ++ : saveSummary(materialId, summary)
+    MR --> F --
+  end
+  F --> V -- : summary
+  V -> V : displaySummary(summary)
+end
+V --> Student -- : summary with key points\nand page references
+@enduml

@@ -1,0 +1,42 @@
+@startuml 12-sequence-concept-map
+title SD10 - Concept Relationship Visualization (F15 | UC15)
+!include seq-style.iuml
+actor Student
+boundary ":ConceptMapView" as V
+control ":LearningFacade" as F
+participant ":ConceptMapService" as CMS
+database ":ConceptRepository" as CR
+database ":ProgressRepository" as PR
+participant "graph:ConceptGraph" as G
+
+Student -> V ++ : open Concept Map for EECS2030
+V -> V : loadConceptMap(courseId)
+V -> F ++ : getConceptMap(studentId, courseId)
+F -> CMS ++ : buildGraph(studentId, courseId)
+CMS -> CR ++ : findByCourse(courseId)
+CR --> CMS -- : concepts
+alt no concepts extracted yet
+  CMS --> F : empty ConceptGraph
+  F --> V : empty graph
+  V -> V : showError("upload material or run Extract Concepts")
+else concepts exist
+  CMS -> CR ++ : findRelations(courseId)
+  CR --> CMS -- : relations
+  CMS -> PR ++ : findMastery(studentId, courseId)
+  PR --> CMS -- : masteries
+  create G
+  CMS -> G : <<create>>(nodes coloured by mastery, edges)
+  CMS --> F -- : graph
+  F --> V -- : graph
+  V -> V : render()
+  V --> Student : interactive map (red = weak, green = mastered)
+  Student -> V : click "Polymorphism"
+  V -> V : selectConcept(conceptId)
+  V -> G ++ : neighbours(conceptId)
+  G --> V -- : prerequisites and related concepts
+  opt student chooses "Quiz me on this concept"
+    note over V : continues as SD03 Part A with\nQuizRequest(conceptIds = [conceptId])
+  end
+end
+V --> Student -- : concept details + prerequisites
+@enduml

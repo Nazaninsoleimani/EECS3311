@@ -1,0 +1,89 @@
+@startuml 06-sequence-adaptive-learning
+title SD04 - Adaptive Learning Session (F12, F13, F06 revision | UC12 includes UC11)
+!include seq-style.iuml
+actor Student
+boundary ":LearningSessionView" as V
+control ":LearningFacade" as F
+participant ":GradingService" as GS
+participant "<<Subject>>\n:ProgressTracker" as PT
+database ":ProgressRepository" as PR
+participant "<<Observer>>\n:StudyPlanMonitor" as SPM
+database ":StudyPlanRepository" as SPR
+participant "session:\nAdaptiveLearningSession" as S
+participant "<<State>>\nstate:DifficultyState" as ST
+participant ":LearningAgent" as A
+participant ":ProgressAnalysisTool" as PAT
+participant ":RetrievalTool" as RT
+participant ":ContextBuilder" as CB
+participant ":QuizGenerationTool" as QGT
+participant "<<interface>>\n:LLMClient" as LLM
+participant "<<Creator>>\n:QuestionFactory" as QF
+
+Student -> V ++ : click "Start adaptive session"
+V -> V : startSession()
+V -> F ++ : startAdaptiveSession(studentId, courseId)
+create S
+F -> S : <<create>>(initial state from mastery:\nFoundationState / IntermediateState / AdvancedState)
+F -> A ++ : nextAdaptiveActivity(session)
+A --> F -- : first question (same steps as 33-50 below)
+F --> V -- : session
+V --> Student -- : first activity
+
+loop until the student ends the session
+  Student -> V ++ : answer current activity
+  V -> V : submitActivityAnswer()
+  V -> F ++ : submitActivityResult(sessionId, response)
+  F -> GS ++ : gradeResponse(session.currentQuestion, response)
+  GS --> F -- : result
+  F -> PT ++ : recordResult(studentId, result)
+  PT -> PR ++ : saveMastery(updated ConceptMastery)
+  PR --> PT --
+  PT -> PT : notifyObservers(event)
+  PT -> SPM ++ : onProgressChanged(event)
+  SPM -> SPM : needsRevision(activePlan, event)
+  opt mastery of a planned topic dropped below threshold
+    SPM -> A ++ : revisePlan(activePlan, event)
+    A --> SPM -- : revised StudyPlan (extra review tasks)
+    SPM -> SPR ++ : save(revisedPlan)
+    SPR --> SPM --
+  end
+  SPM --> PT --
+  PT --> F --
+
+  F -> S ++ : recordOutcome(result)
+  S -> ST ++ : onResult(session, result)
+  alt 3 consecutive correct AND level < ADVANCED
+    ST -> S : setState(next higher state)
+  else 2 consecutive incorrect AND level > FOUNDATION
+    ST -> S : setState(next lower state)
+  else
+    note right of ST : remain in current state
+  end
+  ST --> S --
+  S --> F --
+
+  F -> A ++ : nextAdaptiveActivity(session)
+  A -> PAT ++ : execute(input: masteries)
+  PAT --> A -- : weakest concept to practise
+  A -> S ++ : getState()
+  S --> A -- : state
+  A -> ST ++ : getLevel()
+  ST --> A -- : difficultyLevel
+  A -> ST ++ : preferredQuestionTypes()
+  ST --> A -- : e.g. Foundation: [TRUE_FALSE, MULTIPLE_CHOICE]
+  A -> RT ++ : execute(input: weakest concept)
+  RT --> A -- : ToolResult(chunks)
+  A -> CB ++ : build(ADAPTIVE_ACTIVITY, ctx)
+  CB --> A -- : llmRequest
+  A -> QGT ++ : execute(input: llmRequest, level, types, count=1)
+  QGT -> LLM ++ : generateStructured(llmRequest, questionSpecSchema)
+  LLM --> QGT -- : spec
+  QGT -> QF ++ : build(spec)
+  QF --> QGT -- : question
+  QGT --> A -- : ToolResult(question)
+  A --> F -- : nextQuestion
+  F --> V -- : nextQuestion
+  V -> V : displayActivity(nextQuestion)
+  V --> Student -- : adapted activity\n(difficulty + concept chosen by agent)
+end
+@enduml

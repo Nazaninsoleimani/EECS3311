@@ -1,0 +1,26 @@
+@startuml 14-deployment
+title AI Study and Learning Agent - Deployment Diagram (planned, Stage 2/3)
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+node "Student's computer\n<<device>>" as PC {
+  node "Java runtime (JVM)\n<<execution environment>>" as JVM {
+    artifact "study-agent-gui.jar\n(frontend/gui)" as GUI
+    artifact "study-agent-cli.jar\n(frontend/cli, command: study)" as CLI
+    artifact "study-agent-core.jar\n(backend: application, agent,\ndomain, integration, persistence)" as CORE
+  }
+  database "study-agent.db\n<<SQLite file>>\ncourses, materials, chunks,\nembeddings, progress, history" as DB
+  artifact "application.properties\n+ environment variables\n(API keys)" as CFG
+  node "OS notification centre\n<<execution environment>>" as OSN
+}
+cloud "Google Gemini API\n<<external service>>" as GEM
+cloud "OpenAI API\n<<external service>>\n(alternative provider)" as OAI
+
+GUI ..> CORE : LearningFacade
+CLI ..> CORE : LearningFacade
+CORE --> DB : JDBC
+CORE ..> CFG : reads
+CORE --> OSN : NotificationGateway
+CORE --> GEM : HTTPS (LLMClient,\nEmbeddingService)
+CORE --> OAI : HTTPS (LLMClient)
+@enduml

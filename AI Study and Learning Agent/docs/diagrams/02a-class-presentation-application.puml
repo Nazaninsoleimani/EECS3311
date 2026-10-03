@@ -1,0 +1,10 @@
+@startuml 02a-class-presentation-application
+title Class Diagram View A - Presentation and Application Layers (Facade, Observer)
+!include class-model.iuml
+left to right direction
+remove $agent
+remove $tools
+remove $domain
+remove $integ
+remove $persist
+@enduml

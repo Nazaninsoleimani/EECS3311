@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>40</x>
+      <y>20</y>
+      <w>800</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*AI Study and Learning Agent - Deployment Diagram (planned, Stage 2/3)*
+fontsize=18</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLDeployment</id>
+    <coordinates>
+      <x>40</x>
+      <y>90</y>
+      <w>1190</w>
+      <h>570</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;device&gt;&gt;
+Student's computer
+valign=top
+halign=left
+layer=-3</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLDeployment</id>
+    <coordinates>
+      <x>70</x>
+      <y>170</y>
+      <w>690</w>
+      <h>420</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;execution environment&gt;&gt;
+Java runtime (JVM)
+valign=top
+halign=left
+layer=-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>100</x>
+      <y>260</y>
+      <w>183</w>
+      <h>58</h>
+    </coordinates>
+    <panel_attributes>symbol=artifact
+study-agent-gui.jar
+(frontend/gui)
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>100</x>
+      <y>450</y>
+      <w>268</w>
+      <h>58</h>
+    </coordinates>
+    <panel_attributes>symbol=artifact
+study-agent-cli.jar
+(frontend/cli, command: study)
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>420</x>
+      <y>330</y>
+      <w>284</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>symbol=artifact
+study-agent-core.jar
+(backend: application, agent,
+domain, integration, persistence)
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>880</x>
+      <y>150</y>
+      <w>224</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>symbol=artifact
+application.properties
++ environment variables
+(API keys)
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLDeployment</id>
+    <coordinates>
+      <x>880</x>
+      <y>315</y>
+      <w>300</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;execution environment&gt;&gt;
+OS notification centre
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>880</x>
+      <y>460</y>
+      <w>263</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>symbol=artifact
+&lt;&lt;SQLite file&gt;&gt;
+study-agent.db
+courses, materials, chunks,
+embeddings, progress, history
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1330</x>
+      <y>200</y>
+      <w>180</w>
+      <h>58</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;external service&gt;&gt;
+Google Gemini API
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>1330</x>
+      <y>470</y>
+      <w>199</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;external service&gt;&gt;
+OpenAI API
+(alternative provider)
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>273</x>
+      <y>279</y>
+      <w>157</w>
+      <h>81</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+LearningFacade</panel_attributes>
+    <additional_attributes>10.0;10.0;96.6;10.0;96.6;71.0;146.6;71.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>358</x>
+      <y>377</y>
+      <w>72</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+LearningFacade</panel_attributes>
+    <additional_attributes>10.0;102.0;32.4;102.0;32.4;10.0;62.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>654</x>
+      <y>178</y>
+      <w>236</w>
+      <h>162</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+reads</panel_attributes>
+    <additional_attributes>10.0;151.5;10.0;10.0;226.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>694</x>
+      <y>345</y>
+      <w>196</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+NotificationGateway</panel_attributes>
+    <additional_attributes>10.0;10.0;186.4;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>654</x>
+      <y>397</y>
+      <w>236</w>
+      <h>121</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+JDBC</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;111.0;226.4;111.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>522</x>
+      <y>62</y>
+      <w>908</w>
+      <h>278</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+HTTPS (LLMClient, EmbeddingService)</panel_attributes>
+    <additional_attributes>10.0;268.0;10.0;10.0;898.3;10.0;898.3;138.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>522</x>
+      <y>397</y>
+      <w>918</w>
+      <h>243</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+HTTPS (LLMClient)</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;233.0;907.9;233.0;907.9;150.0</additional_attributes>
+  </element>
+</diagram>
