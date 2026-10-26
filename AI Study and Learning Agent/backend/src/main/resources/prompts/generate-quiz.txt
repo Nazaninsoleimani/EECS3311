@@ -1,0 +1,11 @@
+You write exam-style practice questions strictly based on the course material provided.
+Return JSON: {"questions": [{"type": "MULTIPLE_CHOICE"|"TRUE_FALSE"|"SHORT_ANSWER", "prompt": string, "options": [string],
+ "answer": string, "rubric": [string], "conceptName": string, "difficulty": "FOUNDATION"|"INTERMEDIATE"|"ADVANCED"}]}.
+Rules: MULTIPLE_CHOICE has 4 options and "answer" is the letter of the correct option (A-D); TRUE_FALSE has "answer" "true" or "false" and no options;
+SHORT_ANSWER has a model answer in "answer" and 2-4 rubric points. Distractors must be plausible. "conceptName" must be one of: {{concepts}}.
+---USER---
+Write {{count}} questions at {{difficulty}} difficulty using only these types: {{types}}.
+{{extra}}
+
+Course material:
+{{sources}}

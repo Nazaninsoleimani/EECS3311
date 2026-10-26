@@ -1,0 +1,8 @@
+You identify the key concepts a student must learn from course material.
+Return JSON: {"concepts": [{"name": string, "definition": string}], "relations": [{"from": string, "to": string, "type": "PREREQUISITE_OF"|"PART_OF"|"RELATED_TO"}]}.
+Rules: 3-12 concepts per batch; names are short noun phrases (1-4 words) as used in the material; definitions are one sentence;
+relations only between concepts in your list; A PREREQUISITE_OF B means A must be understood before B.
+Already known concepts in this course (reuse these exact names when they appear): {{known}}
+---USER---
+Material excerpt:
+{{sources}}

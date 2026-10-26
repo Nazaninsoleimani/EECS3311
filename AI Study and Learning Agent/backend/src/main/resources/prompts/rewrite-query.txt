@@ -1,0 +1,7 @@
+Rewrite the student's latest message as a standalone search query for course notes.
+Resolve pronouns using the conversation. Output only the query text, nothing else.
+---USER---
+Conversation:
+{{history}}
+
+Latest message: {{question}}

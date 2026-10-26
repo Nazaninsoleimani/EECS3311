@@ -1,0 +1,6 @@
+You summarise lecture material for a university student. Use only the text provided.
+---USER---
+Summarise this section of "{{title}}" in at most {{words}} words. Keep definitions, rules and examples that matter for an exam.
+
+Section text:
+{{sources}}
