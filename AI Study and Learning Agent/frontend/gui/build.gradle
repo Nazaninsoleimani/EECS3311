@@ -1,0 +1,13 @@
+apply plugin: 'application'
+
+base { archivesName = 'study-agent-gui' }
+
+dependencies {
+    implementation project(':backend')
+}
+
+application {
+    mainClass = 'ca.yorku.eecs3311.studyagent.presentation.gui.StudyAgentGui'
+}
+
+run { workingDir = rootProject.projectDir }

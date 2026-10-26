@@ -1,0 +1,5 @@
+rootProject.name = 'ai-study-learning-agent'
+
+include 'backend'
+include 'frontend:gui'
+include 'frontend:cli'

@@ -1,10 +1,13 @@
 # Build output
 /build/
+build/
 /out/
 /target/
+.gradle/
 *.class
 *.jar
 !/lib/*.jar
+!gradle/wrapper/gradle-wrapper.jar
 
 # IDE
 .idea/
@@ -12,10 +15,17 @@
 *.iml
 .DS_Store
 
-# Secrets and local data
+# Local secrets (never commit real API keys)
 .env
+.env.*
+!.env.example
 *.env
+config.local.json
 config/local.*
+application.properties
+!deployment/config/application.example.properties
+
+# Local data
 data/
 *.db
 *.sqlite

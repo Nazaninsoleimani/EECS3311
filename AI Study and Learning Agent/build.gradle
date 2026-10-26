@@ -1,0 +1,26 @@
+// Shared configuration for the three modules (backend core, GUI, CLI).
+configure(subprojects.findAll { it.path != ':frontend' }) {
+    apply plugin: 'java'
+
+    group = 'ca.yorku.eecs3311'
+    version = '0.2.0'
+
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 21
+        options.encoding = 'UTF-8'
+    }
+
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.3'
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging { events 'failed'; exceptionFormat 'full' }
+    }
+}

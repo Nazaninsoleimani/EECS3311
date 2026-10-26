@@ -1,0 +1,17 @@
+apply plugin: 'application'
+
+base { archivesName = 'study-agent-cli' }
+
+dependencies {
+    implementation project(':backend')
+}
+
+application {
+    mainClass = 'ca.yorku.eecs3311.studyagent.presentation.cli.CLIApplication'
+    applicationName = 'study'
+}
+
+run {
+    workingDir = rootProject.projectDir
+    standardInput = System.in
+}
