@@ -11,5 +11,7 @@ public class QuestionSpec {
     public String answer;
     public List<String> rubric;
     public String conceptName;
+    /** Resolved by QuizGenerationTool from conceptName before the factory runs. */
+    public String conceptId;
     public DifficultyLevel difficulty;
 }
