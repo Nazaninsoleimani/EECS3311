@@ -11,3 +11,6 @@ application {
 }
 
 run { workingDir = rootProject.projectDir }
+
+// views are built without a window in tests
+test { systemProperty 'java.awt.headless', 'true' }
