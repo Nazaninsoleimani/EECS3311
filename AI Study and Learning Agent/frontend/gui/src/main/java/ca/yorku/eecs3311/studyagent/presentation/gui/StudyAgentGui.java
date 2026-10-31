@@ -65,6 +65,10 @@ public class StudyAgentGui {
         list.add(new CourseView(ctx));
         list.add(new MaterialView(ctx));
         list.add(new TutorChatView(ctx));
+        list.add(new StudyPlannerView(ctx));
+        list.add(new QuizView(ctx));
+        list.add(new FlashcardView(ctx));
+        list.add(new LearningSessionView(ctx));
         return list;
     }
 
