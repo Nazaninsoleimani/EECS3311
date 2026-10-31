@@ -55,6 +55,7 @@ public class CLIApplication {
         this.in = in;
         this.out = out;
         registerCoreCommands();
+        new StudyCommands(this).registerAll();
     }
 
     public static void main(String[] args) {

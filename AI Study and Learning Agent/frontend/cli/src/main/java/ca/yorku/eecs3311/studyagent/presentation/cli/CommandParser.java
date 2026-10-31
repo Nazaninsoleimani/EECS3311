@@ -13,7 +13,7 @@ import java.util.Set;
  * flag, or "-i" is a flag. "--name=value" is also accepted.
  */
 public class CommandParser {
-    static final Set<String> BOOLEAN_FLAGS = Set.of("trace", "interactive", "help", "all");
+    static final Set<String> BOOLEAN_FLAGS = Set.of("trace", "interactive", "help", "all", "take");
 
     public ParsedCommand parse(String[] argv) {
         List<String> positional = new ArrayList<>();
