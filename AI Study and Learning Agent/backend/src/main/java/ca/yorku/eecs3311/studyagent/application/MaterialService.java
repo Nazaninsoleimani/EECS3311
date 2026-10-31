@@ -4,6 +4,7 @@ import ca.yorku.eecs3311.studyagent.domain.CourseMaterial;
 import ca.yorku.eecs3311.studyagent.domain.DocumentChunk;
 import ca.yorku.eecs3311.studyagent.domain.FileType;
 import ca.yorku.eecs3311.studyagent.domain.Ids;
+import ca.yorku.eecs3311.studyagent.domain.Summary;
 import ca.yorku.eecs3311.studyagent.domain.ValidationException;
 import ca.yorku.eecs3311.studyagent.integration.parsing.Chunker;
 import ca.yorku.eecs3311.studyagent.integration.parsing.DocumentParser;
@@ -75,6 +76,10 @@ public class MaterialService {
 
     public List<CourseMaterial> list(String courseId) {
         return materials.findByCourse(courseId);
+    }
+
+    public void saveSummary(String materialId, Summary summary) {
+        materials.saveSummary(materialId, summary);
     }
 
     private DocumentParser findParser(FileType type) {

@@ -306,22 +306,40 @@ public class LearningAgent {
     }
 
     public Quiz generateQuiz(QuizRequest request) {
-        List<Concept> selected = selectConcepts(request.courseId, request.conceptIds);
-        String topic = topicOf(null, selected);
+        List<Concept> chosen = selectConcepts(request.courseId, request.conceptIds);
+        String topic = topicOf(null, chosen);
+        // a whole-course quiz targets the course's known concepts so every answer updates mastery
+        List<Concept> selected = chosen.isEmpty() ? concepts.findByCourse(request.courseId).stream().limit(15).toList() : chosen;
         AgentContext ctx = new AgentContext(memory.loadLearnerContext(request.studentId, request.courseId));
         AgentPlan plan = planner.createPlan(new AgentGoal(GoalType.GENERATE_QUIZ, topic)
                 .with("courseId", request.courseId).with("topic", topic), ctx);
         executePlan(plan, ctx, (step, in) -> {
-            if (step.toolName.equals("retrieval") && topic.isBlank()) in.with("query", "key concepts definitions examples");
+            if (step.toolName.equals("retrieval") && topic.isBlank()) {
+                in.with("query", selected.stream().map(Concept::getName).collect(Collectors.joining(" ")));
+            }
+            if (step.toolName.equals("quiz_generation")) {
+                if (ctx.retrieved.isEmpty()) sampleCourseChunks(ctx, request.courseId, 6);
+                if (ctx.retrieved.isEmpty()) throw new AgentException("This course has no indexed material to build a quiz from");
+            }
             in.with("count", request.count).with("types", request.types).with("difficulty", request.difficulty).with("concepts", selected);
         });
-        if (ctx.retrieved.isEmpty()) throw new AgentException("This course has no indexed material to build a quiz from");
         List<Question> questions = ctx.results.get("generate").payload();
         Quiz quiz = new Quiz(Ids.newId("qz"), request.courseId, request.difficulty, questions);
         if (questions.size() < request.count) {
             quiz.setNotice("Generated " + questions.size() + " of " + request.count + " requested questions; the others failed validation.");
+        } else if (selected.isEmpty()) {
+            quiz.setNotice("No concepts extracted for this course yet, so this quiz will not update concept mastery.");
         }
         return quiz;
+    }
+
+    /** Whole-course quiz without a usable query: spread the sources evenly over all indexed chunks. */
+    private void sampleCourseChunks(AgentContext ctx, String courseId, int k) {
+        List<DocumentChunk> all = materials.findChunksByCourse(courseId);
+        if (all.isEmpty()) return;
+        int stride = Math.max(1, all.size() / k);
+        for (int i = 0; i < all.size() && ctx.retrieved.size() < k; i += stride) ctx.retrieved.add(new RetrievedChunk(all.get(i), 1.0));
+        ctx.trace.add("retrieval found nothing for a whole-course quiz; sampled " + ctx.retrieved.size() + " chunk(s) across the material");
     }
 
     private List<Concept> selectConcepts(String courseId, List<String> conceptIdsOrNames) {
