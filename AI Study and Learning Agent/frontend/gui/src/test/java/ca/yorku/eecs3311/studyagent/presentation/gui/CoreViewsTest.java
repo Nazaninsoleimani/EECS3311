@@ -63,6 +63,7 @@ class CoreViewsTest {
     @Test
     void mainWindowHasATabPerView() {
         StudyAgentGui gui = new StudyAgentGui(t.ctx);
-        assertEquals(List.of("Courses", "Materials", "Tutor"), gui.views().stream().map(BaseView::title).toList().subList(0, 3));
+        List<String> titles = gui.views().stream().map(BaseView::title).toList();
+        assertTrue(titles.containsAll(List.of("Courses", "Materials", "Tutor")), titles.toString());
     }
 }

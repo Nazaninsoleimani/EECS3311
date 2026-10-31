@@ -2,7 +2,7 @@
 
 The tools the agent can invoke, plus the Strategy (study scheduling), Factory Method (question creation) and State (adaptive difficulty) participants.
 
-> Stage 1 is the design stage, so this folder contains no implementation yet. The classes listed below come from the Stage 1 class model (`docs/diagrams/class-model.iuml`) and will be implemented here in Stage 2.
+> Implemented in Stage 2. The table lists the classes of the Stage 1 class model (`docs/diagrams/class-model.iuml`) that live here; the Java sources are in this folder.
 
 | Class | Kind | Notes |
 |---|---|---|

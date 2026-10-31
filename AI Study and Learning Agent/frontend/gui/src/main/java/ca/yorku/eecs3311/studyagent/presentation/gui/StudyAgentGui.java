@@ -62,6 +62,7 @@ public class StudyAgentGui {
     /** Every view of the application, in tab order. */
     static List<BaseView> createViews(GuiContext ctx) {
         List<BaseView> list = new ArrayList<>();
+        list.add(new DashboardView(ctx));
         list.add(new CourseView(ctx));
         list.add(new MaterialView(ctx));
         list.add(new TutorChatView(ctx));
@@ -69,6 +70,10 @@ public class StudyAgentGui {
         list.add(new QuizView(ctx));
         list.add(new FlashcardView(ctx));
         list.add(new LearningSessionView(ctx));
+        list.add(new ProgressDashboardView(ctx));
+        list.add(new ConceptMapView(ctx));
+        list.add(new ReminderView(ctx));
+        list.add(new HistoryView(ctx));
         return list;
     }
 

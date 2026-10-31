@@ -2,7 +2,7 @@
 
 Application layer: the single entry point for both front ends (`LearningFacade`, Facade pattern), input validation, deterministic services, and progress notification (Observer pattern).
 
-> Stage 1 is the design stage, so this folder contains no implementation yet. The classes listed below come from the Stage 1 class model (`docs/diagrams/class-model.iuml`) and will be implemented here in Stage 2.
+> Implemented in Stage 2. The table lists the classes of the Stage 1 class model (`docs/diagrams/class-model.iuml`) that live here; the Java sources are in this folder.
 
 | Class | Kind | Notes |
 |---|---|---|
@@ -15,5 +15,6 @@ Application layer: the single entry point for both front ends (`LearningFacade`,
 | `StudyPlanMonitor` | class |  |
 | `ReminderScheduler` | class |  |
 | `ConceptMapService` | class |  |
+| `ActivityOutcome` | record | added in Stage 2: result of one adaptive answer (grade, level change, next question) |
 
 Realized features: all (F01-F16 enter through `LearningFacade`).

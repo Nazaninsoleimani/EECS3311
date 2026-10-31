@@ -7,4 +7,4 @@ Two front ends share one backend facade (`LearningFacade`), as required by the S
 | `gui/` | Desktop graphical interface | `study-agent-gui.jar` |
 | `cli/` | Command-line interface (`study ...`) | `study-agent-cli.jar` |
 
-> Stage 1 is the design stage; no front-end code exists yet.
+> Both front ends are implemented (Stage 2). Launch commands are in the root README.

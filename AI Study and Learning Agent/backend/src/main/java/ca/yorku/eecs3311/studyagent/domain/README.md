@@ -2,7 +2,7 @@
 
 Domain model: learning entities and the deterministic rules closest to their data (mastery update, Leitner scheduling, polymorphic grading, difficulty state context). No dependencies on other layers.
 
-> Stage 1 is the design stage, so this folder contains no implementation yet. The classes listed below come from the Stage 1 class model (`docs/diagrams/class-model.iuml`) and will be implemented here in Stage 2.
+> Implemented in Stage 2. The table lists the classes of the Stage 1 class model (`docs/diagrams/class-model.iuml`) that live here; the Java sources are in this folder.
 
 | Class | Kind | Notes |
 |---|---|---|

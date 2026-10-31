@@ -1,16 +1,17 @@
-# CLI front end (planned package `ca.yorku.eecs3311.studyagent.presentation.cli`)
+# CLI front end (package `ca.yorku.eecs3311.studyagent.presentation.cli`)
 
 Command-line interface invoked as `study <group> <action> [options]`. `CLIApplication` parses arguments with `CommandParser` into a `ParsedCommand` and dispatches to the same `LearningFacade` operations the GUI uses (see SD08 and SD11).
 
-> Stage 1 is the design stage, so this folder contains no implementation yet. The classes listed below come from the Stage 1 class model (`docs/diagrams/class-model.iuml`) and will be implemented here in Stage 2.
+> Implemented in Stage 2. The table lists the classes of the Stage 1 class model (`docs/diagrams/class-model.iuml`) that live here; the Java sources are in this folder.
 
 | Class | Kind | Notes |
 |---|---|---|
 | `CLIApplication` | class |  |
 | `CommandParser` | class |  |
 | `ParsedCommand` | class |  |
+| `StudyCommands` | class | added in Stage 2: the F06-F16 command handlers, split out of `CLIApplication` |
 
-## Planned commands
+## Commands
 
 | Command | Feature |
 |---|---|
@@ -30,3 +31,5 @@ Command-line interface invoked as `study <group> <action> [options]`. `CLIApplic
 | `study reminder add --at "<datetime>" [--repeat daily\|weekly] "<message>"` / `list` / `cancel <id>` | F14 |
 | `study concept-map show --course <c> [--format text\|mermaid]` | F15 |
 | `study history show [--course <c>] [--last 7d] [--type <eventType>]` | F16 |
+
+Also available: `study help`, `study status` (LLM in use and token count), `study quiz list`, `study quiz generate ... --take` (answer immediately), `study flashcards list`, `study study-plan show --all`, `study reminder list [--all]` and `study reminder dispatch`. `study quiz explain` accepts the question number shown after grading. Add `--help` to any command for its usage and `--trace` to print the agent's plan and step results. Running `study` with no arguments opens an interactive shell.
