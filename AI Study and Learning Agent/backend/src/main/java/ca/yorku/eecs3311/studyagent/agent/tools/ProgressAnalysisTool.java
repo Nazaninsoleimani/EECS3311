@@ -19,6 +19,8 @@ import java.util.Map;
  * Unpractised concepts count as mastery 0 and maximal recency gap.
  */
 public class ProgressAnalysisTool implements Tool {
+    public static final String NO_CONCEPTS = "This course has no concepts yet. Concepts are extracted by the AI from uploaded "
+            + "material: upload a file with an API key configured, or run concept extraction on an existing material.";
     private final ConceptRepository concepts;
     private final ProgressRepository progress;
 
@@ -35,7 +37,7 @@ public class ProgressAnalysisTool implements Tool {
         String studentId = input.getString("studentId");
         String courseId = input.getString("courseId");
         List<Concept> all = concepts.findByCourse(courseId);
-        if (all.isEmpty()) return ToolResult.fail("This course has no concepts yet; upload material first");
+        if (all.isEmpty()) return ToolResult.fail(NO_CONCEPTS);
         ConceptGraph graph = new ConceptGraph(all, concepts.findRelations(courseId));
         Map<String, ConceptMastery> mastery = new HashMap<>();
         for (ConceptMastery m : progress.findMastery(studentId, courseId)) mastery.put(m.getConceptId(), m);
