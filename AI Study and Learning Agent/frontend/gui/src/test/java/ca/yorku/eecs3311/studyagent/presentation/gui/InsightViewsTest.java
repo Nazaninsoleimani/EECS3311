@@ -58,6 +58,21 @@ class InsightViewsTest {
     }
 
     @Test
+    void quizMeOnThisOpensAPrefilledQuiz() throws Exception {
+        t.courseWithMaterial(dir);
+        StudyAgentGui gui = new StudyAgentGui(t.ctx);
+        ConceptMapView map = (ConceptMapView) gui.views().stream().filter(v -> v instanceof ConceptMapView).findFirst().orElseThrow();
+        map.render();
+        assertFalse(map.quizMeButton().isEnabled(), "nothing selected yet");
+        map.selectConcept(map.graph().findByName("Adapter Pattern").orElseThrow().getId());
+        assertTrue(map.quizMeButton().isEnabled());
+        map.quizMeButton().doClick();
+        QuizView quiz = (QuizView) gui.views().stream().filter(v -> v instanceof QuizView).findFirst().orElseThrow();
+        assertSame(quiz, gui.selectedView(), "window switched to the Quiz tab");
+        assertEquals("Adapter Pattern", quiz.conceptsField().getText());
+    }
+
+    @Test
     void reminderViewAddsListsAndCancels() throws Exception {
         t.courseWithMaterial(dir);
         ReminderView view = new ReminderView(t.ctx);

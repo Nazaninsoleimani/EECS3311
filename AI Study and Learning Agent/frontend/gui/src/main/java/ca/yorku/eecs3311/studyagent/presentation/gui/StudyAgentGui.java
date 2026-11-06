@@ -56,6 +56,8 @@ public class StudyAgentGui {
             renderSelected();
         });
         ctx.onDataChanged(this::renderSelected);
+        ctx.onQuizRequested(concept -> views.stream().filter(v -> v instanceof QuizView).findFirst()
+                .ifPresent(tabs::setSelectedComponent));
         ctx.setStatusLine(text -> SwingUtilities.invokeLater(() -> status.setText(text)));
     }
 
@@ -153,4 +155,5 @@ public class StudyAgentGui {
     }
 
     List<BaseView> views() { return views; }
+    Component selectedView() { return tabs.getSelectedComponent(); }
 }

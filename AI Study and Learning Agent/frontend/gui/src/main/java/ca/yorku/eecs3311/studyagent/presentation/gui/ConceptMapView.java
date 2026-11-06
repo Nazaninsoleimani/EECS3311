@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,6 +41,7 @@ public class ConceptMapView extends BaseView {
     private final JTextArea details = readOnlyArea();
     private ConceptGraph graph = new ConceptGraph();
     private String selectedId;
+    private final JButton quizMe = button("Quiz me on this", this::quizOnSelected);
 
     public ConceptMapView(GuiContext ctx) {
         super(ctx);
@@ -47,7 +49,9 @@ public class ConceptMapView extends BaseView {
         JPanel top = new JPanel(new BorderLayout());
         top.add(heading("Concept map"), BorderLayout.NORTH);
         top.add(row(legend("not practised", UNPRACTISED), legend("weak (<50%)", WEAK), legend("learning", LEARNING),
-                legend("mastered (≥80%)", MASTERED), button("Copy as Mermaid", this::copyMermaid)), BorderLayout.SOUTH);
+                legend("mastered (≥80%)", MASTERED), button("Copy as Mermaid", this::copyMermaid),
+                quizMe), BorderLayout.SOUTH);
+        quizMe.setEnabled(false);
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, canvas, scroll(details));
         split.setResizeWeight(0.75);
         add(top, BorderLayout.NORTH);
@@ -78,6 +82,7 @@ public class ConceptMapView extends BaseView {
     public void loadConceptMap(String courseId) {
         graph = facade.getConceptMap(ctx.studentId, courseId);
         selectedId = null;
+        quizMe.setEnabled(false);
         details.setText(graph.isEmpty() ? "No concepts yet. Use Extract concepts on a material (Materials tab)."
                 : graph.nodes.size() + " concepts, " + graph.edges.size() + " relations.\nClick a concept for its details.");
         canvas.repaint();
@@ -85,6 +90,7 @@ public class ConceptMapView extends BaseView {
 
     public void selectConcept(String conceptId) {
         selectedId = conceptId;
+        quizMe.setEnabled(graph.find(conceptId).isPresent());
         graph.find(conceptId).ifPresent(c -> details.setText(describe(graph, c)));
         canvas.repaint();
     }
@@ -104,6 +110,10 @@ public class ConceptMapView extends BaseView {
 
     private static String names(List<Concept> list) {
         return list.stream().map(Concept::getName).collect(Collectors.joining(", "));
+    }
+
+    private void quizOnSelected() {
+        if (selectedId != null) graph.find(selectedId).ifPresent(c -> ctx.requestQuizOn(c.getName()));
     }
 
     private void copyMermaid() {
@@ -199,4 +209,5 @@ public class ConceptMapView extends BaseView {
 
     ConceptGraph graph() { return graph; }
     JTextArea detailsArea() { return details; }
+    JButton quizMeButton() { return quizMe; }
 }

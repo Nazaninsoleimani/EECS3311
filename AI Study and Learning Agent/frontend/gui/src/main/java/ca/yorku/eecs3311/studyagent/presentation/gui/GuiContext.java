@@ -18,6 +18,7 @@ public class GuiContext {
     private final List<Consumer<Course>> courseListeners = new CopyOnWriteArrayList<>();
     private final List<Consumer<List<Course>>> courseListListeners = new CopyOnWriteArrayList<>();
     private final List<Runnable> dataListeners = new CopyOnWriteArrayList<>();
+    private final List<Consumer<String>> quizRequestListeners = new CopyOnWriteArrayList<>();
     private Consumer<String> statusLine = s -> {};
 
     public GuiContext(LearningFacade facade, String studentId) {
@@ -56,6 +57,11 @@ public class GuiContext {
     public void fireDataChanged() { dataListeners.forEach(Runnable::run); }
 
     public void onDataChanged(Runnable l) { dataListeners.add(l); }
+
+    /** F15 "Quiz me on this": a view asks for a quiz on one concept; the quiz view and the window react. */
+    public void requestQuizOn(String conceptName) { quizRequestListeners.forEach(l -> l.accept(conceptName)); }
+
+    public void onQuizRequested(Consumer<String> l) { quizRequestListeners.add(l); }
 
     public void setStatusLine(Consumer<String> statusLine) { this.statusLine = statusLine; }
 

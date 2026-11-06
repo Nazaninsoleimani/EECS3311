@@ -52,9 +52,18 @@ public class QuizView extends BaseView {
         add(scroll(holder), BorderLayout.CENTER);
         add(row(submit, result), BorderLayout.SOUTH);
         submit.setEnabled(false);
+        ctx.onQuizRequested(this::prepareFor);
     }
 
     @Override public String title() { return "Quiz"; }
+
+    /** Pre-fills a short quiz on one concept (from the concept map) and generates it. */
+    public void prepareFor(String conceptName) {
+        concepts.setText(conceptName);
+        count.setValue(3);
+        result.setText("Quiz on " + conceptName + "...");
+        requestQuiz();
+    }
 
     @Override
     public void render() {
@@ -139,4 +148,5 @@ public class QuizView extends BaseView {
 
     List<QuestionPanel> panels() { return panels; }
     JLabel resultLabel() { return result; }
+    JTextField conceptsField() { return concepts; }
 }
