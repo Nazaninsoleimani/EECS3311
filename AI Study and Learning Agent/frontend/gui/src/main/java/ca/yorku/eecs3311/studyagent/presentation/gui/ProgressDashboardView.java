@@ -42,7 +42,7 @@ public class ProgressDashboardView extends BaseView implements ProgressObserver 
         top.add(summary, BorderLayout.CENTER);
         top.add(live, BorderLayout.SOUTH);
         JPanel weakPanel = new JPanel(new BorderLayout());
-        weakPanel.add(row(button("Analyze weak topics", this::loadWeakTopics)), BorderLayout.NORTH);
+        weakPanel.add(row(accentButton("Analyze weak topics", this::loadWeakTopics)), BorderLayout.NORTH);
         weakPanel.add(scroll(weak), BorderLayout.CENTER);
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scroll(table), weakPanel);
         split.setResizeWeight(0.55);

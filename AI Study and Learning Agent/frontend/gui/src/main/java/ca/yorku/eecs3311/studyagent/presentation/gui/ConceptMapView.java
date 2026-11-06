@@ -62,6 +62,7 @@ public class ConceptMapView extends BaseView {
         JLabel l = new JLabel(" " + text + " ");
         l.setOpaque(true);
         l.setBackground(c);
+        l.setForeground(new Color(0x222222));
         return l;
     }
 
@@ -149,7 +150,7 @@ public class ConceptMapView extends BaseView {
         protected void paintComponent(Graphics g0) {
             Graphics2D g = (Graphics2D) g0;
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.setColor(Color.WHITE);
+            g.setColor(Theme.card());
             g.fillRect(0, 0, getWidth(), getHeight());
             positions.clear();
             List<Concept> nodes = graph.nodes.stream()
@@ -167,7 +168,7 @@ public class ConceptMapView extends BaseView {
                 Point a = positions.get(r.getFromId());
                 Point b = positions.get(r.getToId());
                 if (a == null || b == null) continue;
-                g.setColor(r.getType() == RelationType.PREREQUISITE_OF ? new Color(60, 90, 160) : Color.GRAY);
+                g.setColor(r.getType() == RelationType.PREREQUISITE_OF ? Theme.ACCENT : Theme.muted());
                 g.setStroke(r.getType() == RelationType.RELATED_TO
                         ? new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10, new float[]{5, 4}, 0) : new BasicStroke(1.6f));
                 g.draw(new Line2D.Double(a, b));
@@ -184,7 +185,7 @@ public class ConceptMapView extends BaseView {
                 int h = fm.getHeight() + 10;
                 g.setColor(colorFor(m));
                 g.fillRoundRect(p.x - w / 2, p.y - h / 2, w, h, 14, 14);
-                g.setColor(c.getId().equals(selectedId) ? Color.BLUE : Color.DARK_GRAY);
+                g.setColor(c.getId().equals(selectedId) ? Theme.ACCENT : Color.DARK_GRAY);
                 g.drawRoundRect(p.x - w / 2, p.y - h / 2, w, h, 14, 14);
                 g.setColor(Color.BLACK);
                 g.drawString(clip(label, fm, w - 10), p.x - w / 2 + 8, p.y + fm.getAscent() / 2 - 1);

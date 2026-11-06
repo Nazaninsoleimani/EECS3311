@@ -42,7 +42,7 @@ public class MaterialView extends BaseView {
         });
         JPanel top = new JPanel(new BorderLayout());
         top.add(heading("Course materials"), BorderLayout.NORTH);
-        top.add(row(button("Upload file...", this::chooseAndUpload), button("Delete", this::delete), button("Retry indexing", this::retryIndexing),
+        top.add(row(accentButton("Upload file...", this::chooseAndUpload), button("Delete", this::delete), button("Retry indexing", this::retryIndexing),
                 new JLabel("   Summary length"), length, button("Summarize", this::summarize),
                 button("Extract concepts", this::extractConcepts)), BorderLayout.SOUTH);
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scroll(table), scroll(output));

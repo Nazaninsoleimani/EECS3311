@@ -32,7 +32,7 @@ public abstract class BaseView extends JPanel {
         super(new BorderLayout(8, 8));
         this.ctx = ctx;
         this.facade = ctx.facade;
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setBorder(BorderFactory.createEmptyBorder(18, 22, 14, 22));
     }
 
     /** Tab title. */
@@ -132,7 +132,22 @@ public abstract class BaseView extends JPanel {
 
     protected static JLabel heading(String text) {
         JLabel l = new JLabel(text);
-        l.setFont(l.getFont().deriveFont(Font.BOLD, 15f));
+        l.setFont(l.getFont().deriveFont(Font.BOLD, 20f));
+        l.setBorder(BorderFactory.createEmptyBorder(0, 0, 6, 0));
+        return l;
+    }
+
+    /** The main action of a view, drawn in the accent colour. */
+    protected static JButton accentButton(String text, Runnable action) {
+        JButton b = button(text, action);
+        b.putClientProperty("FlatLaf.style", "background: #4F6BED; foreground: #FFFFFF; borderWidth: 0; focusWidth: 0; font: bold");
+        return b;
+    }
+
+    /** Muted helper text under a heading or inside a card. */
+    protected static JLabel hint(String text) {
+        JLabel l = new JLabel(text);
+        l.setForeground(Theme.muted());
         return l;
     }
 }

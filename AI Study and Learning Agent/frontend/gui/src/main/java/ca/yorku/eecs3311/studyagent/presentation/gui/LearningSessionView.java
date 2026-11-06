@@ -19,7 +19,7 @@ public class LearningSessionView extends BaseView {
     private final JLabel level = new JLabel("Not started");
     private final JPanel questionHolder = new JPanel(new BorderLayout());
     private final JTextArea log = readOnlyArea();
-    private final JButton start = button("Start session", this::startSession);
+    private final JButton start = accentButton("Start session", this::startSession);
     private final JButton submit = button("Submit answer", this::submitActivityAnswer);
     private final JButton end = button("End session", this::endSession);
     private AdaptiveLearningSession session;

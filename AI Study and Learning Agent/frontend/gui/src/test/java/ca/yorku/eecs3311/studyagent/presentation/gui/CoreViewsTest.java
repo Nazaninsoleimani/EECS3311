@@ -55,9 +55,13 @@ class CoreViewsTest {
         Course c = t.courseWithMaterial(dir);
         TutorChatView view = new TutorChatView(t.ctx);
         view.render();
-        assertTrue(view.transcript().getText().contains("Ask anything about EECS3311"));
-        view.displayAnswer(t.app.facade().askQuestion("s", c.getId(), "What does a subject do in the observer pattern?"));
-        assertTrue(view.transcript().getText().contains("Sources: [1] patterns.md"));
+        assertTrue(view.transcriptText().contains("Ask anything about EECS3311"));
+        assertTrue(view.html().contains("href='ask:"), "suggested questions are clickable");
+        String q = "What does a subject do in the observer pattern?";
+        view.showExchange(q, t.app.facade().askQuestion("s", c.getId(), q));
+        String chat = view.transcriptText();
+        assertTrue(chat.contains(q) && chat.contains("A subject notifies its observers"), chat);
+        assertTrue(chat.contains("Sources") && chat.contains("[1] patterns.md"), chat);
     }
 
     @Test

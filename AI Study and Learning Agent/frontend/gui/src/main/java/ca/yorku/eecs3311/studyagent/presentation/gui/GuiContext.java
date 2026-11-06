@@ -19,6 +19,7 @@ public class GuiContext {
     private final List<Consumer<List<Course>>> courseListListeners = new CopyOnWriteArrayList<>();
     private final List<Runnable> dataListeners = new CopyOnWriteArrayList<>();
     private final List<Consumer<String>> quizRequestListeners = new CopyOnWriteArrayList<>();
+    private final List<Consumer<Class<? extends BaseView>>> navigationListeners = new CopyOnWriteArrayList<>();
     private Consumer<String> statusLine = s -> {};
 
     public GuiContext(LearningFacade facade, String studentId) {
@@ -62,6 +63,11 @@ public class GuiContext {
     public void requestQuizOn(String conceptName) { quizRequestListeners.forEach(l -> l.accept(conceptName)); }
 
     public void onQuizRequested(Consumer<String> l) { quizRequestListeners.add(l); }
+
+    /** Asks the window to show the view of the given class (dashboard quick actions). */
+    public void navigateTo(Class<? extends BaseView> view) { navigationListeners.forEach(l -> l.accept(view)); }
+
+    public void onNavigate(Consumer<Class<? extends BaseView>> l) { navigationListeners.add(l); }
 
     public void setStatusLine(Consumer<String> statusLine) { this.statusLine = statusLine; }
 

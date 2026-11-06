@@ -39,7 +39,7 @@ public class CourseView extends BaseView {
         });
         JPanel form = new JPanel(new GridLayout(0, 1));
         form.add(row(new JLabel("Code"), code, new JLabel("Title"), title, new JLabel("Exam (yyyy-mm-dd, optional)"), exam));
-        form.add(row(button("Create course", this::create), button("Save changes", this::update),
+        form.add(row(accentButton("Create course", this::create), button("Save changes", this::update),
                 button("Delete course", this::delete), button("Clear", this::clear)));
         add(heading("Your courses"), BorderLayout.NORTH);
         add(scroll(table), BorderLayout.CENTER);

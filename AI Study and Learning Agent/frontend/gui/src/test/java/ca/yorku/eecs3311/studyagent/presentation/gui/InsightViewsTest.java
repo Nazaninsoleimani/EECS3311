@@ -106,11 +106,16 @@ class InsightViewsTest {
         t.app.facade().generateStudyPlan(new StudyPlanRequest(t.app.studentId(), c.getId(), c.getExamDate(), 60, List.of()));
         t.app.facade().scheduleReminder(new Reminder(Ids.newId("r"), t.app.studentId(), c.getId(), "Flashcards",
                 LocalDateTime.now().plusHours(2), Recurrence.NONE));
-        String text = new DashboardView(t.ctx).buildOverview(LocalDate.now());
-        assertTrue(text.contains("exam in 6 day(s)"), text);
-        assertTrue(text.contains("Plan 0% complete (Exam cram)"));
-        assertTrue(text.contains("Flashcards"));
-        assertTrue(text.contains("No graded practice yet."));
+        DashboardView view = new DashboardView(t.ctx);
+        DashboardView.Overview o = view.overview(LocalDate.now());
+        assertEquals(6, o.daysToExam());
+        assertEquals("Exam cram", o.plan().getStrategyName());
+        assertEquals(0.0, o.plan().completionRate());
+        assertTrue(o.reminders().stream().anyMatch(r -> r.getMessage().equals("Flashcards")));
+        assertTrue(o.progress().isEmpty());
+        assertTrue(o.aiAvailable());
+        view.render();
+        assertTrue(view.contentPanel().getComponentCount() > 3, "greeting, stat cards, plan and actions are shown");
     }
 
     @Test

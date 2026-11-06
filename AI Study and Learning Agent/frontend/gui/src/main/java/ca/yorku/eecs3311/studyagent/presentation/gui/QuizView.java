@@ -33,7 +33,7 @@ public class QuizView extends BaseView {
     private final JTextField concepts = new JTextField(18);
     private final JPanel questions = new JPanel();
     private final JLabel result = new JLabel(" ");
-    private final JButton submit = button("Submit answers", this::submitAnswers);
+    private final JButton submit = accentButton("Submit answers", this::submitAnswers);
     private final List<QuestionPanel> panels = new ArrayList<>();
     private Quiz quiz;
     private QuizAttempt attempt;
@@ -45,7 +45,7 @@ public class QuizView extends BaseView {
         JPanel top = new JPanel(new BorderLayout());
         top.add(heading("Practice quiz"), BorderLayout.NORTH);
         top.add(row(new JLabel("Questions"), count, new JLabel("Difficulty"), difficulty, mcq, tf, shortAnswer,
-                new JLabel("Concepts (optional)"), concepts, button("Generate quiz", this::requestQuiz)), BorderLayout.SOUTH);
+                new JLabel("Concepts (optional)"), concepts, accentButton("Generate quiz", this::requestQuiz)), BorderLayout.SOUTH);
         JPanel holder = new JPanel(new BorderLayout());
         holder.add(questions, BorderLayout.NORTH);
         add(top, BorderLayout.NORTH);

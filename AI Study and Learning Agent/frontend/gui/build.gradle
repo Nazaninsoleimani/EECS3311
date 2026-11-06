@@ -4,6 +4,8 @@ base { archivesName = 'study-agent-gui' }
 
 dependencies {
     implementation project(':backend')
+    // modern flat look and feel with light and dark themes
+    implementation 'com.formdev:flatlaf:3.5.1'
 }
 
 application {

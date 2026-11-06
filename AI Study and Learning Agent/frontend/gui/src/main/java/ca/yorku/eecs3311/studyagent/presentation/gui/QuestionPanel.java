@@ -30,7 +30,7 @@ public class QuestionPanel extends JPanel {
     public QuestionPanel(int number, Question q) {
         super(new BorderLayout(4, 4));
         this.question = q;
-        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY),
+        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.border()),
                 BorderFactory.createEmptyBorder(8, 4, 8, 4)));
         String meta = q.getType().name().toLowerCase().replace('_', ' ') + ", " + q.getDifficulty().name().toLowerCase()
                 + (q.getConceptName() == null ? "" : ", " + q.getConceptName());

@@ -43,7 +43,7 @@ public class StudyPlannerView extends BaseView {
         JPanel top = new JPanel(new BorderLayout());
         top.add(heading("Study plan"), BorderLayout.NORTH);
         top.add(row(new JLabel("Exam date"), exam, new JLabel("Minutes per day"), minutes, new JLabel("Focus topics (comma-separated)"),
-                focus, button("Generate plan", this::submitPlanRequest)), BorderLayout.SOUTH);
+                focus, accentButton("Generate plan", this::submitPlanRequest)), BorderLayout.SOUTH);
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scroll(rationale), scroll(table));
         split.setResizeWeight(0.2);
         add(top, BorderLayout.NORTH);

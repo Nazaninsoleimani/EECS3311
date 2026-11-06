@@ -34,7 +34,7 @@ public class FlashcardView extends BaseView {
         super(ctx);
         JPanel top = new JPanel(new BorderLayout());
         top.add(heading("Flashcards"), BorderLayout.NORTH);
-        top.add(row(new JLabel("Topic"), topic, new JLabel("Cards"), count, button("Generate deck", this::requestDeck), dueLabel),
+        top.add(row(new JLabel("Topic"), topic, new JLabel("Cards"), count, accentButton("Generate deck", this::requestDeck), dueLabel),
                 BorderLayout.SOUTH);
         JPanel card = new JPanel(new GridLayout(2, 1, 0, 10));
         card.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(20, 20, 20, 20)));

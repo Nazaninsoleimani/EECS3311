@@ -43,7 +43,7 @@ public class ReminderView extends BaseView {
         JPanel top = new JPanel(new BorderLayout());
         top.add(heading("Reminders"), BorderLayout.NORTH);
         top.add(row(new JLabel("When (yyyy-mm-dd hh:mm)"), when, new JLabel("Repeat"), repeat, new JLabel("Message"), message,
-                button("Add reminder", this::createReminder)), BorderLayout.SOUTH);
+                accentButton("Add reminder", this::createReminder)), BorderLayout.SOUTH);
         add(top, BorderLayout.NORTH);
         add(scroll(table), BorderLayout.CENTER);
         add(row(button("Cancel selected", this::cancelSelected), button("Send due reminders now", this::dispatch), showAll), BorderLayout.SOUTH);
