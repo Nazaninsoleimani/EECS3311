@@ -46,22 +46,51 @@ public class MaterialService {
         }
         String title = file.getFileName().toString();
         CourseMaterial material = new CourseMaterial(Ids.newId("m"), courseId, title, type, file.toAbsolutePath().toString());
+        List<DocumentChunk> chunks;
         try {
             ParsedDocument doc = parser.parse(file);
             if (doc.isBlank()) {
                 material.markFailed("No extractable text (scanned or image-only file?)");
-            } else {
-                List<DocumentChunk> chunks = chunker.chunk(doc, material.getId(), courseId, title);
-                materials.saveChunks(material.getId(), chunks);
-                retrieval.index(material, chunks);
-                material.markIndexed(chunks.size());
+                materials.save(material);
+                return material;
             }
+            chunks = chunker.chunk(doc, material.getId(), courseId, title);
+            materials.saveChunks(material.getId(), chunks);
         } catch (IOException | RuntimeException e) {
             materials.delete(material.getId());
             material.markFailed("Could not process file: " + e.getMessage());
+            materials.save(material);
+            return material;
+        }
+        index(material, chunks);
+        return material;
+    }
+
+    /**
+     * Embeds and indexes the chunks. If the embedding service fails, the parsed chunks are kept and the
+     * material stays UPLOADED so that retryPendingIndexing() can finish the job later.
+     */
+    private void index(CourseMaterial material, List<DocumentChunk> chunks) {
+        try {
+            retrieval.index(material, chunks);
+            material.markIndexed(chunks.size());
+        } catch (RuntimeException e) {
+            material.markIndexingPending(chunks.size(), "Indexing pending, embedding service unavailable: " + e.getMessage());
         }
         materials.save(material);
-        return material;
+    }
+
+    /** Retries indexing of every material of the courses that is still waiting; returns how many are now indexed. */
+    public int retryPendingIndexing(List<String> courseIds) {
+        int done = 0;
+        for (String courseId : courseIds) {
+            for (CourseMaterial m : materials.findByCourse(courseId)) {
+                if (!m.isIndexingPending()) continue;
+                index(m, materials.findChunks(m.getId()));
+                if (m.isIndexed()) done++;
+            }
+        }
+        return done;
     }
 
     public void delete(String materialId) {

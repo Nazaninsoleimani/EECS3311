@@ -65,6 +65,11 @@ public class CLIApplication {
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
             CLIApplication cli = new CLIApplication(app.facade(), app.studentId(), in, out);
             app.facade().dispatchDueReminders();
+            try {
+                app.facade().retryPendingIndexing(app.studentId());
+            } catch (RuntimeException e) {
+                // still unavailable; 'study material reindex' retries on request
+            }
             int code = args.length == 0 ? cli.shell() : cli.run(args);
             if (code != 0) System.exit(code);
         }
@@ -183,6 +188,8 @@ public class CLIApplication {
                     Course c = course(cmd);
                     MaterialUpload up = facade.uploadMaterial(c.getId(), Path.of(cmd.arg(0, "file path")));
                     CourseMaterial m = up.material();
+                    if (m.isIndexingPending()) return "Saved " + m.getTitle() + " (id " + m.getId() + ") but " + m.getFailureReason()
+                            + "\nRun 'study material reindex' when the service is back.";
                     if (!m.isIndexed()) return "Upload failed for " + m.getTitle() + ": " + m.getFailureReason();
                     String concepts = up.conceptsExtracted()
                             ? "\n" + up.concepts().nodes.size() + " concept(s) extracted: "
@@ -196,6 +203,8 @@ public class CLIApplication {
             return list.stream().map(m -> String.format("%-12s %-40s %-8s %s", m.getId(), m.getTitle(), m.getStatus(),
                     m.isIndexed() ? m.getChunkCount() + " chunks" : m.getFailureReason())).collect(Collectors.joining("\n"));
         });
+        register("material reindex", "study material reindex", "F02: retry indexing of materials whose embedding failed",
+                cmd -> facade.retryPendingIndexing(studentId) + " material(s) indexed.");
         register("material delete", "study material delete <materialId>", "F02: delete a material and its index", cmd -> {
             facade.deleteMaterial(cmd.arg(0, "material id"));
             return "Deleted.";

@@ -62,6 +62,38 @@ class CourseMaterialServicesTest {
     }
 
     @Test
+    void embeddingOutageKeepsMaterialPendingUntilRetry() throws Exception {
+        boolean[] down = {true};
+        EmbeddingService local = new LocalHashEmbeddingService();
+        EmbeddingService flaky = new EmbeddingService() {
+            public List<float[]> embed(List<String> texts) {
+                if (down[0]) throw new IllegalStateException("embedding API timeout");
+                return local.embed(texts);
+            }
+            public String modelName() { return local.modelName(); }
+            public double suggestedMinScore() { return local.suggestedMinScore(); }
+        };
+        RetrievalService flakyRetrieval = new RetrievalService(flaky, new SqliteVectorStore(db, materials));
+        MaterialService svc = new MaterialService(List.of(new PlainTextParser()), new Chunker(80, 10), materials, flakyRetrieval);
+        Course c = courses.createCourse("s1", "EECS3311", "Design", null);
+
+        CourseMaterial m = svc.upload(c.getId(), Files.writeString(dir.resolve("n.txt"), "Strategy objects encapsulate algorithms. ".repeat(40)));
+        assertEquals(MaterialStatus.UPLOADED, m.getStatus());
+        assertTrue(m.isIndexingPending());
+        assertTrue(m.getFailureReason().contains("embedding API timeout"));
+        assertFalse(materials.findChunks(m.getId()).isEmpty(), "parsed text is kept");
+        assertEquals(0, svc.retryPendingIndexing(List.of(c.getId())), "still down");
+
+        down[0] = false;
+        assertEquals(1, svc.retryPendingIndexing(List.of(c.getId())));
+        CourseMaterial after = materials.findById(m.getId()).orElseThrow();
+        assertTrue(after.isIndexed());
+        assertNull(after.getFailureReason());
+        assertFalse(flakyRetrieval.retrieve("strategy algorithms", c.getId(), 3).isEmpty());
+        assertEquals(0, svc.retryPendingIndexing(List.of(c.getId())), "nothing left to retry");
+    }
+
+    @Test
     void deletingCourseRemovesMaterialsConceptsAndVectors() throws Exception {
         Course c = courses.createCourse("s1", "EECS3311", "Software Design", null);
         CourseMaterial m = service.upload(c.getId(), Files.writeString(dir.resolve("a.txt"), "Factory method creates products. ".repeat(30)));

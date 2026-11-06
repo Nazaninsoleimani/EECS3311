@@ -42,7 +42,7 @@ public class MaterialView extends BaseView {
         });
         JPanel top = new JPanel(new BorderLayout());
         top.add(heading("Course materials"), BorderLayout.NORTH);
-        top.add(row(button("Upload file...", this::chooseAndUpload), button("Delete", this::delete),
+        top.add(row(button("Upload file...", this::chooseAndUpload), button("Delete", this::delete), button("Retry indexing", this::retryIndexing),
                 new JLabel("   Summary length"), length, button("Summarize", this::summarize),
                 button("Extract concepts", this::extractConcepts)), BorderLayout.SOUTH);
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scroll(table), scroll(output));
@@ -88,9 +88,17 @@ public class MaterialView extends BaseView {
 
     static String describe(MaterialUpload up) {
         CourseMaterial m = up.material();
+        if (m.isIndexingPending()) return "Saved " + m.getTitle() + ", but " + m.getFailureReason() + "\nUse Retry indexing later.";
         if (!m.isIndexed()) return "Could not index " + m.getTitle() + ": " + m.getFailureReason();
         String head = "Uploaded " + m.getTitle() + ": " + m.getChunkCount() + " chunks indexed for retrieval.\n\n";
         return head + (up.conceptsExtracted() ? describe(up.concepts(), m.getTitle()) : "Note: " + up.conceptWarning());
+    }
+
+    private void retryIndexing() {
+        runAsync("Retrying indexing", () -> facade.retryPendingIndexing(ctx.studentId), n -> {
+            render();
+            output.setText(n + " material(s) indexed.");
+        });
     }
 
     private void delete() {

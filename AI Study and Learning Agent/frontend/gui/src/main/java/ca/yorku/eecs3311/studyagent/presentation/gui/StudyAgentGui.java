@@ -131,6 +131,13 @@ public class StudyAgentGui {
             return;
         }
         app.facade().startReminderTimer(app.config().getInt("REMINDER_CHECK_SECONDS", 60));
+        new Thread(() -> {
+            try {
+                app.facade().retryPendingIndexing(app.studentId());
+            } catch (RuntimeException e) {
+                // still unavailable; the Materials view has a Retry indexing button
+            }
+        }, "pending-indexing").start();
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new StudyAgentGui(new GuiContext(app.facade(), app.studentId())).buildFrame();
             frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

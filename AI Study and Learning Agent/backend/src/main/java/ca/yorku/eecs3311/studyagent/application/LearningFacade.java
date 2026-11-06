@@ -149,6 +149,11 @@ public class LearningFacade {
         return materialService.list(courseId);
     }
 
+    /** Finishes indexing of materials whose embedding failed earlier (run at start-up and on request). */
+    public int retryPendingIndexing(String studentId) {
+        return materialService.retryPendingIndexing(courseService.listCourses(studentId).stream().map(Course::getId).toList());
+    }
+
     public void deleteMaterial(String materialId) {
         CourseMaterial m = materialService.find(materialId);
         materialService.delete(materialId);

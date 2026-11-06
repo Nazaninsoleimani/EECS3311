@@ -30,6 +30,15 @@ public class CourseMaterial {
         this.failureReason = null;
     }
 
+    /** Text was extracted and chunked but could not be embedded yet; indexing is retried later. */
+    public void markIndexingPending(int chunkCount, String reason) {
+        this.status = MaterialStatus.UPLOADED;
+        this.chunkCount = chunkCount;
+        this.failureReason = reason;
+    }
+
+    public boolean isIndexingPending() { return status == MaterialStatus.UPLOADED && chunkCount > 0; }
+
     public void markFailed(String reason) {
         this.status = MaterialStatus.FAILED;
         this.failureReason = reason;
