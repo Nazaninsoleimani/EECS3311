@@ -55,7 +55,7 @@
   <tr><td>Stage 1 design</td><td><code>docs/stage1/Stage1_Report.pdf</code></td></tr>
   <tr><td>Implementation period</td><td>October 20 - November 10, 2026</td></tr>
   <tr><td>Language and build</td><td>Java 21, Gradle multi-module (<code>backend</code>, <code>frontend:cli</code>, <code>frontend:gui</code>)</td></tr>
-  <tr><td>LLM</td><td>Google Gemini (<code>gemini-2.5-flash</code>, free tier) through the <code>LLMClient</code> adapter; any OpenAI-compatible model by configuration</td></tr>
+  <tr><td>LLM</td><td>Google Gemini (<code>gemini-3.8-flash</code>, free tier) through the <code>LLMClient</code> adapter; any OpenAI-compatible model by configuration</td></tr>
 </table>
 
 <p class="small muted">How to read this report: section 2 traces every Stage 1 feature (F01-F16) to the classes, methods, patterns and demonstration video that realise it; section 3 explains the six design patterns with the updated class diagrams; section 4 lists every difference from the Stage 1 design with its reason; sections 5-7 cover AI collaboration, commits and verification, and the video index. Items highlighted <span class="todo">like this</span> are completed by the student before submission.</p>
@@ -69,7 +69,7 @@
 
 <p><b>AI / LLM integration and agent behaviour.</b> The LLM is never called directly by a feature. Every AI goal goes through <code>LearningAgent</code>, which (1) loads the learner context from memory (mastery, recent history, exam date), (2) asks the <code>Planner</code> for a plan of tool steps, (3) executes the steps through the <code>ToolRegistry</code> (retrieval, progress analysis, scheduling, generation, reminders), letting the Planner revise the remaining plan after each observation (for example, no generation when retrieval found nothing), (4) builds prompts with retrieved sources inside a token budget (<code>ContextBuilder</code>), and (5) validates every LLM output (<code>ResponseValidator</code>: JSON schema fields, citation grounding) before it becomes a domain object, regenerating once when validation fails. Session memory keeps the tutor conversation so follow-up questions are rewritten into standalone retrieval queries. Deterministic code makes the decisions that must be reliable (mastery, difficulty transitions, scheduling strategy, grading of objective questions); the LLM generates content.</p>
 
-<p><b>Working functionality.</b> All 16 Stage 1 features are implemented and working in both front ends (table below). The build compiles three modules and runs 118 automated JUnit tests, all passing (section 6). Without an API key the deterministic features work fully and AI features use documented fallbacks (extractive answers, deterministic plan priorities, stored questions) or report clearly that the AI is unavailable.</p>
+<p><b>Working functionality.</b> All 16 Stage 1 features are implemented and working in both front ends (table below). The build compiles three modules and runs 119 automated JUnit tests, all passing (section 6). Without an API key the deterministic features work fully and AI features use documented fallbacks (extractive answers, deterministic plan priorities, stored questions) or report clearly that the AI is unavailable.</p>
 
 <table>
   <tr><th>ID</th><th>Feature</th><th>Type</th><th>Status</th><th>GUI view</th><th>CLI command</th></tr>
@@ -93,7 +93,7 @@
 
 <p><b>Limitations and incomplete functionality (honest list).</b></p>
 <ul>
-  <li><b>Automated tests use a scripted LLM.</b> The 118 tests exercise every AI flow with a deterministic fake <code>LLMClient</code>, so they verify the agent's control flow, validation and fallbacks, not the quality of real model output. Live-model behaviour was checked manually (section 6.2) <span class="todo">[confirm after your run with the Gemini key]</span>.</li>
+  <li><b>Automated tests use a scripted LLM.</b> The 119 tests exercise every AI flow with a deterministic fake <code>LLMClient</code>, so they verify the agent's control flow, validation and fallbacks, not the quality of real model output. Live-model behaviour was checked manually with a Gemini key on November 5 (section 6.2).</li>
   <li><b>Retrieval quality.</b> The default embeddings (<code>LocalHashEmbeddingService</code>) are lexical (hashed, stemmed words), not semantic, so a question phrased with different words than the notes may retrieve less. Gemini embeddings can be enabled with <code>EMBEDDING_PROVIDER=gemini</code> (section 4).</li>
   <li><b>Scanned PDFs</b> without a text layer are rejected with a clear reason; there is no OCR.</li>
   <li><b>GUI details planned in Stage 1 that were simplified:</b> tutor citations are shown as text, not clickable links to the page; history entries do not open the related object (the reference id is stored); the material status badge is a table column; the concept map uses a circular layout rather than an interactive force layout.</li>
@@ -421,7 +421,7 @@
 <tr><th>Tool / platform</th><th>LLM / model</th><th>Used for (features, classes, tasks)</th><th>Tokens and cost</th></tr>
 <tr><td><span class="todo">[week 1 tool, e.g. ...]</span></td><td><span class="todo">[model]</span></td><td>Week 1 (Oct 26) commits: domain model, persistence, LLM adapters, parsing and retrieval, agent core, strategies, factories, generation tools <span class="todo">[confirm]</span></td><td><span class="todo">[tokens / $]</span></td></tr>
 <tr><td>Claude Code (VS Code extension)</td><td>Claude Opus 5.5 (<code>claude-opus-5-5</code>)</td><td>Week 2: <code>LearningAgent</code>, application services and <code>LearningFacade</code>, <code>AppContext</code>, CLI (<code>CLIApplication</code>, <code>CommandParser</code>, <code>StudyCommands</code>), Swing GUI (12 views). Week 3: gap analysis against the Stage 1 specification and fixes C1-C6, F15 "Quiz me on this", sample data, demo script, class diagrams and this report draft. Tests for all of the above.</td><td><span class="todo">[tokens / $ from the Claude usage page]</span></td></tr>
-<tr><td>Google Gemini API (runtime, not a development tool)</td><td><code>gemini-2.5-flash</code></td><td>The application's own LLM at run time (free tier).</td><td><span class="todo">[$0 on the free tier / usage]</span></td></tr>
+<tr><td>Google Gemini API (runtime, not a development tool)</td><td><code>gemini-3.8-flash</code></td><td>The application's own LLM at run time (free tier).</td><td><span class="todo">[$0 on the free tier / usage]</span></td></tr>
 </table>
 
 <h3>5.2 Representative interactions</h3>
@@ -470,7 +470,7 @@
 <tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/3623aead7d16c8fdbc9914b65fd690a92fe38336">3623aea</a></td><td>2026-10-30</td><td>Add GUI dashboard, progress observer, concept map, reminder and history views</td></tr>
 </table>
 
-<h4>Period 3 - November 3-9, 2026 (8 code commits, minimum 5)</h4>
+<h4>Period 3 - November 3-9, 2026 (9 code commits, minimum 5)</h4>
 <table class="small">
 <tr><th style="width:12%">Commit</th><th style="width:12%">Date</th><th>Change</th></tr>
 <tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/3fc77369368a2b928a46b2018fb286ff5d332432">3fc7736</a></td><td>2026-11-05</td><td>Extract concepts automatically after a material is uploaded (C1)</td></tr>
@@ -481,17 +481,18 @@
 <tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/7a220dfad0ab06309ea6b51b744cc33bae7df5aa">7a220df</a></td><td>2026-11-05</td><td>Add Quiz me on this from the concept map (F15)</td></tr>
 <tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/e1332216b9faae024d894a0be45583e220b074e2">e133221</a></td><td>2026-11-05</td><td>Add sample course material and a CLI demo script (and fix a misleading error)</td></tr>
 <tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/613ec19a25538b813c792b07cbf9d62a2545787b">613ec19</a></td><td>2026-11-05</td><td>Redesign the GUI with a modern theme, sidebar and dashboard cards (C10)</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/e78e3619e3997ce9a94d088c0fbb934f1e18d963">e78e361</a></td><td>2026-11-05</td><td>Retry busy Gemini responses with back-off and update the default model</td></tr>
 </table>
 
 <h3>6.2 Checks performed</h3>
 <table>
 <tr><th style="width:26%">Check</th><th>Result</th></tr>
-<tr><td>Build (<code>./gradlew build</code>)</td><td>Compiles <code>backend</code>, <code>frontend:cli</code>, <code>frontend:gui</code> with Java 21; 118 JUnit tests, 0 failures.</td></tr>
-<tr><td>Backend unit and integration tests (87)</td><td>Domain rules (grading, mastery, Leitner, reminders, concept graph); SQLite repositories; LLM adapters against canned vendor responses (request shape, response mapping, retry, empty answers); retrieval pipeline; agent core (validator, context builder, planner); strategies, factories and states; generation tools with a scripted LLM; <code>LearningAgent</code> (grounding and regeneration, fallbacks, plan priorities and retry, adaptive concept choice, weak-topic thresholds); services (uploads, indexing retry, exam dates, cascade delete, concept-map remapping); observers; adaptive fallback; an end-to-end facade test through all sixteen features.</td></tr>
+<tr><td>Build (<code>./gradlew build</code>)</td><td>Compiles <code>backend</code>, <code>frontend:cli</code>, <code>frontend:gui</code> with Java 21; 119 JUnit tests, 0 failures.</td></tr>
+<tr><td>Backend unit and integration tests (88)</td><td>Domain rules (grading, mastery, Leitner, reminders, concept graph); SQLite repositories; LLM adapters against canned vendor responses (request shape, response mapping, retry, empty answers); retrieval pipeline; agent core (validator, context builder, planner); strategies, factories and states; generation tools with a scripted LLM; <code>LearningAgent</code> (grounding and regeneration, fallbacks, plan priorities and retry, adaptive concept choice, weak-topic thresholds); services (uploads, indexing retry, exam dates, cascade delete, concept-map remapping); observers; adaptive fallback; an end-to-end facade test through all sixteen features.</td></tr>
 <tr><td>CLI tests (14)</td><td>Parser (options, flags, quoting, invalid values); every command group run against an in-memory backend with scripted input (quiz taking, flashcard review, adaptive session, reminders, history filters, help listing all features, exit codes).</td></tr>
 <tr><td>GUI tests (17, headless)</td><td>Each view built without a window and checked against facade data: course selection, materials and summaries, tutor answers with sources, plan table, quiz grading display, flashcard flow, adaptive outcome, live progress observer update, concept map details and "Quiz me on this", reminders, history filter, dashboard, all 12 tabs present.</td></tr>
 <tr><td>Manual runs without an API key</td><td>Real GUI launched against a scratch database (no errors). <code>scripts/demo-cli.sh</code> over <code>sample-data/</code>: course creation, uploads, cited extractive answers, clear errors for AI-only features, history.</td></tr>
-<tr><td>Manual run with the Gemini key</td><td><span class="todo">[date, which features you exercised, any problems observed]</span></td></tr>
+<tr><td>Manual run with the Gemini key</td><td>November 5, 2026, over <code>sample-data/</code> with the CLI: upload with automatic concept extraction (8 concepts), tutor answer with correct [1] citations, quiz generation (3 validated questions), flashcard generation (3 cards) and study planning worked. Two problems were found: the configured model <code>gemini-2.5-flash</code> is no longer offered to new API keys (default changed to <code>gemini-3.8-flash</code>), and the free tier often answered HTTP 503 "high demand" (retry with back-off added, see 6.3). A summary request still received 503 after the retries; the student is shown "Summary unavailable, retry later" as designed.</td></tr>
 <tr><td>API-key protection</td><td><code>.env</code> is ignored by git and has never been committed (checked in the history); <code>.env.example</code> contains placeholders only; keys are read only by <code>AppConfig</code>.</td></tr>
 </table>
 
@@ -505,6 +506,8 @@
 <tr><td>Any indexing failure discarded the parsed text and marked the material failed</td><td>Stage 1 specification review</td><td>Indexing-pending state and retry (C3)</td></tr>
 <tr><td>Study plan without focus topics searched with an empty query and could not be grounded</td><td>Stage 1 specification review</td><td>Concept names as query; ungrounded warning</td></tr>
 <tr><td>"Upload material first" shown although material was uploaded (no concepts without AI)</td><td>Demo script run without a key</td><td>Message explains that concepts come from AI extraction</td></tr>
+<tr><td>Default model <code>gemini-2.5-flash</code> rejected for new keys (HTTP 404)</td><td>Manual run with a real key</td><td>Default and <code>.env.example</code> changed to <code>gemini-3.8-flash</code> (configurable with <code>GEMINI_MODEL</code>)</td></tr>
+<tr><td>Free-tier "high demand" (HTTP 503) failed requests after one retry</td><td>Manual run with a real key</td><td>Gemini adapter retries temporary failures three times with 2, 5 and 10 s pauses; permanent errors are not retried (test added)</td></tr>
 </table>
 
 <h3>6.4 Remaining limitations</h3>
