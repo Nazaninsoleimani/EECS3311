@@ -66,6 +66,8 @@ public class LearningAgent {
     static final String NOT_COVERED = "The course material does not cover this.";
     /** Stage 1 (F11): fewer graded answers than this in a course give a report with sufficientData=false. */
     static final int MIN_GRADED_FOR_DIAGNOSIS = 5;
+    /** Stage 1 (F06): invalid prioritisation output is retried once before falling back. */
+    static final int PRIORITY_ATTEMPTS = 2;
 
     private final Planner planner;
     private final ToolRegistry tools;
@@ -208,14 +210,20 @@ public class LearningAgent {
     private StudyPlan buildPlan(StudyPlanRequest request, GoalType type, String revisionReason) {
         AgentContext ctx = new AgentContext(memory.loadLearnerContext(request.studentId, request.courseId));
         boolean reminders = ctx.learner.profile.isRemindersEnabled() && tools.has("reminder");
+        // without focus topics, ground the plan in the material about the course's own concepts
+        String focusQuery = !request.focusTopics.isEmpty() ? String.join(" ", request.focusTopics)
+                : concepts.findByCourse(request.courseId).stream().limit(12).map(Concept::getName).collect(Collectors.joining(" "));
         AgentGoal goal = new AgentGoal(type, "Study plan").with("courseId", request.courseId)
-                .with("focusQuery", String.join(" ", request.focusTopics)).with("reminders", reminders);
+                .with("focusQuery", focusQuery).with("reminders", reminders);
         AgentPlan plan = planner.createPlan(goal, ctx);
         StudyPlan[] built = new StudyPlan[1];
         List<String> warnings = new ArrayList<>();
         executePlan(plan, ctx, (step, in) -> {
             switch (step.toolName) {
                 case "study_schedule" -> {
+                    if (plan.hasNote("no-grounding")) {
+                        warnings.add("Ungrounded plan: no uploaded material matched these topics, so priorities come from concept names and progress only.");
+                    }
                     List<TopicPriority> ranked = ctx.results.get("analyze").payload();
                     in.with("request", request).with("priorities", prioritize(ctx, request, ranked, warnings));
                 }
@@ -264,10 +272,14 @@ public class LearningAgent {
            .set("candidates", ordered.stream().map(t -> String.format("- %s: %.2f (%s)", t.concept.getName(), t.priority, t.reason))
                    .collect(Collectors.joining("\n")));
         try {
-            ValidationResult v = validator.validate(llm.generateStructured(
-                    contextBuilder.build(PromptTask.PRIORITIZE_TOPICS, ctx, 0.2, 2500), PRIORITY_SCHEMA), PRIORITY_SCHEMA);
+            ValidationResult v = null;
+            for (int attempt = 1; attempt <= PRIORITY_ATTEMPTS && (v == null || !v.valid); attempt++) {
+                v = validator.validate(llm.generateStructured(
+                        contextBuilder.build(PromptTask.PRIORITIZE_TOPICS, ctx, 0.2, 2500), PRIORITY_SCHEMA), PRIORITY_SCHEMA);
+                if (!v.valid) ctx.trace.add("prioritisation attempt " + attempt + " invalid: " + v.errors);
+            }
             if (!v.valid) {
-                warnings.add("AI prioritisation returned invalid output; deterministic ranking used");
+                warnings.add("AI prioritisation returned invalid output twice; deterministic ranking used");
                 return ordered;
             }
             Map<String, TopicPriority> byName = new LinkedHashMap<>();

@@ -120,6 +120,24 @@ class LearningAgentTest {
     }
 
     @Test
+    void invalidPrioritiesAreRetriedOnceThenDeterministicRankingIsUsed() {
+        StudyPlanRequest req = new StudyPlanRequest("s1", "c1", LocalDate.now().plusDays(10), 60, List.of());
+        StudyPlan plan = agent(fake(r -> "{\"rationale\":\"no topics\"}", r -> "")).generateStudyPlan(req);
+        assertEquals(2, log.size(), "one retry, no more");
+        assertTrue(plan.getWarnings().stream().anyMatch(w -> w.contains("invalid output twice")));
+        assertFalse(plan.getWarnings().stream().anyMatch(w -> w.startsWith("Ungrounded")), "concept names found the material");
+        assertFalse(plan.getTasks().isEmpty());
+    }
+
+    @Test
+    void planForUnmatchedFocusTopicsIsMarkedUngrounded() {
+        StudyPlanRequest req = new StudyPlanRequest("s1", "c1", LocalDate.now().plusDays(10), 60, List.of("quantum chromodynamics"));
+        StudyPlan plan = agent(new UnavailableLLMClient("none")).generateStudyPlan(req);
+        assertTrue(plan.getWarnings().stream().anyMatch(w -> w.startsWith("Ungrounded plan")), plan.getWarnings().toString());
+        assertFalse(plan.getTasks().isEmpty(), "still scheduled from concept names");
+    }
+
+    @Test
     void adaptiveActivityUsesStateQuestionTypesAndAvoidsRecentConcept() {
         String json = "{\"questions\":[{\"type\":\"TRUE_FALSE\",\"prompt\":\"Polymorphism is resolved at runtime.\",\"answer\":\"true\","
                 + "\"conceptName\":\"Polymorphism\",\"difficulty\":\"FOUNDATION\"}]}";
