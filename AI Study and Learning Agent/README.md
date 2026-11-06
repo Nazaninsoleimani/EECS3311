@@ -11,7 +11,7 @@ A personalized AI learning agent for university students. It works over the stud
 | Stage | Content | Status |
 |---|---|---|
 | **Stage 1 - Design** | Project definition, 16 features, use-case model (17 use cases), class model, 6 design patterns, 11 sequence diagrams, deployment diagram, traceability | Complete: [`docs/stage1/Stage1_Report.md`](docs/stage1/Stage1_Report.md) ([PDF](docs/stage1/Stage1_Report.pdf)) |
-| **Stage 2 - Implementation** | Java backend (agent, tools, services, SQLite), CLI and Swing GUI for all 16 features | In progress (due Nov 10): code in `backend/` and `frontend/`, report in `docs/stage2/` |
+| **Stage 2 - Implementation** | Java backend (agent, tools, services, SQLite), CLI and Swing GUI for all 16 features | Complete: [`docs/stage2/stage2-report.pdf`](docs/stage2/stage2-report.pdf); code in `backend/` and `frontend/` |
 | Stage 3 | To be announced | Planned (`docs/stage3/`) |
 
 ## Stage 1 documents
@@ -78,7 +78,7 @@ cp .env.example .env
 # edit .env and replace YOUR_LOCAL_API_KEY_HERE with your own key
 ```
 
-`.env` is listed in `.gitignore` and must never be committed. To use an OpenAI-compatible provider instead, set `LLM_PROVIDER=openai` and the `OPENAI_*` values. Data is stored in `~/.study-agent/study-agent.db` (change it with `STUDY_AGENT_DB`).
+`.env` is listed in `.gitignore` and must never be committed. To use an OpenAI-compatible provider instead, set `LLM_PROVIDER=openai` and the `OPENAI_*` values. Retrieval uses local embeddings by default; set `EMBEDDING_PROVIDER=gemini` to use Gemini embeddings instead. Data is stored in `~/.study-agent/study-agent.db` (change it with `STUDY_AGENT_DB`).
 
 ### Build and test
 
@@ -113,5 +113,7 @@ study learning-session start --course EECS3311
 study progress show --course EECS3311
 study history show --last 7d
 ```
+
+Safe sample lecture notes are in [`sample-data/`](sample-data/); `scripts/demo-cli.sh` runs the commands above over them in a separate demo database (your own data is not touched).
 
 Run `study` with no arguments for an interactive shell; add `--trace` to any AI command to see the agent's plan and tool results. The GUI and CLI share the same database, so work done in one appears in the other.

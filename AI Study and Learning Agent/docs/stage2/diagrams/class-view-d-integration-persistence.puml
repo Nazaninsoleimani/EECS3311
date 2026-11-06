@@ -1,0 +1,11 @@
+@startuml class-view-d-integration-persistence
+!pragma layout smetana
+title View D - Integration and Persistence (Adapter) as implemented
+!include class-model-stage2.iuml
+left to right direction
+remove $pres
+remove $app
+remove $agent
+remove $tools
+remove $domain
+@enduml

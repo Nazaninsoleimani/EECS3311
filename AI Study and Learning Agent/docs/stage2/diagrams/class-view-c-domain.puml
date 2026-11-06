@@ -1,0 +1,12 @@
+@startuml class-view-c-domain
+!pragma layout smetana
+title View C - Domain model as implemented
+!include class-model-stage2.iuml
+left to right direction
+remove $pres
+remove $app
+remove $agent
+remove $tools
+remove $integ
+remove $persist
+@enduml

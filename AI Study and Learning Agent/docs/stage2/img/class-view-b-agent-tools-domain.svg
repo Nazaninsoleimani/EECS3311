@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 1035" width="1320" height="1035">
+<defs>
+<marker id="tri" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+  <path d="M1,1 L11,6 L1,11 z" fill="white" stroke="#333" stroke-width="1"/></marker>
+<marker id="open" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+  <path d="M1,1 L11,6 L1,11" fill="none" stroke="#333" stroke-width="1.2"/></marker>
+<marker id="dfill" viewBox="0 0 16 10" refX="1" refY="5" markerWidth="16" markerHeight="10" orient="auto-start-reverse">
+  <path d="M1,5 L8,1 L15,5 L8,9 z" fill="#333" stroke="#333"/></marker>
+<marker id="dempty" viewBox="0 0 16 10" refX="1" refY="5" markerWidth="16" markerHeight="10" orient="auto-start-reverse">
+  <path d="M1,5 L8,1 L15,5 L8,9 z" fill="white" stroke="#333"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="white"/>
+<text x="20.0" y="26.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" font-weight="bold" font-style="normal" fill="#111">View B - Agent, tools and pattern participants as implemented (Strategy, Factory Method, State)</text>
+<rect x="10" y="40" width="1300" height="245" fill="none" stroke="#999" stroke-dasharray="2,3" rx="4"/>
+<text x="18.0" y="53.0" font-family="Helvetica, Arial, sans-serif" font-size="11" text-anchor="start" font-weight="bold" font-style="normal" fill="#555">Agent layer</text>
+<rect x="10" y="305" width="1300" height="685" fill="none" stroke="#999" stroke-dasharray="2,3" rx="4"/>
+<text x="18.0" y="318.0" font-family="Helvetica, Arial, sans-serif" font-size="11" text-anchor="start" font-weight="bold" font-style="normal" fill="#555">Agent tools and domain participants (Strategy, Factory Method, State)</text>
+<polyline points="330.0,106.1 277.0,101.6" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#open)"/>
+<polyline points="330.0,154.3 191.2,187.0" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#open)"/>
+<polyline points="629.8,106.4 720.0,98.9" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#open)"/>
+<polyline points="629.8,148.9 720.0,167.0" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#open)"/>
+<polyline points="629.8,72.0 700.0,50.0 1060.0,50.0 1066.6,60.0" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#open)"/>
+<polyline points="115.2,237.0 129.1,330.0" stroke="#333" stroke-width="1.1" fill="none" marker-start="url(#dempty)"/>
+<rect x="105.6" y="274.5" width="33.0" height="12" fill="white" opacity="0.9"/>
+<text x="122.1" y="283.5" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="italic" fill="#333">tools</text>
+<text x="130.7" y="311.2" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#333">0..*</text>
+<polyline points="144.2,440.0 137.8,392.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
+<polyline points="330.0,365.3 237.4,363.3" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
+<polyline points="377.2,470.0 202.9,392.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
+<polyline points="570.4,366.0 760.0,362.9" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#open)"/>
+<rect x="642.9" y="355.4" width="44.6" height="12" fill="white" opacity="0.9"/>
+<text x="665.2" y="364.4" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="italic" fill="#333">current</text>
+<polyline points="743.3,450.0 828.2,392.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
+<polyline points="892.9,450.0 880.3,392.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
+<polyline points="1050.8,450.0 935.3,392.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
+<polyline points="443.3,532.0 437.6,590.0" stroke="#333" stroke-width="1.1" fill="none" marker-start="url(#dempty)"/>
+<text x="445.7" y="544.9" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#333">1</text>
+<text x="443.1" y="571.1" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#333">1..*</text>
+<polyline points="277.1,715.0 365.4,666.0" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#tri)"/>
+<polyline points="558.6,715.0 488.3,666.0" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#tri)"/>
+<polyline points="738.3,715.0 527.6,654.8" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#tri)"/>
+<polyline points="436.8,666.0 447.3,800.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#open)"/>
+<rect x="411.1" y="724.0" width="62.0" height="12" fill="white" opacity="0.9"/>
+<text x="442.1" y="733.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="italic" fill="#333">&lt;&lt;create&gt;&gt;</text>
+<polyline points="257.8,930.0 370.8,876.0" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#tri)"/>
+<polyline points="440.5,930.0 446.2,876.0" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#tri)"/>
+<polyline points="608.4,930.0 515.6,876.0" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#tri)"/>
+<polyline points="988.2,680.0 993.5,735.0" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#open)"/>
+<rect x="974.3" y="698.5" width="33.0" height="12" fill="white" opacity="0.9"/>
+<text x="990.8" y="707.5" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="italic" fill="#333">state</text>
+<polyline points="874.0,870.0 948.9,811.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
+<polyline points="1012.1,870.0 1003.0,811.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
+<polyline points="1132.7,870.0 1050.2,811.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
+<polyline points="629.8,123.3 1220.0,140.0 1220.0,630.0 1067.8,633.2" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#open)"/>
+<rect x="1160.0" y="376.0" width="120.0" height="12" fill="white" opacity="0.9"/>
+<text x="1220.0" y="385.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="italic" fill="#333">nextAdaptiveActivity</text>
+<rect x="30.0" y="60.0" width="247.0" height="62.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="153.5" y="77.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">Planner</text>
+<line x1="30.0" y1="82.0" x2="277.0" y2="82.0" stroke="#444444" stroke-width="0.8"/>
+<text x="38.0" y="96.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ createPlan(goal, ctx) : AgentPlan</text>
+<text x="38.0" y="110.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ revise(plan, step, result)</text>
+<rect x="30.0" y="175.0" width="161.2" height="62.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="110.6" y="192.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">ToolRegistry</text>
+<line x1="30.0" y1="197.0" x2="191.2" y2="197.0" stroke="#444444" stroke-width="0.8"/>
+<text x="38.0" y="211.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ register(t)</text>
+<text x="38.0" y="225.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ getTool(name) : Tool</text>
+<rect x="330.0" y="60.0" width="299.8" height="118.0" rx="3" fill="#DCEBFF" stroke="#1F5FBF" stroke-width="1.2"/>
+<text x="479.9" y="77.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">LearningAgent</text>
+<line x1="330.0" y1="82.0" x2="629.8" y2="82.0" stroke="#1F5FBF" stroke-width="0.8"/>
+<text x="338.0" y="96.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ answerQuestion(...) : Answer</text>
+<text x="338.0" y="110.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ generateStudyPlan(req) : StudyPlan</text>
+<text x="338.0" y="124.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ revisePlan(plan, event, exam) : StudyPlan</text>
+<text x="338.0" y="138.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ generateQuiz(req) : Quiz</text>
+<text x="338.0" y="152.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ nextAdaptiveActivity(s) : Question</text>
+<text x="338.0" y="166.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">- executePlan(plan, ctx, binder)</text>
+<rect x="720.0" y="60.0" width="187.6" height="62.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="813.8" y="77.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">MemoryManager</text>
+<line x1="720.0" y1="82.0" x2="907.6" y2="82.0" stroke="#444444" stroke-width="0.8"/>
+<text x="728.0" y="96.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ loadLearnerContext(s, c)</text>
+<text x="728.0" y="110.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ getSessionMemory(id)</text>
+<rect x="720.0" y="165.0" width="220.6" height="48.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="830.3" y="182.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">ContextBuilder</text>
+<line x1="720.0" y1="187.0" x2="940.6" y2="187.0" stroke="#444444" stroke-width="0.8"/>
+<text x="728.0" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ build(task, ctx) : LLMRequest</text>
+<rect x="980.0" y="60.0" width="214.0" height="62.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="1087.0" y="77.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">ResponseValidator</text>
+<line x1="980.0" y1="82.0" x2="1194.0" y2="82.0" stroke="#444444" stroke-width="0.8"/>
+<text x="988.0" y="96.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ validate(resp, schema)</text>
+<text x="988.0" y="110.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ checkGrounding(answer, srcs)</text>
+<rect x="30.0" y="330.0" width="207.4" height="62.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="133.7" y="347.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" font-weight="normal" font-style="italic" fill="#111">&lt;&lt;interface&gt;&gt;</text>
+<text x="133.7" y="361.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">Tool</text>
+<line x1="30.0" y1="366.0" x2="237.4" y2="366.0" stroke="#444444" stroke-width="0.8"/>
+<text x="38.0" y="380.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ execute(input) : ToolResult</text>
+<rect x="30.0" y="440.0" width="240.4" height="90.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="150.2" y="457.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">Other tools (6)</text>
+<line x1="30.0" y1="462.0" x2="270.4" y2="462.0" stroke="#444444" stroke-width="0.8"/>
+<text x="38.0" y="476.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">RetrievalTool, SummarizationTool,</text>
+<text x="38.0" y="490.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">ConceptExtractionTool,</text>
+<text x="38.0" y="504.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">FlashcardGenerationTool,</text>
+<text x="38.0" y="518.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">ProgressAnalysisTool, ReminderTool</text>
+<rect x="330.0" y="330.0" width="240.4" height="76.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="450.2" y="347.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" font-weight="normal" font-style="italic" fill="#111">&lt;&lt;Context&gt;&gt;</text>
+<text x="450.2" y="361.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">StudyScheduleTool</text>
+<line x1="330.0" y1="366.0" x2="570.4" y2="366.0" stroke="#444444" stroke-width="0.8"/>
+<text x="338.0" y="380.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">- strategy : StudyPlanningStrategy</text>
+<text x="338.0" y="394.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ selectStrategy(req)</text>
+<rect x="760.0" y="330.0" width="227.2" height="62.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="873.6" y="347.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" font-weight="normal" font-style="italic" fill="#111">&lt;&lt;interface&gt;&gt; &lt;&lt;Strategy&gt;&gt;</text>
+<text x="873.6" y="361.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">StudyPlanningStrategy</text>
+<line x1="760.0" y1="366.0" x2="987.2" y2="366.0" stroke="#444444" stroke-width="0.8"/>
+<text x="768.0" y="380.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ buildSchedule(req, priorities)</text>
+<rect x="640.0" y="450.0" width="148.0" height="40.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="714.0" y="467.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" font-weight="normal" font-style="italic" fill="#111">&lt;&lt;ConcreteStrategy&gt;&gt;</text>
+<text x="714.0" y="481.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">ExamCramStrategy</text>
+<rect x="810.0" y="450.0" width="174.4" height="40.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="897.2" y="467.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" font-weight="normal" font-style="italic" fill="#111">&lt;&lt;ConcreteStrategy&gt;&gt;</text>
+<text x="897.2" y="481.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">SpacedRepetitionStrategy</text>
+<rect x="1010.0" y="450.0" width="161.2" height="40.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="1090.6" y="467.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" font-weight="normal" font-style="italic" fill="#111">&lt;&lt;ConcreteStrategy&gt;&gt;</text>
+<text x="1090.6" y="481.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">BalancedReviewStrategy</text>
+<rect x="280.0" y="470.0" width="332.8" height="62.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="446.4" y="487.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" font-weight="normal" font-style="italic" fill="#111">&lt;&lt;Client&gt;&gt;</text>
+<text x="446.4" y="501.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">QuizGenerationTool</text>
+<line x1="280.0" y1="506.0" x2="612.8" y2="506.0" stroke="#444444" stroke-width="0.8"/>
+<text x="288.0" y="520.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">- factories : Map&lt;QuestionType, QuestionFactory&gt;</text>
+<rect x="340.0" y="590.0" width="187.6" height="76.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="433.8" y="607.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" font-weight="normal" font-style="italic" fill="#111">{abstract} &lt;&lt;Creator&gt;&gt;</text>
+<text x="433.8" y="621.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="italic" fill="#111">QuestionFactory</text>
+<line x1="340.0" y1="626.0" x2="527.6" y2="626.0" stroke="#444444" stroke-width="0.8"/>
+<text x="348.0" y="640.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ build(spec) : Question</text>
+<text x="348.0" y="654.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111"># createQuestion(spec, id)</text>
+<rect x="150.0" y="715.0" width="207.4" height="26.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="253.7" y="732.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">MultipleChoiceQuestionFactory</text>
+<rect x="490.0" y="715.0" width="174.4" height="26.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="577.2" y="732.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">TrueFalseQuestionFactory</text>
+<rect x="690.0" y="715.0" width="187.6" height="26.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="783.8" y="732.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">ShortAnswerQuestionFactory</text>
+<rect x="340.0" y="800.0" width="220.6" height="76.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="450.3" y="817.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" font-weight="normal" font-style="italic" fill="#111">{abstract} &lt;&lt;Product&gt;&gt;</text>
+<text x="450.3" y="831.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="italic" fill="#111">Question</text>
+<line x1="340.0" y1="836.0" x2="560.6" y2="836.0" stroke="#444444" stroke-width="0.8"/>
+<text x="348.0" y="850.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ grade(response) : GradeResult</text>
+<text x="348.0" y="864.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ correctAnswerText()</text>
+<rect x="150.0" y="930.0" width="161.2" height="26.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="230.6" y="947.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">MultipleChoiceQuestion</text>
+<rect x="375.0" y="930.0" width="128.2" height="26.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="439.1" y="947.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">TrueFalseQuestion</text>
+<rect x="560.0" y="930.0" width="141.4" height="26.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="630.7" y="947.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">ShortAnswerQuestion</text>
+<rect x="900.0" y="590.0" width="167.8" height="90.0" rx="3" fill="#DCEBFF" stroke="#1F5FBF" stroke-width="1.2"/>
+<text x="983.9" y="607.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" font-weight="normal" font-style="italic" fill="#111">&lt;&lt;Context&gt;&gt;</text>
+<text x="983.9" y="621.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">AdaptiveLearningSession</text>
+<line x1="900.0" y1="626.0" x2="1067.8" y2="626.0" stroke="#1F5FBF" stroke-width="0.8"/>
+<text x="908.0" y="640.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">- askedQuestionIds</text>
+<text x="908.0" y="654.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ recordOutcome(result)</text>
+<text x="908.0" y="668.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ setState(s)</text>
+<rect x="900.0" y="735.0" width="194.2" height="76.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="997.1" y="752.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" font-weight="normal" font-style="italic" fill="#111">&lt;&lt;interface&gt;&gt; &lt;&lt;State&gt;&gt;</text>
+<text x="997.1" y="766.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">DifficultyState</text>
+<line x1="900.0" y1="771.0" x2="1094.2" y2="771.0" stroke="#444444" stroke-width="0.8"/>
+<text x="908.0" y="785.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ onResult(session, result)</text>
+<text x="908.0" y="799.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ preferredQuestionTypes()</text>
+<rect x="800.0" y="870.0" width="115.0" height="26.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="857.5" y="887.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">FoundationState</text>
+<rect x="950.0" y="870.0" width="128.2" height="26.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="1014.1" y="887.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">IntermediateState</text>
+<rect x="1100.0" y="870.0" width="101.8" height="26.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+<text x="1150.9" y="887.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">AdvancedState</text>
+<rect x="20" y="1003" width="14" height="12" fill="#DCEBFF" stroke="#1F5FBF"/>
+<text x="40.0" y="1013.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">added or changed in Stage 2</text>
+<rect x="210" y="1003" width="14" height="12" fill="#FFFFFF" stroke="#444444"/>
+<text x="230.0" y="1013.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">as designed in Stage 1</text>
+<rect x="380" y="1003" width="14" height="12" fill="#F2F2F2" stroke="#444444"/>
+<text x="400.0" y="1013.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">shown for context (other view)</text>
+</svg>

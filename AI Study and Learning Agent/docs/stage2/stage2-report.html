@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stage 2 Implementation Report - AI Study and Learning Agent</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 16mm 15mm; }
+  /* wide diagrams: one page each, drawn rotated (see overview_svg.py) so they use the full page height */
+  figure.wide { break-before: page; break-after: page; margin: 0; }
+  figure.wide img { width: auto; height: auto; max-width: 100%; max-height: 250mm; border: none; display: block; margin: 0 auto; }
+  :root { --ink: #1b1f24; --muted: #57606a; --line: #d0d7de; --head: #f3f5f8; --accent: #1f5fbf; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: var(--ink); font-size: 10.2pt; line-height: 1.42; margin: 0; }
+  h1 { font-size: 21pt; margin: 0 0 4pt; }
+  h2 { font-size: 14.5pt; margin: 22pt 0 7pt; padding-bottom: 3pt; border-bottom: 2px solid var(--accent); break-after: avoid; }
+  h3 { font-size: 11.5pt; margin: 14pt 0 5pt; break-after: avoid; }
+  h4 { font-size: 10.4pt; margin: 10pt 0 4pt; break-after: avoid; }
+  p { margin: 4pt 0 6pt; }
+  table { border-collapse: collapse; width: 100%; margin: 5pt 0 9pt; font-size: 9pt; break-inside: auto; }
+  th, td { border: 1px solid var(--line); padding: 3.5pt 5pt; vertical-align: top; text-align: left; }
+  th { background: var(--head); font-weight: 600; }
+  tr { break-inside: avoid; }
+  table.fixed { table-layout: fixed; }
+  table.fixed td, table.fixed code { overflow-wrap: anywhere; }
+  td.k { width: 23%; background: #fafbfc; font-weight: 600; }
+  code { font-family: Menlo, Consolas, monospace; font-size: 8.6pt; background: #f2f4f7; padding: 0 2px; border-radius: 2px; }
+  pre { font-family: Menlo, Consolas, monospace; font-size: 8.4pt; background: #f6f8fa; border: 1px solid var(--line); padding: 6pt; white-space: pre-wrap; }
+  .todo { background: #fff3a8; padding: 0 3px; border-radius: 2px; }
+  .muted { color: var(--muted); }
+  .title-block { border-bottom: 3px solid var(--accent); padding-bottom: 10pt; margin-bottom: 12pt; }
+  .meta td { border: none; padding: 1pt 8pt 1pt 0; font-size: 10pt; }
+  .meta td:first-child { color: var(--muted); width: 32%; }
+  figure { margin: 8pt 0 12pt; break-inside: avoid; }
+  figure img { width: 100%; border: 1px solid var(--line); }
+  figcaption { font-size: 8.8pt; color: var(--muted); margin-top: 3pt; }
+  .feature { break-inside: avoid; margin-bottom: 10pt; }
+  .feature table { margin-bottom: 3pt; }
+  .feature p.flow { font-size: 9.3pt; margin: 2pt 0 0; }
+  .pill { display: inline-block; font-size: 8pt; padding: 0 5px; border-radius: 8px; border: 1px solid var(--line); background: #fff; }
+  .ai { border-color: #9a6dd7; color: #5b2e9b; } .det { border-color: #4a8a4a; color: #2f6b2f; } .hyb { border-color: #c27b19; color: #8a5208; }
+  .pagebreak { break-before: page; }
+  ul { margin: 3pt 0 6pt 16pt; padding: 0; } li { margin: 1.5pt 0; }
+  .small { font-size: 8.8pt; }
+</style>
+</head>
+<body>
+
+<div class="title-block">
+  <div class="muted">EECS 3311 Software Design - Fall 2026 - Course Project</div>
+  <h1>Stage 2 Implementation Report</h1>
+  <div style="font-size:13pt">AI Study and Learning Agent</div>
+</div>
+<table class="meta">
+  <tr><td>Student</td><td>Nazanin Fatemeh Soleimani (222050579)</td></tr>
+  <tr><td>Repository</td><td><a href="https://github.com/Nazaninsoleimani/EECS3311">https://github.com/Nazaninsoleimani/EECS3311</a> (project folder <code>AI Study and Learning Agent/</code>)</td></tr>
+  <tr><td>Stage 1 design</td><td><code>docs/stage1/Stage1_Report.pdf</code></td></tr>
+  <tr><td>Implementation period</td><td>October 20 - November 10, 2026</td></tr>
+  <tr><td>Language and build</td><td>Java 21, Gradle multi-module (<code>backend</code>, <code>frontend:cli</code>, <code>frontend:gui</code>)</td></tr>
+  <tr><td>LLM</td><td>Google Gemini (<code>gemini-2.5-flash</code>, free tier) through the <code>LLMClient</code> adapter; any OpenAI-compatible model by configuration</td></tr>
+</table>
+
+<p class="small muted">How to read this report: section 2 traces every Stage 1 feature (F01-F16) to the classes, methods, patterns and demonstration video that realise it; section 3 explains the six design patterns with the updated class diagrams; section 4 lists every difference from the Stage 1 design with its reason; sections 5-7 cover AI collaboration, commits and verification, and the video index. Items highlighted <span class="todo">like this</span> are completed by the student before submission.</p>
+
+<!-- ================================================================== 1 -->
+<h2>1. Project overview and implementation status</h2>
+
+<p><b>Application.</b> The AI Study and Learning Agent is a desktop application for university students. A student creates a course, uploads their own lecture notes (PDF, DOCX, TXT, Markdown), and the agent works over that material: it answers questions with citations to the source pages, summarises lectures, extracts the course's concepts and their relations, plans study time up to the exam, generates and grades quizzes and flashcards, finds weak topics, adapts practice difficulty, and tracks progress. Everything is available through a Swing GUI (12 views) and a <code>study</code> command-line interface (32 commands); both call the same <code>LearningFacade</code>.</p>
+
+<p><b>Users.</b> A single student per installation (a local profile, <code>STUDENT_ID</code>, default <code>student-1</code>). All data is stored locally in one SQLite file (<code>~/.study-agent/study-agent.db</code>).</p>
+
+<p><b>AI / LLM integration and agent behaviour.</b> The LLM is never called directly by a feature. Every AI goal goes through <code>LearningAgent</code>, which (1) loads the learner context from memory (mastery, recent history, exam date), (2) asks the <code>Planner</code> for a plan of tool steps, (3) executes the steps through the <code>ToolRegistry</code> (retrieval, progress analysis, scheduling, generation, reminders), letting the Planner revise the remaining plan after each observation (for example, no generation when retrieval found nothing), (4) builds prompts with retrieved sources inside a token budget (<code>ContextBuilder</code>), and (5) validates every LLM output (<code>ResponseValidator</code>: JSON schema fields, citation grounding) before it becomes a domain object, regenerating once when validation fails. Session memory keeps the tutor conversation so follow-up questions are rewritten into standalone retrieval queries. Deterministic code makes the decisions that must be reliable (mastery, difficulty transitions, scheduling strategy, grading of objective questions); the LLM generates content.</p>
+
+<p><b>Working functionality.</b> All 16 Stage 1 features are implemented and working in both front ends (table below). The build compiles three modules and runs 118 automated JUnit tests, all passing (section 6). Without an API key the deterministic features work fully and AI features use documented fallbacks (extractive answers, deterministic plan priorities, stored questions) or report clearly that the AI is unavailable.</p>
+
+<table>
+  <tr><th>ID</th><th>Feature</th><th>Type</th><th>Status</th><th>GUI view</th><th>CLI command</th></tr>
+  <tr><td>F01</td><td>Course Management</td><td><span class="pill det">Deterministic</span></td><td>Implemented</td><td>Courses</td><td><code>course create|list|update|delete</code></td></tr>
+  <tr><td>F02</td><td>Material Upload and Management</td><td><span class="pill det">Deterministic</span></td><td>Implemented (modified)</td><td>Materials</td><td><code>material upload|list|delete|reindex</code></td></tr>
+  <tr><td>F03</td><td>Document Summarization</td><td><span class="pill ai">AI-based</span></td><td>Implemented</td><td>Materials</td><td><code>material summarize</code></td></tr>
+  <tr><td>F04</td><td>Concept Extraction</td><td><span class="pill ai">AI-based</span></td><td>Implemented</td><td>Materials</td><td><code>material extract-concepts</code>, automatic on upload</td></tr>
+  <tr><td>F05</td><td>Question Answering over Materials</td><td><span class="pill hyb">Hybrid</span></td><td>Implemented (modified)</td><td>Tutor</td><td><code>ask</code>, <code>ask -i</code></td></tr>
+  <tr><td>F06</td><td>Personalized Study-Plan Generation</td><td><span class="pill hyb">Hybrid</span></td><td>Implemented</td><td>Study Plan</td><td><code>study-plan generate|show|done</code></td></tr>
+  <tr><td>F07</td><td>Flashcard Generation and Review</td><td><span class="pill hyb">Hybrid</span></td><td>Implemented</td><td>Flashcards</td><td><code>flashcards generate|list|review</code></td></tr>
+  <tr><td>F08</td><td>Quiz Generation</td><td><span class="pill ai">AI-based</span></td><td>Implemented</td><td>Quiz</td><td><code>quiz generate|list</code></td></tr>
+  <tr><td>F09</td><td>Automatic Quiz Grading</td><td><span class="pill hyb">Hybrid</span></td><td>Implemented</td><td>Quiz</td><td><code>quiz take</code>, <code>quiz generate --take</code></td></tr>
+  <tr><td>F10</td><td>Answer Explanation</td><td><span class="pill ai">AI-based</span></td><td>Implemented</td><td>Quiz (Explain)</td><td><code>quiz explain</code></td></tr>
+  <tr><td>F11</td><td>Weak-Topic Identification</td><td><span class="pill hyb">Hybrid</span></td><td>Implemented</td><td>Progress</td><td><code>weak-topics show</code></td></tr>
+  <tr><td>F12</td><td>Adaptive Question Difficulty</td><td><span class="pill hyb">Hybrid</span></td><td>Implemented (modified)</td><td>Learning Session</td><td><code>learning-session start</code></td></tr>
+  <tr><td>F13</td><td>Learning Progress Tracking</td><td><span class="pill det">Deterministic</span></td><td>Implemented</td><td>Progress, Dashboard</td><td><code>progress show</code></td></tr>
+  <tr><td>F14</td><td>Study Reminder Management</td><td><span class="pill det">Deterministic</span></td><td>Implemented</td><td>Reminders</td><td><code>reminder add|list|cancel|dispatch</code></td></tr>
+  <tr><td>F15</td><td>Concept Relationship Visualization</td><td><span class="pill hyb">Hybrid</span></td><td>Implemented</td><td>Concept Map</td><td><code>concept-map show [--format mermaid]</code></td></tr>
+  <tr><td>F16</td><td>Learning Session History</td><td><span class="pill det">Deterministic</span></td><td>Implemented</td><td>History</td><td><code>history show</code></td></tr>
+</table>
+
+<p><b>Limitations and incomplete functionality (honest list).</b></p>
+<ul>
+  <li><b>Automated tests use a scripted LLM.</b> The 118 tests exercise every AI flow with a deterministic fake <code>LLMClient</code>, so they verify the agent's control flow, validation and fallbacks, not the quality of real model output. Live-model behaviour was checked manually (section 6.2) <span class="todo">[confirm after your run with the Gemini key]</span>.</li>
+  <li><b>Retrieval quality.</b> The default embeddings (<code>LocalHashEmbeddingService</code>) are lexical (hashed, stemmed words), not semantic, so a question phrased with different words than the notes may retrieve less. Gemini embeddings can be enabled with <code>EMBEDDING_PROVIDER=gemini</code> (section 4).</li>
+  <li><b>Scanned PDFs</b> without a text layer are rejected with a clear reason; there is no OCR.</li>
+  <li><b>GUI details planned in Stage 1 that were simplified:</b> tutor citations are shown as text, not clickable links to the page; history entries do not open the related object (the reference id is stored); the material status badge is a table column; the concept map uses a circular layout rather than an interactive force layout.</li>
+  <li><b>Single local user.</b> There is no login or multi-user support (not required by Stage 1).</li>
+  <li><b>Short-answer grading by the LLM</b> can vary between runs; scores outside 0-1 or malformed output are rejected and the keyword grade is kept and excluded from mastery.</li>
+  <li>Full deterministic testing and KUMA agent validation are Stage 3 work.</li>
+</ul>
+
+<!-- ================================================================== 2 -->
+<h2 class="pagebreak">2. Feature to implementation mapping</h2>
+<p class="small">All classes are under <code>ca.yorku.eecs3311.studyagent</code>. Paths are abbreviated: <code>app/</code> = <code>backend/.../application</code>, <code>agent/</code>, <code>tools/</code> = <code>agent/tools</code>, <code>domain/</code>, <code>integ/</code> = <code>integration</code>, <code>persist/</code> = <code>persistence</code>, <code>gui/</code> = <code>frontend/gui/.../presentation/gui</code>, <code>cli/</code> = <code>frontend/cli/.../presentation/cli</code>. Every feature is reached from the GUI view or CLI command through <code>LearningFacade</code> (Facade).</p>
+
+<div class="feature">
+<h3>F01 - Course Management</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F01, UC01, SD11</td></tr>
+<tr><td class="k">Status</td><td>Implemented (Stage 1 rule "exam date in the past is rejected" enforced in week 3)</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/CourseView</code> (form, table, selection); <code>cli/CLIApplication</code> (course commands); <code>app/LearningFacade</code> (entry, history event); <code>app/CourseService</code> (unique code per student, exam-date check, cascading delete, resolve by id or code); <code>domain/Course</code>; <code>persist/CourseRepository</code> + <code>SqliteCourseRepository</code>; <code>agent/MemoryManager</code> (records <code>COURSE_*</code> events)</td></tr>
+<tr><td class="k">Key methods</td><td><code>createCourse()</code>, <code>updateCourse()</code>, <code>deleteCourse()</code>, <code>listCourses()</code>, <code>resolve()</code>, <code>requireUniqueCode()</code>, <code>requireFutureExam()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Facade</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill det">Deterministic</span> The view or CLI passes code, title and exam date to <code>LearningFacade.createCourse()</code>; <code>CourseService</code> builds the <code>Course</code> (which normalises the code), rejects a duplicate code or a past exam date, and saves it; the facade records <code>COURSE_CREATED</code>. Deleting asks for confirmation in both front ends, then removes the course's materials, vectors, concepts, progress, quizzes, decks and plans.</p>
+</div>
+
+<div class="feature">
+<h3>F02 - Learning Material Upload and Management</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F02, UC02 (includes UC04), SD07</td></tr>
+<tr><td class="k">Status</td><td>Implemented, modified: upload returns <code>MaterialUpload</code> and runs concept extraction (UC04); embedding failures keep the material pending and indexing is retried (section 4, C1 and C3)</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/MaterialView</code> (file chooser, status table, Retry indexing); <code>app/MaterialService</code> (validation, parse, chunk, index, pending retry); <code>integ/parsing/DocumentParser</code> with <code>PdfParser</code> (PDFBox, per page), <code>DocxParser</code>, <code>PlainTextParser</code>; <code>integ/parsing/Chunker</code> (800-token chunks, 100 overlap, page refs); <code>integ/retrieval/RetrievalService</code>, <code>EmbeddingService</code>, <code>SqliteVectorStore</code>; <code>domain/CourseMaterial</code>, <code>DocumentChunk</code>; <code>app/MaterialUpload</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>uploadMaterial()</code>, <code>upload()</code>, <code>findParser()</code>, <code>supports()</code>, <code>parse()</code>, <code>chunk()</code>, <code>index()</code>, <code>embed()</code>, <code>upsert()</code>, <code>markIndexed()</code>, <code>markFailed()</code>, <code>markIndexingPending()</code>, <code>retryPendingIndexing()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Facade; parsers are interchangeable <code>DocumentParser</code> implementations</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill det">Deterministic</span> <code>MaterialService.upload()</code> checks the file exists, its type has a parser and it is under 50 MB, then parses, chunks and saves the chunks, and indexes them (embed + upsert). Unsupported types are rejected before anything is stored; empty or unreadable files are stored as <code>FAILED</code> with the reason; an embedding outage leaves the material <code>UPLOADED</code> with its chunks so <code>retryPendingIndexing()</code> (run at start-up, <code>material reindex</code>, Retry indexing button) can finish later.</p>
+</div>
+
+<div class="feature">
+<h3>F03 - Document Summarization</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F03, UC03, SD05</td></tr>
+<tr><td class="k">Status</td><td>Implemented</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/MaterialView</code> (length choice, summary panel); <code>app/LearningFacade.summarizeMaterial()</code> (requires an indexed material, stores the summary); <code>agent/LearningAgent.summarize()</code>; <code>agent/Planner</code> (chooses single pass or map-reduce above 6,000 tokens); <code>tools/SummarizationTool</code> (map: one LLM call per group of chunks; reduce: structured JSON); <code>agent/ResponseValidator</code>; <code>domain/Summary</code>, <code>SummaryOptions</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>summarizeMaterial()</code>, <code>summarize()</code>, <code>createPlan()</code>, <code>execute()</code>, <code>mapSections()</code>, <code>generate()</code>, <code>generateStructured()</code>, <code>validate()</code>, <code>saveSummary()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Facade, Adapter</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill ai">AI-based</span> The agent counts the material's tokens, the Planner picks the mode, and <code>SummarizationTool</code> produces <code>{summary, keyPoints, sourceRefs}</code>; invalid output is retried once; an LLM failure returns "Summary unavailable, retry later" and nothing partial is stored.</p>
+</div>
+
+<div class="feature">
+<h3>F04 - Concept Extraction</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F04, UC04 (included by UC02), SD07</td></tr>
+<tr><td class="k">Status</td><td>Implemented (runs automatically after upload since week 3, and on demand)</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>app/LearningFacade.extractConcepts()</code> and <code>uploadMaterial()</code>; <code>agent/LearningAgent.extractConcepts()</code>; <code>tools/ConceptExtractionTool</code> (batches of chunks, reuses known course concepts, drops relations to unknown concepts and self-relations); <code>app/ConceptMapService.save()</code> (persists and remaps relation ids to stored concepts); <code>domain/Concept</code>, <code>ConceptRelation</code>, <code>ConceptGraph</code>; <code>persist/ConceptRepository</code> (merge by normalised name)</td></tr>
+<tr><td class="k">Key methods</td><td><code>extractConcepts()</code>, <code>execute()</code>, <code>generateStructured()</code>, <code>validate()</code>, <code>saveAll()</code>, <code>saveRelations()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Facade, Adapter</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill ai">AI-based</span> with deterministic validation. The LLM proposes concepts and typed relations (<code>PREREQUISITE_OF</code>, <code>PART_OF</code>, <code>RELATED_TO</code>) per batch; validation merges duplicates and discards invalid relations, reporting how many were dropped. If the LLM is unavailable the upload still succeeds and the student is told extraction can be re-run.</p>
+</div>
+
+<div class="feature">
+<h3>F05 - Question Answering over Course Materials</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F05, UC05 (includes UC17), SD02</td></tr>
+<tr><td class="k">Status</td><td>Implemented, modified: with no LLM the agent returns the most relevant passages with citations instead of an error (section 4, C5)</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/TutorChatView</code> (conversation, "Show agent plan"); <code>cli</code> <code>ask</code> and <code>ask -i</code>; <code>LearningAgent.answerQuestion()</code>; <code>MemoryManager</code>, <code>SessionMemory</code> (last 20 turns); <code>Planner.retrievalQuery()</code> (rewrites follow-ups); <code>tools/RetrievalTool</code> &rarr; <code>RetrievalService</code> (threshold); <code>ContextBuilder</code> (numbered sources, token budget); <code>ResponseValidator.checkGrounding()</code>; <code>domain/Answer</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>askQuestion()</code>, <code>answerQuestion()</code>, <code>generateGroundedAnswer()</code>, <code>extractiveAnswer()</code>, <code>retrieve()</code>, <code>build()</code>, <code>checkGrounding()</code>, <code>appendToSession()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Facade, Adapter</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill hyb">Hybrid</span> Retrieval and the grounding check are deterministic; the LLM writes the answer only from the numbered sources. If no chunk passes the similarity threshold, the LLM is not called and the student is told the material does not cover the question. An answer whose citations are missing or point to non-existent sources is regenerated once with a stricter instruction; if it still fails it is returned with <code>grounded=false</code> and a warning.</p>
+</div>
+
+<div class="feature">
+<h3>F06 - Personalized Study-Plan Generation</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F06, UC06 (includes UC11, UC17), SD01, SD04</td></tr>
+<tr><td class="k">Status</td><td>Implemented (ungrounded-plan warning and one retry of invalid priorities added in week 3)</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/StudyPlannerView</code>; <code>cli</code> <code>study-plan</code>; <code>LearningAgent.generateStudyPlan()</code>, <code>prioritize()</code>, <code>revisePlan()</code>; <code>Planner</code> (analyze &rarr; retrieve &rarr; schedule &rarr; remind); <code>tools/ProgressAnalysisTool</code> (deterministic ranking); <code>tools/StudyScheduleTool</code> (Strategy context); <code>ExamCramStrategy</code>, <code>SpacedRepetitionStrategy</code>, <code>BalancedReviewStrategy</code>; <code>tools/ReminderTool</code>; <code>app/StudyPlanMonitor</code> (revision); <code>domain/StudyPlan</code>, <code>StudyTask</code>, <code>TopicPriority</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>generateStudyPlan()</code>, <code>createPlan()</code>, <code>rankTopics()</code>, <code>prioritize()</code>, <code>selectStrategy()</code>, <code>buildSchedule()</code>, <code>revisePlan()</code>, <code>needsRevision()</code>, <code>completeStudyTask()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Strategy, Observer (revision), Facade, Adapter</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill hyb">Hybrid</span> <code>ProgressAnalysisTool</code> ranks concepts by priority = 0.6(1 - mastery) + 0.25 recency gap + 0.15 prerequisite weight; focus topics are boosted. The LLM may reorder the candidates and write a learning objective per topic and the rationale (names it invents are ignored; invalid output is retried once, then the deterministic ranking is used with a warning). The tool picks the strategy from the days left (&le; 7 cram, &ge; 21 spaced repetition, otherwise or without an exam balanced) and allocates 30-minute slots. Reminders are created for the first seven planned days. When a concept's mastery drops sharply or below 50% and the plan does not revisit it within three days, <code>StudyPlanMonitor</code> asks the agent for a revised plan and archives the old one.</p>
+</div>
+
+<div class="feature">
+<h3>F07 - Flashcard Generation and Review</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F07, UC07, SD08</td></tr>
+<tr><td class="k">Status</td><td>Implemented</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/FlashcardView</code> (generate, flip, Again/Hard/Good/Easy); <code>cli</code> <code>flashcards generate|list|review</code> (<code>CommandParser</code>, <code>StudyCommands</code>); <code>LearningAgent.generateFlashcards()</code>; <code>tools/FlashcardGenerationTool</code> (drops empty and duplicate cards); <code>domain/FlashcardDeck</code>, <code>Flashcard</code> (Leitner boxes); <code>LearningFacade.reviewFlashcard()</code> &rarr; <code>ProgressTracker.recordResult()</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>run()</code>, <code>parse()</code>, <code>dispatch()</code>, <code>generateFlashcards()</code>, <code>execute()</code>, <code>saveDeck()</code>, <code>dueFlashcards()</code>, <code>reviewFlashcard()</code>, <code>recordReview()</code>, <code>toGradeResult()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Facade, Adapter, Observer (review results feed mastery)</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill hyb">Hybrid</span> The LLM writes front/back pairs only from retrieved material (no matching material: an error, nothing generated); a shortfall is reported on the deck. Review is deterministic: Good/Easy move the card up a box, Again/Hard back to box 1; intervals 1, 2, 4, 8, 16 days. Each rating is also a graded result for the card's concept.</p>
+</div>
+
+<div class="feature">
+<h3>F08 - Quiz Generation</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F08, UC08, SD03 part A</td></tr>
+<tr><td class="k">Status</td><td>Implemented</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/QuizView</code> (count, difficulty, types, concepts); <code>cli</code> <code>quiz generate</code>; <code>LearningAgent.generateQuiz()</code>; <code>tools/QuizGenerationTool</code> (Factory Method client, up to three rounds); <code>QuestionFactory</code> + <code>MultipleChoiceQuestionFactory</code>, <code>TrueFalseQuestionFactory</code>, <code>ShortAnswerQuestionFactory</code>; <code>domain/Question</code> and subclasses, <code>QuestionSpec</code>, <code>Quiz</code>; <code>persist/QuizRepository</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>generateQuiz()</code>, <code>execute()</code>, <code>toSpec()</code>, <code>resolveConcept()</code>, <code>build()</code>, <code>createQuestion()</code>, <code>save()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Factory Method, Facade, Adapter</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill ai">AI-based</span> The LLM returns question specifications as JSON; each is built by the factory registered for its type, which rejects invalid specs (wrong option count, unmatched answer, unknown concept, empty prompt). Rejection reasons are fed back for replacement questions; a quiz with fewer questions carries a notice. A whole-course quiz targets the course's known concepts so every answer updates mastery.</p>
+</div>
+
+<div class="feature">
+<h3>F09 - Automatic Quiz Grading</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F09, UC09, SD03 part B</td></tr>
+<tr><td class="k">Status</td><td>Implemented</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/QuizView</code> + <code>QuestionPanel</code> (inputs per type, feedback); <code>cli</code> <code>quiz take</code>; <code>LearningFacade.submitQuiz()</code>; <code>app/GradingService</code>; <code>Question.grade()</code> in each subclass; <code>domain/QuizAttempt</code>, <code>GradeResult</code>; <code>app/ProgressTracker.recordAttempt()</code>; <code>ConceptMastery</code>, <code>PerformanceRecord</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>submitQuiz()</code>, <code>grade()</code>, <code>gradeResponse()</code>, <code>Question.grade()</code>, <code>gradeWithRubric()</code>, <code>computeScore()</code>, <code>recordAttempt()</code>, <code>applyResult()</code>, <code>notifyObservers()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Observer, Facade, Factory Method products (polymorphic <code>grade()</code>)</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill hyb">Hybrid</span> Multiple-choice and true/false are graded exactly by the question objects; unanswered questions score 0. Short answers are scored by the LLM against the model answer and rubric (validated 0-1 score); without an LLM the keyword grade is shown and flagged "needs review", which is stored but not applied to mastery. The attempt is saved and <code>ProgressTracker</code> updates mastery and notifies observers.</p>
+</div>
+
+<div class="feature">
+<h3>F10 - Answer Explanation</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F10, UC10 (extends UC09), SD03 part C</td></tr>
+<tr><td class="k">Status</td><td>Implemented (CLI also accepts the question number)</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/QuizView</code> (Explain button per question); <code>cli</code> <code>quiz explain</code>; <code>LearningFacade.explainAnswer()</code>; <code>LearningAgent.explainAnswer()</code>; <code>RetrievalTool</code>, <code>ContextBuilder</code>; <code>domain/Explanation</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>requestExplanation()</code>, <code>explainAnswer()</code>, <code>findAttempt()</code>, <code>execute()</code>, <code>build()</code>, <code>generate()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Facade, Adapter</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill ai">AI-based</span> The explanation is generated from the question, the correct answer, the student's answer and retrieved sources, citing them as [n]; it is marked not source-backed when it cites none. Without an LLM the stored correct answer, the grading feedback and the most relevant passage are shown.</p>
+</div>
+
+<div class="feature">
+<h3>F11 - Weak-Topic Identification</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F11, UC11, SD06</td></tr>
+<tr><td class="k">Status</td><td>Implemented ("at least 5 graded answers" threshold aligned in week 3)</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/ProgressDashboardView</code> (Analyze weak topics); <code>cli</code> <code>weak-topics show</code>; <code>LearningAgent.diagnoseWeakTopics()</code>, <code>diagnoseWithLlm()</code>; <code>tools/ProgressAnalysisTool.rankTopics()</code>; <code>domain/WeakTopicReport</code>, <code>WeakTopic</code>, <code>ConceptMastery</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>analyzeWeakTopics()</code>, <code>diagnoseWeakTopics()</code>, <code>rankTopics()</code>, <code>recommendedActivity()</code>, <code>generateStructured()</code>, <code>validate()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Facade, Adapter</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill hyb">Hybrid</span> Deterministic: a concept is weak when its mastery is below 50% after at least three attempts; with fewer than five graded answers in the course the report says the data is insufficient and suggests where to start. With enough data the LLM reads the student's wrong answers and the relevant material and writes the likely misconception and a recommended activity; on failure the deterministic report is returned.</p>
+</div>
+
+<div class="feature">
+<h3>F12 - Adaptive Question Difficulty</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F12, UC12, SD04</td></tr>
+<tr><td class="k">Status</td><td>Implemented, modified: <code>submitActivityResult()</code> returns <code>ActivityOutcome</code>; stored-question fallback added (section 4, C2 and C4)</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/LearningSessionView</code>; <code>cli</code> <code>learning-session start</code>; <code>LearningFacade.startAdaptiveSession()</code>, <code>submitActivityResult()</code>, <code>endAdaptiveSession()</code>; <code>GradingService</code>; <code>ProgressTracker.recordActivity()</code>; <code>domain/AdaptiveLearningSession</code> (State context) with <code>FoundationState</code>, <code>IntermediateState</code>, <code>AdvancedState</code>; <code>LearningAgent.nextAdaptiveActivity()</code>; <code>QuizGenerationTool</code>; <code>app/QuestionBank</code>; <code>app/ActivityOutcome</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>startAdaptiveSession()</code>, <code>submitActivityResult()</code>, <code>gradeResponse()</code>, <code>recordOutcome()</code>, <code>onResult()</code>, <code>setState()</code>, <code>preferredQuestionTypes()</code>, <code>nextAdaptiveActivity()</code>, <code>pickConcept()</code>, <code>QuestionBank.pick()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>State, Observer, Factory Method, Facade</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill hyb">Hybrid</span> The state machine decides difficulty (three correct in a row: up one level; two wrong: down one level); the agent picks the most urgent concept not asked in the last two activities and asks the LLM for one question of a type preferred by the current state. If generation fails, an unused stored question from the course's earlier quizzes is reused (same level and preferred type first); with none left the session ends gracefully, and when every concept is mastered it suggests a mixed review quiz.</p>
+</div>
+
+<div class="feature">
+<h3>F13 - Learning Progress Tracking</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F13, UC13, SD06 (view), SD03/SD04 (updates)</td></tr>
+<tr><td class="k">Status</td><td>Implemented</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/ProgressDashboardView</code> (ProgressObserver; table with mastery bars, live update line), <code>gui/DashboardView</code> (summary); <code>cli</code> <code>progress show</code>; <code>app/ProgressTracker</code> (Subject), <code>ProgressObserver</code>; <code>domain/ConceptMastery</code> (EMA, alpha 0.3), <code>PerformanceRecord</code>, <code>LearningProgress</code>, <code>ProgressEvent</code>; <code>persist/ProgressRepository</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>getProgress()</code>, <code>recordAttempt()</code>, <code>recordResult()</code>, <code>applyResult()</code>, <code>attach()</code>, <code>notifyObservers()</code>, <code>onProgressChanged()</code>, <code>loadProgress()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Observer, Facade</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill det">Deterministic</span> Quizzes, adaptive answers and flashcard reviews all go through <code>ProgressTracker</code>, which stores a performance record, updates the concept's mastery (m &larr; 0.7m + 0.3s) and notifies observers; the dashboard refreshes without the grading code knowing it exists. The empty state suggests a first activity.</p>
+</div>
+
+<div class="feature">
+<h3>F14 - Study Reminder Management</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F14, UC14, SD09</td></tr>
+<tr><td class="k">Status</td><td>Implemented</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/ReminderView</code>; <code>cli</code> <code>reminder add|list|cancel|dispatch</code>; <code>app/ReminderScheduler</code> (store, background dispatch every 60 s, ProgressObserver); <code>domain/Reminder</code> (recurrence); <code>integ/notification/NotificationGateway</code> with <code>DesktopNotificationGateway</code> (GUI, macOS notification / system tray) and <code>ConsoleNotificationGateway</code> (CLI); <code>tools/ReminderTool</code> (plan reminders)</td></tr>
+<tr><td class="k">Key methods</td><td><code>scheduleReminder()</code>, <code>schedule()</code>, <code>cancel()</code>, <code>dispatchDue()</code>, <code>findDue()</code>, <code>isDue()</code>, <code>markDelivered()</code>, <code>send()</code>, <code>onProgressChanged()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Observer, Facade</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill det">Deterministic</span> One-off reminders in the past are rejected; daily and weekly ones move to their next occurrence after delivery; a failed delivery stays pending and is retried. Overdue reminders are delivered when the application next starts. Reminders are also created by the agent for planned days and by the scheduler when a concept falls below the weak threshold (once per concept).</p>
+</div>
+
+<div class="feature">
+<h3>F15 - Concept Relationship Visualization</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F15, UC15, SD10</td></tr>
+<tr><td class="k">Status</td><td>Implemented ("Quiz me on this" added in week 3)</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/ConceptMapView</code> (drawn graph coloured by mastery, details on click, Copy as Mermaid, Quiz me on this); <code>gui/GuiContext.requestQuizOn()</code> &rarr; <code>QuizView.prepareFor()</code>; <code>cli</code> <code>concept-map show [--format text|mermaid]</code>; <code>app/ConceptMapService.buildGraph()</code>, <code>renderText()</code>; <code>domain/ConceptGraph</code> (<code>neighbours()</code>, <code>prerequisitesOf()</code>, <code>toMermaid()</code>)</td></tr>
+<tr><td class="k">Key methods</td><td><code>loadConceptMap()</code>, <code>getConceptMap()</code>, <code>buildGraph()</code>, <code>selectConcept()</code>, <code>neighbours()</code>, <code>prerequisitesOf()</code>, <code>requestQuizOn()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Facade</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill hyb">Hybrid</span> Relations were proposed by the LLM during F04; viewing is deterministic and makes no LLM call. Grey = not practised, red = below 50%, amber = learning, green = at least 80%.</p>
+</div>
+
+<div class="feature">
+<h3>F16 - Learning Session History</h3>
+<table>
+<tr><td class="k">Stage 1 reference</td><td>F16, UC16, SD11</td></tr>
+<tr><td class="k">Status</td><td>Implemented (entries are not clickable; see limitations)</td></tr>
+<tr><td class="k">Classes / files and responsibilities</td><td><code>gui/HistoryView</code> (course, period and activity filters); <code>cli</code> <code>history show [--course] [--last 7d|2w] [--type]</code>; <code>LearningFacade</code> (records an event for every operation); <code>agent/MemoryManager.recordEvent()</code>, <code>getHistory()</code>; <code>domain/LearningEvent</code>, <code>HistoryFilter</code>, <code>LearningHistory</code>; <code>persist/LearningHistoryRepository</code></td></tr>
+<tr><td class="k">Key methods</td><td><code>loadHistory()</code>, <code>getHistory()</code>, <code>recordEvent()</code>, <code>append()</code>, <code>find()</code>, <code>matches()</code></td></tr>
+<tr><td class="k">Design patterns</td><td>Facade</td></tr>
+<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+</table>
+<p class="flow"><span class="pill det">Deterministic</span> 21 event types are recorded; the agent also reads the last two weeks of events as learner context when planning and answering.</p>
+</div>
+
+<!-- ================================================================== 3 -->
+<h2 class="pagebreak">3. Implemented design patterns</h2>
+<p>All six patterns proposed in Stage 1 are implemented as designed; none was replaced. Each solves a problem that appears in the running code, described below with the participating classes, files and methods.</p>
+
+<h3>3.1 Strategy - study scheduling</h3>
+<table>
+<tr><td class="k">Design problem</td><td>Study time must be distributed differently depending on the time left before the exam; one method with all algorithms would grow a large conditional and be hard to test.</td></tr>
+<tr><td class="k">Participants and roles</td><td>Strategy: <code>StudyPlanningStrategy</code> (<code>buildSchedule(request, priorities)</code>). Concrete strategies: <code>ExamCramStrategy</code> (&le; 7 days: practice-heavy, weakest topics repeated, last day mixed review), <code>SpacedRepetitionStrategy</code> (&ge; 21 days: revisits after 1, 3, 7, 14 days), <code>BalancedReviewStrategy</code> (otherwise or no exam date). Context: <code>StudyScheduleTool</code> (<code>selectStrategy()</code>, <code>execute()</code>).</td></tr>
+<tr><td class="k">Files</td><td><code>backend/.../agent/tools/StudyPlanningStrategy.java</code>, <code>ExamCramStrategy.java</code>, <code>SpacedRepetitionStrategy.java</code>, <code>BalancedReviewStrategy.java</code>, <code>StudyScheduleTool.java</code>, shared slot arithmetic in <code>ScheduleSlots.java</code></td></tr>
+<tr><td class="k">How it follows the pattern</td><td>The tool selects a strategy object from the request and delegates; the agent and plan code only see <code>StudyScheduleTool</code>. Each strategy is unit-tested with fixed priorities (<code>StudyStrategyTest</code>).</td></tr>
+<tr><td class="k">Matches Stage 1?</td><td>Yes. Thresholds (7 / 21 days) were fixed during implementation.</td></tr>
+</table>
+
+<h3>3.2 Factory Method - question creation</h3>
+<table>
+<tr><td class="k">Design problem</td><td>LLM JSON specifications must become the right <code>Question</code> subclass with type-specific validation, without the generator switching on every concrete class.</td></tr>
+<tr><td class="k">Participants and roles</td><td>Creator: abstract <code>QuestionFactory</code> with template operation <code>build(spec)</code> (common checks) and factory method <code>createQuestion(spec, id)</code>. Concrete creators: <code>MultipleChoiceQuestionFactory</code>, <code>TrueFalseQuestionFactory</code>, <code>ShortAnswerQuestionFactory</code>. Product: <code>Question</code>; concrete products: <code>MultipleChoiceQuestion</code>, <code>TrueFalseQuestion</code>, <code>ShortAnswerQuestion</code>. Client: <code>QuizGenerationTool</code> (map of factories per <code>QuestionType</code>).</td></tr>
+<tr><td class="k">Files</td><td><code>agent/tools/QuestionFactory.java</code> and the three factories, <code>QuizGenerationTool.java</code>; <code>domain/Question.java</code> and subclasses</td></tr>
+<tr><td class="k">How it follows the pattern</td><td>The client calls <code>factories.get(spec.type).build(spec)</code>; rejected specs raise <code>ValidationException</code> and are replaced. Both quiz generation (F08) and adaptive sessions (F12) create questions this way, and <code>GradingService</code> grades through the polymorphic <code>grade()</code>.</td></tr>
+<tr><td class="k">Matches Stage 1?</td><td>Yes.</td></tr>
+</table>
+
+<h3>3.3 Facade - one application API for GUI and CLI</h3>
+<table>
+<tr><td class="k">Design problem</td><td>Both front ends must expose every feature; calling the agent, services and repositories directly would duplicate orchestration in two places and couple the UI to internal classes.</td></tr>
+<tr><td class="k">Participants and roles</td><td>Facade: <code>LearningFacade</code> (about 40 operations). Subsystem: <code>LearningAgent</code>, <code>CourseService</code>, <code>MaterialService</code>, <code>GradingService</code>, <code>ProgressTracker</code>, <code>ReminderScheduler</code>, <code>ConceptMapService</code>, <code>StudyPlanMonitor</code>, <code>QuestionBank</code>, <code>MemoryManager</code>, repositories. Clients: the 12 <code>BaseView</code> subclasses, <code>CLIApplication</code> and <code>StudyCommands</code>.</td></tr>
+<tr><td class="k">Files</td><td><code>application/LearningFacade.java</code>; wired once in <code>config/AppContext.java</code></td></tr>
+<tr><td class="k">How it follows the pattern</td><td>No view or CLI class imports a service, the agent or a repository; the facade only delegates and records the history event. Week 3 changes (auto concept extraction, question bank) were made behind the facade without touching the CLI dispatch code.</td></tr>
+<tr><td class="k">Matches Stage 1?</td><td>Yes. Two operations return new result records (<code>MaterialUpload</code>, <code>ActivityOutcome</code>), see section 4.</td></tr>
+</table>
+
+<h3>3.4 Observer - reacting to progress changes</h3>
+<table>
+<tr><td class="k">Design problem</td><td>When mastery changes, the dashboard must refresh, the plan may need revision and a review reminder may be due; the tracker must not depend on the GUI, the agent or the scheduler.</td></tr>
+<tr><td class="k">Participants and roles</td><td>Subject: <code>ProgressTracker</code> (<code>attach()</code>, <code>detach()</code>, <code>notifyObservers()</code>). Observer: <code>ProgressObserver</code> (<code>onProgressChanged(ProgressEvent)</code>). Concrete observers: <code>ProgressDashboardView</code>, <code>StudyPlanMonitor</code>, <code>ReminderScheduler</code>. Event: <code>ProgressEvent</code> (old/new mastery, <code>isSharpDrop()</code>, <code>fellBelowWeakThreshold()</code>).</td></tr>
+<tr><td class="k">Files</td><td><code>application/ProgressTracker.java</code>, <code>ProgressObserver.java</code>, <code>StudyPlanMonitor.java</code>, <code>ReminderScheduler.java</code>; <code>gui/ProgressDashboardView.java</code></td></tr>
+<tr><td class="k">How it follows the pattern</td><td>Push model: the event carries old and new mastery. A failing observer is reported and does not stop the others or undo the grading. The monitor and scheduler are attached in <code>AppContext</code>; the dashboard attaches itself when created.</td></tr>
+<tr><td class="k">Matches Stage 1?</td><td>Yes. Difference: the dashboard stays attached for the lifetime of the window rather than only while its tab is visible (simpler, no visible cost).</td></tr>
+</table>
+
+<h3>3.5 Adapter - LLM provider independence</h3>
+<table>
+<tr><td class="k">Design problem</td><td>Gemini and OpenAI-compatible APIs have incompatible request/response formats, structured-output mechanisms and errors; agent, tools and grading must not depend on either.</td></tr>
+<tr><td class="k">Participants and roles</td><td>Target: <code>LLMClient</code> (<code>generate()</code>, <code>generateStructured()</code>, <code>getModelName()</code>, <code>isAvailable()</code>). Adapters: <code>GeminiLLMAdapter</code>, <code>OpenAILLMAdapter</code>. Adaptees: <code>GeminiSdkClient</code> (<code>generateContent()</code>), <code>OpenAISdkClient</code> (<code>createChatCompletion()</code>), thin REST clients over <code>HttpJson</code> with the vendors' request shapes. Clients: <code>LearningAgent</code>, <code>Planner</code>, the generation tools, <code>GradingService</code>.</td></tr>
+<tr><td class="k">Files</td><td><code>integration/llm/*</code>; provider chosen by <code>LLMClientFactory</code> from <code>LLM_PROVIDER</code></td></tr>
+<tr><td class="k">How it follows the pattern</td><td>Adapters translate messages, JSON-mode requests, token counts and errors (into <code>LLMException</code>). Switching provider is a <code>.env</code> change; all tests use a fake <code>LLMClient</code>.</td></tr>
+<tr><td class="k">Matches Stage 1?</td><td>Yes. Added around it: <code>LLMClientFactory</code>, <code>UsageMeter</code> (wraps any client to count calls and tokens) and <code>UnavailableLLMClient</code> (no key).</td></tr>
+</table>
+
+<h3>3.6 State - adaptive difficulty</h3>
+<table>
+<tr><td class="k">Design problem</td><td>An adaptive session behaves differently at each level (question types, when to move up or down); <code>if (level == ...)</code> checks would scatter the rules.</td></tr>
+<tr><td class="k">Participants and roles</td><td>Context: <code>AdaptiveLearningSession</code> (<code>recordOutcome()</code>, <code>setState()</code>, <code>getState()</code>). State: <code>DifficultyState</code> (<code>getLevel()</code>, <code>onResult()</code>, <code>preferredQuestionTypes()</code>). Concrete states: <code>FoundationState</code>, <code>IntermediateState</code>, <code>AdvancedState</code>.</td></tr>
+<tr><td class="k">Files</td><td><code>domain/AdaptiveLearningSession.java</code>, <code>DifficultyState.java</code> and the three states</td></tr>
+<tr><td class="k">How it follows the pattern</td><td>Each state decides its own transition from the session's streak; the agent asks the current state which question types to generate and the <code>QuestionBank</code> fallback ranks stored questions by the same preferences.</td></tr>
+<tr><td class="k">Matches Stage 1?</td><td>Yes.</td></tr>
+</table>
+
+<h3>3.7 Updated UML class diagrams</h3>
+<p>The figures below show the implemented system in three views (as in Stage 1). Blue classes were added or changed in Stage 2. The complete specification-level model, with every class, attribute and method, is <code>docs/stage2/diagrams/class-model-stage2.iuml</code> (PlantUML, derived from the Stage 1 model); <code>scripts/render-stage2-diagrams.sh</code> renders it. Every class of the Stage 1 class model exists in the code; 50 classes were added: 23 enums, exceptions and small helpers, the 12 SQLite persistence classes, and 15 further classes (<code>ActivityOutcome</code>, <code>AppConfig</code>, <code>AppContext</code>, <code>ConsoleNotificationGateway</code>, <code>GeminiEmbeddingService</code>, <code>GuiContext</code>, <code>LLMClientFactory</code>, <code>LocalHashEmbeddingService</code>, <code>MaterialUpload</code>, <code>QuestionBank</code>, <code>QuestionPanel</code>, <code>StudyAgentGui</code>, <code>StudyCommands</code>, <code>UnavailableLLMClient</code>, <code>UsageMeter</code>), all explained in section 4.</p>
+<p><b>Use-case and sequence diagrams.</b> No use case was added or removed, so the Stage 1 use-case diagram remains accurate. The Stage 1 sequence diagrams remain accurate for the main flows; the changes are alternative flows or return types: SD07 (upload) now returns <code>MaterialUpload</code> and its "embedding unavailable" alternative keeps the material pending; SD04 (adaptive session) returns <code>ActivityOutcome</code> and has the stored-question alternative described in F12. These are documented in section 4 rather than redrawn.</p>
+<figure class="wide"><img src="img/class-view-a-presentation-application-portrait.png" alt="View A class diagram"><figcaption>Figure 1. View A - presentation and application layers (Facade, Observer).</figcaption></figure>
+<figure class="wide"><img src="img/class-view-b-agent-tools-domain-portrait.png" alt="View B class diagram"><figcaption>Figure 2. View B - agent, tools and the Strategy, Factory Method and State participants.</figcaption></figure>
+<figure class="wide"><img src="img/class-view-c-integration-persistence-portrait.png" alt="View C class diagram"><figcaption>Figure 3. View C - integration (Adapter) and persistence layers.</figcaption></figure>
+
+
+<!-- ================================================================== 4 -->
+<h2 class="pagebreak">4. Changes and rationale</h2>
+<p>Structure: original design &rarr; implemented change &rarr; reason &rarr; impact (affected use cases, classes, methods, patterns). No Stage 1 feature was removed or replaced and no design pattern was replaced.</p>
+
+<h3>4.1 Feature changes</h3>
+<table class="fixed">
+<tr><th style="width:5%">#</th><th style="width:19%">Original design (Stage 1)</th><th style="width:27%">Implemented change</th><th style="width:21%">Reason</th><th style="width:28%">Impact</th></tr>
+<tr><td>C1</td><td>F02/F04: UC02 includes UC04; <code>uploadMaterial()</code> returns <code>CourseMaterial</code>.</td><td>Modified F02: after indexing, the facade runs concept extraction and returns <code>MaterialUpload(material, concepts, conceptWarning)</code>.</td><td>The front ends must tell the student which concepts were found or why not, and an extraction failure must not undo the upload.</td><td>UC02, UC04; <code>LearningFacade.uploadMaterial()</code>, new <code>MaterialUpload</code>, <code>MaterialView</code>, CLI <code>material upload</code>; Facade.</td></tr>
+<tr><td>C2</td><td>F12: <code>submitActivityResult()</code> returns the next <code>Question</code>.</td><td>Returns <code>ActivityOutcome(result, previousLevel, level, next, notice)</code>; added <code>endAdaptiveSession()</code>.</td><td>The UI must show the grade and feedback of the answer just given and whether the level changed, which a bare question cannot carry.</td><td>UC12; <code>LearningFacade</code>, new <code>ActivityOutcome</code>, <code>LearningSessionView</code>, CLI <code>learning-session</code>; State, Facade.</td></tr>
+<tr><td>C3</td><td>F02: "embedding service unavailable &rarr; status remains UPLOADED, indexing retried later" (behaviour, no API given).</td><td><code>CourseMaterial.markIndexingPending()</code>, <code>MaterialService.retryPendingIndexing()</code>, retry at start-up, CLI <code>material reindex</code>, GUI Retry indexing.</td><td>Implements the specified alternative flow; the first version discarded the parsed text on any failure.</td><td>UC02; <code>MaterialService</code>, <code>CourseMaterial</code>, <code>LearningFacade.retryPendingIndexing()</code>, <code>CLIApplication</code>, <code>StudyAgentGui</code>, <code>MaterialView</code>.</td></tr>
+<tr><td>C4</td><td>F12: "LLM unavailable &rarr; next question drawn from previously generated questions for the same concept and level".</td><td>New <code>QuestionBank</code>: unused questions of the course's earlier quizzes, ranked by level and preferred type, then least-mastered concept; the session tracks asked ids.</td><td>A dedicated class keeps the selection rule deterministic and testable and out of the facade.</td><td>UC12; <code>QuestionBank</code>, <code>AdaptiveLearningSession.askedQuestionIds</code>, <code>LearningFacade.nextActivity()</code>; State (uses <code>preferredQuestionTypes()</code>).</td></tr>
+<tr><td>C5</td><td>F05: "LLM unavailable &rarr; error message".</td><td>The agent returns the three most relevant retrieved passages with citations, clearly labelled.</td><td>Retrieval works without an LLM, and showing the student their own material is more useful than an error.</td><td>UC05; <code>LearningAgent.extractiveAnswer()</code>.</td></tr>
+<tr><td>C6</td><td>F11: insufficient data below 5 graded attempts.</td><td>Implemented first with "a concept has 3 attempts", corrected in week 3 to "5 graded answers in the course"; a concept is weak after 3 attempts below 50%.</td><td>Align with the Stage 1 rule.</td><td>UC11; <code>LearningAgent.diagnoseWeakTopics()</code>.</td></tr>
+<tr><td>C7</td><td>CLI command list of Stage 1 (Appendix B).</td><td>Added <code>help</code>, <code>status</code>, <code>material reindex</code>, <code>flashcards list</code>, <code>quiz list</code>, <code>quiz generate --take</code>, <code>reminder dispatch</code>, <code>study-plan show --all</code>, <code>--trace</code>, <code>--help</code>, an interactive shell; <code>quiz explain</code> accepts the question number.</td><td>Usability and demonstration (the trace shows the agent's plan and tool results).</td><td>New class <code>StudyCommands</code> (F06-F16 handlers) split from <code>CLIApplication</code> to keep each class focused.</td></tr>
+<tr><td>C8</td><td>GUI: <code>BaseView</code> with 12 views.</td><td>Swing; added <code>StudyAgentGui</code> (window, course selector, tabs), <code>GuiContext</code> (selected course, refresh events, "Quiz me on this" requests), <code>QuestionPanel</code> (question input shared by quiz and adaptive views); <code>BaseView.runAsync()</code> runs LLM calls off the event thread.</td><td>Views needed shared state and one way to render questions; LLM calls take seconds and must not freeze the window.</td><td>All views; no pattern change.</td></tr>
+<tr><td>C9</td><td>GUI details: clickable citations; history entries link to objects; status badge.</td><td>Citations shown as text; history not clickable; status as a table column.</td><td>Time; the information is present.</td><td>Listed as limitations (section 1).</td></tr>
+</table>
+
+<h3 class="pagebreak">4.2 Architecture and class changes</h3>
+<table class="fixed">
+<tr><th style="width:5%">#</th><th style="width:19%">Original design</th><th style="width:27%">Implemented change</th><th style="width:24%">Reason</th><th style="width:25%">Impact</th></tr>
+<tr><td>A1</td><td>Repository interfaces only; "local SQLite".</td><td><code>SqliteDatabase</code> stores entities as JSON documents (kind, id, parent, owner) via Gson with <code>JsonCodec</code>; ten <code>Sqlite*Repository</code> classes; vectors in their own table (<code>SqliteVectorStore</code>).</td><td>One schema-free table keeps persistence small while the domain model evolves; polymorphic <code>Question</code>s are stored with their type.</td><td>Persistence layer only; interfaces unchanged.</td></tr>
+<tr><td>A2</td><td><code>EmbeddingService</code> (provider not fixed).</td><td><code>LocalHashEmbeddingService</code> by default (hashed, stemmed bag of words); <code>GeminiEmbeddingService</code> with <code>EMBEDDING_PROVIDER=gemini</code>. Vectors store their model name.</td><td>Works offline, costs no quota and is deterministic for tests; the free Gemini tier is kept for generation.</td><td>Retrieval is lexical by default (limitation in section 1).</td></tr>
+<tr><td>A3</td><td><code>LLMClient</code> with two adapters.</td><td>Added <code>LLMClientFactory</code>, <code>UsageMeter</code> (call and token counter shown by <code>study status</code>), <code>UnavailableLLMClient</code>.</td><td>Configuration-driven provider choice; usage visibility; explicit no-key mode instead of null checks.</td><td>Adapter unchanged; integration layer.</td></tr>
+<tr><td>A4</td><td>Objects created where needed.</td><td><code>AppContext</code> composition root and <code>AppConfig</code> (environment, <code>.env</code>, properties).</td><td>The GUI, the CLI and the tests build the identical object graph in one place.</td><td>Both <code>main()</code> methods; tests use <code>AppContext.create(config, db, llm, gateway)</code>.</td></tr>
+<tr><td>A5</td><td><code>DesktopNotificationGateway</code>.</td><td>Added <code>ConsoleNotificationGateway</code> for the CLI.</td><td>Terminal users see reminders in the terminal.</td><td>F14.</td></tr>
+<tr><td>A6</td><td>Student profile (no login specified).</td><td>One local profile created at start-up (<code>STUDENT_ID</code>, <code>STUDENT_NAME</code>).</td><td>Single-user desktop application.</td><td>No authentication.</td></tr>
+</table>
+
+<h3>4.3 Design pattern changes</h3>
+<p>None of the six patterns was replaced or substantially modified; their participants are those of Stage 1 (section 3). Patterns not counted toward the five: the template operation <code>QuestionFactory.build()</code> (part of Factory Method), <code>UsageMeter</code> wrapping an <code>LLMClient</code> (decorator-like), and the CLI's command registry.</p>
+
+<!-- ================================================================== 5 -->
+<h2 class="pagebreak">5. AI tools and collaboration log</h2>
+
+<h3>5.1 Tools used</h3>
+<table>
+<tr><th>Tool / platform</th><th>LLM / model</th><th>Used for (features, classes, tasks)</th><th>Tokens and cost</th></tr>
+<tr><td><span class="todo">[week 1 tool, e.g. ...]</span></td><td><span class="todo">[model]</span></td><td>Week 1 (Oct 26) commits: domain model, persistence, LLM adapters, parsing and retrieval, agent core, strategies, factories, generation tools <span class="todo">[confirm]</span></td><td><span class="todo">[tokens / $]</span></td></tr>
+<tr><td>Claude Code (VS Code extension)</td><td>Claude Opus 5.5 (<code>claude-opus-5-5</code>)</td><td>Week 2: <code>LearningAgent</code>, application services and <code>LearningFacade</code>, <code>AppContext</code>, CLI (<code>CLIApplication</code>, <code>CommandParser</code>, <code>StudyCommands</code>), Swing GUI (12 views). Week 3: gap analysis against the Stage 1 specification and fixes C1-C6, F15 "Quiz me on this", sample data, demo script, class diagrams and this report draft. Tests for all of the above.</td><td><span class="todo">[tokens / $ from the Claude usage page]</span></td></tr>
+<tr><td>Google Gemini API (runtime, not a development tool)</td><td><code>gemini-2.5-flash</code></td><td>The application's own LLM at run time (free tier).</td><td><span class="todo">[$0 on the free tier / usage]</span></td></tr>
+</table>
+
+<h3>5.2 Representative interactions</h3>
+<table>
+<tr><th style="width:18%">Request</th><th style="width:42%">What the AI did</th><th>Human decisions and review</th></tr>
+<tr><td>"The professor said Stage 2 must be in Java; change the project to Java."</td><td>Inspected the repository and reported that all 162 source files were already Java (Gradle, Java 21), built it and ran the 57 existing tests, and listed what was actually missing: the agent loop, the application layer, the CLI and the GUI.</td><td>No conversion was needed; the student decided to proceed with implementing the missing layers.</td></tr>
+<tr><td>"Do 10 commits for Stage 2 week 2."</td><td>Implemented the missing layers as ten working, tested commits (agent loop; grading and progress; services; observers; facade; CLI x2; GUI x3). The end-to-end facade test exposed two defects that were fixed before committing (whole-course quiz retrieved nothing; its questions did not update mastery); a CLI test exposed that the parser lowercased the first word of questions.</td><td>The student required that commits list only her as author and that AI attribution lines be removed from commit messages; this report documents the AI use instead, as the course requires.</td></tr>
+<tr><td>"Complete Stage 2 and make it ready for submission."</td><td>Compared every F01-F16 specification with the code and implemented the missing alternative flows (C1, C3, C4, C6, F06 grounding warning and retry, F15 "Quiz me on this"); added sample data and a demo script; running the demo without a key exposed a misleading error message, which was fixed.</td><td><span class="todo">[describe your own review: what you read, ran and changed]</span></td></tr>
+</table>
+<p class="small"><b>Problems in AI-generated code caught during development:</b> a reference to a non-existent helper class (compile error, fixed by using the Planner's tool names); a meaningless statement and a button that stayed disabled after a failed LLM call in <code>TutorChatView</code> (fixed with an "always" callback in <code>runAsync</code>); a redundant expression in <code>QuestionBank.pick()</code>; incorrect test expectations (an empty priorities list that the validator correctly rejects; a flashcard due-date assumption). Each was found by compiling, by the tests, or by reviewing the diff before committing.</p>
+
+<!-- ================================================================== 6 -->
+<h2 class="pagebreak">6. Development and verification summary</h2>
+
+<h3>6.1 Weekly commit summary</h3>
+<p class="small">Links: <code>https://github.com/Nazaninsoleimani/EECS3311/commit/&lt;id&gt;</code>. Every listed commit changes implementation or test code. Dates are Toronto time.</p>
+
+<h4>Period 1 - October 20-26, 2026 (11 commits, minimum 5)</h4>
+<table class="small">
+<tr><th style="width:12%">Commit</th><th style="width:12%">Date</th><th>Change</th></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/605beff7848426f62d371168e9bb91780b5e4e68">605beff</a></td><td>2026-10-26</td><td>Set up Gradle multi-module build and core domain model</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/3815bc511e285110363ea474097defe119f7e10f">3815bc5</a></td><td>2026-10-26</td><td>Add course material, chunk, summary and concept graph domain classes</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/d0c0baa6cddd37e939d3c1b2e133d56c7db37c2a">d0c0baa</a></td><td>2026-10-26</td><td>Implement question hierarchy with polymorphic grading and quiz attempts</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/fba50f60f2f40be560a398e2f7ee455766846a26">fba50f6</a></td><td>2026-10-26</td><td>Add progress, flashcard, study plan, reminder and history domain rules</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/2acdea65deb453d4636396831b2e191b85a2eefe">2acdea6</a></td><td>2026-10-26</td><td>Add repository interfaces and SQLite persistence layer</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/43880179dd96b0a2af576530e403e7df2b7213d7">4388017</a></td><td>2026-10-26</td><td>Implement LLM provider adapters (Gemini, OpenAI-compatible) and config</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/84d748709fbd262135cbc27d3a8a5578687edfd3">84d7487</a></td><td>2026-10-26</td><td>Add document parsing, chunking, embeddings and vector retrieval</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/9796881b82fdccbf7496d674dbbd407a9aa96da4">9796881</a></td><td>2026-10-26</td><td>Add agent core: planner, tool registry, memory, context builder, validator</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/5ba5ef91d88a368f2b965e4d428bc0f803bfdb37">5ba5ef9</a></td><td>2026-10-26</td><td>Implement study scheduling strategies and progress analysis tool</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/055a8aec7bd2fb90c713dec1dfe0bba9915b01f2">055a8ae</a></td><td>2026-10-26</td><td>Add question factories, quiz generation tool and adaptive difficulty states</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/532d36a91d27aad3e5a1e27d1c544a414c5acc0e">532d36a</a></td><td>2026-10-26</td><td>Add summarization, concept extraction and flashcard generation tools</td></tr>
+</table>
+
+<h4>Period 2 - October 27 - November 2, 2026 (10 commits, minimum 5)</h4>
+<table class="small">
+<tr><th style="width:12%">Commit</th><th style="width:12%">Date</th><th>Change</th></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/87a9da91b3cf654bdcefd29067515ee04f6c53d6">87a9da9</a></td><td>2026-10-30</td><td>Implement LearningAgent loop with grounded answers and plan execution</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/b781d5b3da220254aa85c1fa36d873ab1462e9cf">b781d5b</a></td><td>2026-10-30</td><td>Add GradingService and ProgressTracker subject with progress observers</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/a04de3bfc57d1d440b59af42ddc31cfdb6f2d98e">a04de3b</a></td><td>2026-10-30</td><td>Add course, material upload and concept map application services</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/badde08da52bd427894fe9b546b52e87909d0df0">badde08</a></td><td>2026-10-30</td><td>Add ReminderScheduler and StudyPlanMonitor progress observers</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/4e656ebdc1d7b376be50748e02f8992c44a0b5fa">4e656eb</a></td><td>2026-10-30</td><td>Add LearningFacade and AppContext composition root</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/80f3ff8bb88bf9b44ad4950984c0fbe3abfd7b6c">80f3ff8</a></td><td>2026-10-30</td><td>Add CLI command parser and course, material and tutor commands</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/150c6e13900df0cb554c1c90eff1dcb8826df78d">150c6e1</a></td><td>2026-10-30</td><td>Add CLI commands for study plans, practice, progress and reminders</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/9c4746fb64c4937aa6eefd48fd32c4ca24d7094c">9c4746f</a></td><td>2026-10-30</td><td>Add Swing GUI shell with course, material and tutor views</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/16846484b596f00c2d431dae266e23be6670582c">1684648</a></td><td>2026-10-30</td><td>Add GUI study planner, quiz, flashcard and adaptive session views</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/3623aead7d16c8fdbc9914b65fd690a92fe38336">3623aea</a></td><td>2026-10-30</td><td>Add GUI dashboard, progress observer, concept map, reminder and history views</td></tr>
+</table>
+
+<h4>Period 3 - November 3-9, 2026 (7 code commits, minimum 5)</h4>
+<table class="small">
+<tr><th style="width:12%">Commit</th><th style="width:12%">Date</th><th>Change</th></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/3fc77369368a2b928a46b2018fb286ff5d332432">3fc7736</a></td><td>2026-11-05</td><td>Extract concepts automatically after a material is uploaded (C1)</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/bee0f157f0f2384ee0ad9ef6612d2d8f7077e13c">bee0f15</a></td><td>2026-11-05</td><td>Reuse stored questions when adaptive generation fails (C4)</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/924acd6040e69ac16e0f7217bbcdfdbf3cdd3b7e">924acd6</a></td><td>2026-11-05</td><td>Keep materials pending and retry indexing after embedding failures (C3)</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/58cae4e62854b326c42d098e5a92dbe210a40ec4">58cae4e</a></td><td>2026-11-05</td><td>Reject past exam dates and require five graded answers for diagnosis (F01, C6)</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/d8bb6294591ff7fb2c44fe0ed7c291b849313caf">d8bb629</a></td><td>2026-11-05</td><td>Ground study plans in concept material and retry invalid priorities (F06)</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/7a220dfad0ab06309ea6b51b744cc33bae7df5aa">7a220df</a></td><td>2026-11-05</td><td>Add Quiz me on this from the concept map (F15)</td></tr>
+<tr><td><a href="https://github.com/Nazaninsoleimani/EECS3311/commit/e1332216b9faae024d894a0be45583e220b074e2">e133221</a></td><td>2026-11-05</td><td>Add sample course material and a CLI demo script (and fix a misleading error)</td></tr>
+</table>
+
+<h3>6.2 Checks performed</h3>
+<table>
+<tr><th style="width:26%">Check</th><th>Result</th></tr>
+<tr><td>Build (<code>./gradlew build</code>)</td><td>Compiles <code>backend</code>, <code>frontend:cli</code>, <code>frontend:gui</code> with Java 21; 118 JUnit tests, 0 failures.</td></tr>
+<tr><td>Backend unit and integration tests (87)</td><td>Domain rules (grading, mastery, Leitner, reminders, concept graph); SQLite repositories; LLM adapters against canned vendor responses (request shape, response mapping, retry, empty answers); retrieval pipeline; agent core (validator, context builder, planner); strategies, factories and states; generation tools with a scripted LLM; <code>LearningAgent</code> (grounding and regeneration, fallbacks, plan priorities and retry, adaptive concept choice, weak-topic thresholds); services (uploads, indexing retry, exam dates, cascade delete, concept-map remapping); observers; adaptive fallback; an end-to-end facade test through all sixteen features.</td></tr>
+<tr><td>CLI tests (14)</td><td>Parser (options, flags, quoting, invalid values); every command group run against an in-memory backend with scripted input (quiz taking, flashcard review, adaptive session, reminders, history filters, help listing all features, exit codes).</td></tr>
+<tr><td>GUI tests (17, headless)</td><td>Each view built without a window and checked against facade data: course selection, materials and summaries, tutor answers with sources, plan table, quiz grading display, flashcard flow, adaptive outcome, live progress observer update, concept map details and "Quiz me on this", reminders, history filter, dashboard, all 12 tabs present.</td></tr>
+<tr><td>Manual runs without an API key</td><td>Real GUI launched against a scratch database (no errors). <code>scripts/demo-cli.sh</code> over <code>sample-data/</code>: course creation, uploads, cited extractive answers, clear errors for AI-only features, history.</td></tr>
+<tr><td>Manual run with the Gemini key</td><td><span class="todo">[date, which features you exercised, any problems observed]</span></td></tr>
+<tr><td>API-key protection</td><td><code>.env</code> is ignored by git and has never been committed (checked in the history); <code>.env.example</code> contains placeholders only; keys are read only by <code>AppConfig</code>.</td></tr>
+</table>
+
+<h3>6.3 Important defects found and corrected</h3>
+<table class="small">
+<tr><th style="width:30%">Defect</th><th style="width:30%">How it was found</th><th>Correction</th></tr>
+<tr><td>Whole-course quiz retrieved no material (generic query)</td><td>End-to-end facade test</td><td>Query with the course's concept names; sample chunks across the material as a fallback</td></tr>
+<tr><td>Whole-course quiz questions had no concept, so mastery never changed</td><td>End-to-end facade test</td><td>Generation targets the course's known concepts</td></tr>
+<tr><td>CLI lowercased the first word of a question (<code>study ask What ...</code>)</td><td>Parser test</td><td>Lowercase only for command lookup</td></tr>
+<tr><td>Tutor "Ask" button stayed disabled after a failed LLM call</td><td>Code review</td><td><code>runAsync</code> overload with an always-run callback</td></tr>
+<tr><td>Any indexing failure discarded the parsed text and marked the material failed</td><td>Stage 1 specification review</td><td>Indexing-pending state and retry (C3)</td></tr>
+<tr><td>Study plan without focus topics searched with an empty query and could not be grounded</td><td>Stage 1 specification review</td><td>Concept names as query; ungrounded warning</td></tr>
+<tr><td>"Upload material first" shown although material was uploaded (no concepts without AI)</td><td>Demo script run without a key</td><td>Message explains that concepts come from AI extraction</td></tr>
+</table>
+
+<h3>6.4 Remaining limitations</h3>
+<p>See section 1 (scripted LLM in tests, lexical default retrieval, no OCR, simplified GUI details, single user, variable short-answer grading). Stage 3 will add the full deterministic test plan and KUMA agent validation.</p>
+
+<!-- ================================================================== 7 -->
+<h2 class="pagebreak">7. Demonstration index</h2>
+<p>Each segment shows the feature ID and name, how it is invoked and its input, the running result, where AI is involved, and an error or alternative case. Together the recordings show both the GUI and the CLI. No API key appears in any recording. Sample data: <code>sample-data/EECS3311/</code>.</p>
+<table>
+<tr><th style="width:23%">Feature</th><th style="width:11%">Interface</th><th style="width:38%">What the segment shows (incl. error / alternative case)</th><th>Video link and timestamp</th></tr>
+<tr><td>F01 Course Management</td><td>GUI + CLI</td><td>Create, edit, delete with confirmation; duplicate code and past exam date rejected</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F02 Material Upload</td><td>GUI + CLI</td><td>Upload the three sample notes, status table; <code>.pptx</code> rejected; empty file FAILED</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F03 Summarization</td><td>GUI</td><td>Brief and detailed summary with key points</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F04 Concept Extraction</td><td>GUI + CLI</td><td>Concepts listed after upload; re-extract</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F05 Question Answering</td><td>GUI + CLI <code>ask -i</code></td><td>Cited answer, follow-up "why is that?", "Show agent plan"; unrelated question &rarr; not covered</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F06 Study Plan</td><td>GUI</td><td>Generate with exam date and minutes; strategy and rationale; mark task done; plan revision after a poor quiz</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F07 Flashcards</td><td>CLI + GUI</td><td>Generate a deck, review with ratings, next-review dates</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F08 Quiz Generation</td><td>GUI</td><td>Choose types, difficulty, concepts; notice when fewer questions pass validation</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F09 Quiz Grading</td><td>GUI + CLI <code>quiz take</code></td><td>Submit with an unanswered question; per-question feedback; short answer graded by AI</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F10 Answer Explanation</td><td>GUI + CLI</td><td>Explain a wrong answer with sources</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F11 Weak Topics</td><td>GUI + CLI</td><td>Insufficient-data message first; after practice, weak topics with AI diagnosis</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F12 Adaptive Difficulty</td><td>CLI + GUI</td><td>Three correct answers &rarr; level up; two wrong &rarr; level down</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F13 Progress Tracking</td><td>GUI + CLI</td><td>Progress tab updating live after a quiz (Observer); <code>progress show</code></td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F14 Reminders</td><td>GUI + CLI</td><td>Add a reminder two minutes ahead and receive the notification; past time rejected; cancel</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F15 Concept Map</td><td>GUI + CLI</td><td>Coloured map, click a concept, Quiz me on this; Mermaid output in the CLI</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F16 History</td><td>GUI + CLI</td><td>Filters by course, period and activity type; <code>history show --last 7d --type quiz_completed</code></td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+</table>
+
+<h3>Appendix - running the submission</h3>
+<pre>cp .env.example .env            # put your own key in .env (never committed)
+./gradlew build                 # compile and run the tests
+./gradlew :frontend:gui:run     # GUI
+./gradlew :frontend:cli:installDist && frontend/cli/build/install/study/bin/study help   # CLI
+scripts/demo-cli.sh             # CLI walkthrough over sample-data/ in a separate demo database</pre>
+<p class="small">Full instructions, prerequisites and example usage are in the repository README.</p>
+
+</body>
+</html>
