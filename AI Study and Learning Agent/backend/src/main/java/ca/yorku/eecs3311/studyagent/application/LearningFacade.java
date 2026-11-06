@@ -36,6 +36,7 @@ import ca.yorku.eecs3311.studyagent.domain.Summary;
 import ca.yorku.eecs3311.studyagent.domain.SummaryOptions;
 import ca.yorku.eecs3311.studyagent.domain.ValidationException;
 import ca.yorku.eecs3311.studyagent.domain.WeakTopicReport;
+import ca.yorku.eecs3311.studyagent.integration.llm.LLMException;
 import ca.yorku.eecs3311.studyagent.integration.llm.UsageMeter;
 import ca.yorku.eecs3311.studyagent.persistence.FlashcardRepository;
 import ca.yorku.eecs3311.studyagent.persistence.QuizRepository;
@@ -121,12 +122,24 @@ public class LearningFacade {
 
     // ------------------------------------------------------------------ F02-F04 materials
 
-    public CourseMaterial uploadMaterial(String courseId, Path file) {
+    /**
+     * UC02 includes UC04: once the material is indexed, its concepts are extracted automatically.
+     * An extraction failure never undoes the upload; the material stays usable and extraction can be re-run.
+     */
+    public MaterialUpload uploadMaterial(String courseId, Path file) {
         Course c = courseService.find(courseId);
         CourseMaterial m = materialService.upload(courseId, file);
         record(c.getStudentId(), courseId, EventType.MATERIAL_UPLOADED, "Uploaded " + m.getTitle() + " (" + m.getStatus()
                 + (m.isIndexed() ? ", " + m.getChunkCount() + " chunks" : ": " + m.getFailureReason()) + ")", m.getId());
-        return m;
+        if (!m.isIndexed()) return new MaterialUpload(m, null, null);
+        if (!agent.isLlmAvailable()) {
+            return new MaterialUpload(m, null, "Concepts were not extracted because no AI model is configured.");
+        }
+        try {
+            return new MaterialUpload(m, extractConcepts(m.getId()), null);
+        } catch (AgentException | LLMException | ValidationException e) {
+            return new MaterialUpload(m, null, "Concept extraction failed (" + e.getMessage() + "); retry it from the material.");
+        }
     }
 
     public List<CourseMaterial> listMaterials(String courseId) {

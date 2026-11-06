@@ -42,8 +42,8 @@ class GuiTestSupport implements AutoCloseable {
         Course c = app.facade().createCourse(app.studentId(), "EECS3311", "Software Design", LocalDate.now().plusDays(6));
         Path notes = Files.writeString(dir.resolve("patterns.md"),
                 "The observer pattern: a subject notifies its observers. ".repeat(20) + "An adapter converts an interface. ".repeat(20));
-        CourseMaterial m = app.facade().uploadMaterial(c.getId(), notes);
-        app.facade().extractConcepts(m.getId());
+        CourseMaterial m = app.facade().uploadMaterial(c.getId(), notes).material();
+        if (!m.isIndexed()) throw new IllegalStateException(m.getFailureReason());
         ctx.reloadCourses();
         return c;
     }

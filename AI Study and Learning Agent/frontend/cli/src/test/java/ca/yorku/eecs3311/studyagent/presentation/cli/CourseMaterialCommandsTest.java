@@ -21,6 +21,7 @@ class CourseMaterialCommandsTest {
         assertEquals(0, t.run("material upload --course EECS3311 \"" + notes + "\""));
         String out = t.output();
         assertTrue(out.contains("chunks indexed"), out);
+        assertTrue(out.contains("2 concept(s) extracted: Observer Pattern, Adapter Pattern"), out);
         return out.substring(out.indexOf("(id ") + 4, out.indexOf(")"));
     }
 

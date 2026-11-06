@@ -2,6 +2,7 @@ package ca.yorku.eecs3311.studyagent.presentation.cli;
 
 import ca.yorku.eecs3311.studyagent.agent.AgentException;
 import ca.yorku.eecs3311.studyagent.application.LearningFacade;
+import ca.yorku.eecs3311.studyagent.application.MaterialUpload;
 import ca.yorku.eecs3311.studyagent.config.AppConfig;
 import ca.yorku.eecs3311.studyagent.config.AppContext;
 import ca.yorku.eecs3311.studyagent.domain.Answer;
@@ -178,11 +179,16 @@ public class CLIApplication {
         });
 
         register("material upload", "study material upload --course <course> <file>",
-                "F02: upload a PDF, DOCX, TXT or Markdown file and index it", cmd -> {
+                "F02/F04: upload a PDF, DOCX, TXT or Markdown file, index it and extract its concepts", cmd -> {
                     Course c = course(cmd);
-                    CourseMaterial m = facade.uploadMaterial(c.getId(), Path.of(cmd.arg(0, "file path")));
-                    return m.isIndexed() ? "Uploaded " + m.getTitle() + " (id " + m.getId() + "): " + m.getChunkCount() + " chunks indexed."
-                            : "Upload failed for " + m.getTitle() + ": " + m.getFailureReason();
+                    MaterialUpload up = facade.uploadMaterial(c.getId(), Path.of(cmd.arg(0, "file path")));
+                    CourseMaterial m = up.material();
+                    if (!m.isIndexed()) return "Upload failed for " + m.getTitle() + ": " + m.getFailureReason();
+                    String concepts = up.conceptsExtracted()
+                            ? "\n" + up.concepts().nodes.size() + " concept(s) extracted: "
+                                    + up.concepts().nodes.stream().map(k -> k.getName()).collect(Collectors.joining(", "))
+                            : "\nNote: " + up.conceptWarning();
+                    return "Uploaded " + m.getTitle() + " (id " + m.getId() + "): " + m.getChunkCount() + " chunks indexed." + concepts;
                 });
         register("material list", "study material list --course <course>", "F02: list a course's materials", cmd -> {
             List<CourseMaterial> list = facade.listMaterials(course(cmd).getId());

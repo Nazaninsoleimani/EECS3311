@@ -1,5 +1,6 @@
 package ca.yorku.eecs3311.studyagent.presentation.gui;
 
+import ca.yorku.eecs3311.studyagent.application.MaterialUpload;
 import ca.yorku.eecs3311.studyagent.domain.ConceptGraph;
 import ca.yorku.eecs3311.studyagent.domain.Course;
 import ca.yorku.eecs3311.studyagent.domain.CourseMaterial;
@@ -77,11 +78,19 @@ public class MaterialView extends BaseView {
     public void uploadFile(Path path) {
         Course c = requireCourse();
         if (c == null) return;
-        runAsync("Uploading and indexing " + path.getFileName(), () -> facade.uploadMaterial(c.getId(), path), m -> {
-            render();
-            output.setText(m.isIndexed() ? "Uploaded " + m.getTitle() + ": " + m.getChunkCount() + " chunks indexed for retrieval."
-                    : "Could not index " + m.getTitle() + ": " + m.getFailureReason());
-        });
+        runAsync("Uploading, indexing and extracting concepts from " + path.getFileName(), () -> facade.uploadMaterial(c.getId(), path),
+                up -> {
+                    render();
+                    output.setText(describe(up));
+                    if (up.conceptsExtracted()) ctx.fireDataChanged();
+                });
+    }
+
+    static String describe(MaterialUpload up) {
+        CourseMaterial m = up.material();
+        if (!m.isIndexed()) return "Could not index " + m.getTitle() + ": " + m.getFailureReason();
+        String head = "Uploaded " + m.getTitle() + ": " + m.getChunkCount() + " chunks indexed for retrieval.\n\n";
+        return head + (up.conceptsExtracted() ? describe(up.concepts(), m.getTitle()) : "Note: " + up.conceptWarning());
     }
 
     private void delete() {

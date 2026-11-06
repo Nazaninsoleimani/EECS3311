@@ -51,8 +51,11 @@ class LearningFacadeTest {
             Path notes = Files.writeString(dir.resolve("patterns.txt"),
                     "The observer pattern: a subject notifies its observers when its state changes. ".repeat(20)
                             + "The adapter pattern converts the interface of a class into another interface clients expect. ".repeat(20));
-            CourseMaterial m = f.uploadMaterial(c.getId(), notes);
+            MaterialUpload up = f.uploadMaterial(c.getId(), notes);
+            CourseMaterial m = up.material();
             assertTrue(m.isIndexed());
+            assertTrue(up.conceptsExtracted(), "UC02 includes UC04: concepts extracted on upload");
+            assertEquals(2, up.concepts().nodes.size());
 
             assertEquals("Two patterns.", f.summarizeMaterial(m.getId(), new SummaryOptions(SummaryLength.BRIEF)).getText());
             ConceptGraph graph = f.extractConcepts(m.getId());
@@ -106,7 +109,11 @@ class LearningFacadeTest {
                 new UnavailableLLMClient("no key"), (t, b, to) -> true)) {
             LearningFacade f = app.facade();
             Course c = f.createCourse(app.studentId(), "EECS3311", "Software Design", null);
-            CourseMaterial m = f.uploadMaterial(c.getId(), Files.writeString(dir.resolve("n.txt"), "Factory method defers creation to subclasses. ".repeat(30)));
+            MaterialUpload up = f.uploadMaterial(c.getId(), Files.writeString(dir.resolve("n.txt"), "Factory method defers creation to subclasses. ".repeat(30)));
+            CourseMaterial m = up.material();
+            assertTrue(m.isIndexed(), "indexing needs no LLM");
+            assertFalse(up.conceptsExtracted());
+            assertTrue(up.conceptWarning().contains("no AI model"));
             assertTrue(f.askQuestion("s", c.getId(), "what does factory method defer to subclasses?").text.contains("unavailable"));
             Exception e = assertThrows(RuntimeException.class, () -> f.summarizeMaterial(m.getId(), new SummaryOptions(null)));
             assertTrue(e.getMessage().contains("Summary unavailable"));
