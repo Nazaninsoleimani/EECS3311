@@ -42,13 +42,15 @@ public class CourseService {
     public Course createCourse(String studentId, String code, String title, LocalDate examDate) {
         Course course = new Course(Ids.newId("c"), studentId, code, title, examDate);
         requireUniqueCode(studentId, course.getCode(), null);
+        requireFutureExam(examDate, null);
         courses.save(course);
         return course;
     }
 
     public Course updateCourse(Course course) {
-        find(course.getId());
+        Course stored = find(course.getId());
         requireUniqueCode(course.getStudentId(), course.getCode(), course.getId());
+        requireFutureExam(course.getExamDate(), stored.getExamDate());
         courses.save(course);
         return course;
     }
@@ -79,6 +81,13 @@ public class CourseService {
         return courses.findById(idOrCode).or(() -> listCourses(studentId).stream()
                         .filter(c -> c.getCode().equalsIgnoreCase(idOrCode.trim())).findFirst())
                 .orElseThrow(() -> new ValidationException("No course '" + idOrCode + "'"));
+    }
+
+    /** A new or changed exam date must not be in the past; an unchanged date may be (the course stays editable after the exam). */
+    private static void requireFutureExam(LocalDate examDate, LocalDate previous) {
+        if (examDate != null && !examDate.equals(previous) && examDate.isBefore(LocalDate.now())) {
+            throw new ValidationException("Exam date " + examDate + " is in the past");
+        }
     }
 
     private void requireUniqueCode(String studentId, String code, String exceptId) {

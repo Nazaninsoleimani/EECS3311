@@ -64,6 +64,8 @@ public class LearningAgent {
             "{\"diagnoses\":[{\"conceptName\":\"string\",\"diagnosis\":\"string\",\"recommendedActivity\":\"READ|FLASHCARDS|QUIZ|ADAPTIVE_SESSION\"}]}",
             List.of("diagnoses"));
     static final String NOT_COVERED = "The course material does not cover this.";
+    /** Stage 1 (F11): fewer graded answers than this in a course give a report with sufficientData=false. */
+    static final int MIN_GRADED_FOR_DIAGNOSIS = 5;
 
     private final Planner planner;
     private final ToolRegistry tools;
@@ -400,7 +402,8 @@ public class LearningAgent {
         List<TopicPriority> ranked = ctx.results.get("analyze").payload();
         Map<String, ConceptMastery> mastery = new HashMap<>();
         ctx.learner.masteries.forEach(m -> mastery.put(m.getConceptId(), m));
-        boolean sufficient = mastery.values().stream().anyMatch(m -> m.getAttempts() >= ConceptMastery.MIN_ATTEMPTS_FOR_WEAK);
+        int graded = mastery.values().stream().mapToInt(ConceptMastery::getAttempts).sum();
+        boolean sufficient = graded >= MIN_GRADED_FOR_DIAGNOSIS;
         WeakTopicReport report = new WeakTopicReport(courseId, sufficient);
         for (TopicPriority t : ranked) {
             ConceptMastery m = mastery.get(t.concept.getId());
@@ -410,8 +413,8 @@ public class LearningAgent {
                     t.reason, recommendedActivity(m.getMastery())));
         }
         if (!sufficient) {
-            report.message = "Not enough graded practice yet: a concept needs at least " + ConceptMastery.MIN_ATTEMPTS_FOR_WEAK
-                    + " graded attempts before it can be called weak. Take a quiz or an adaptive session first.";
+            report.message = "Not enough graded practice yet: " + graded + " of the " + MIN_GRADED_FOR_DIAGNOSIS
+                    + " graded answers needed for a reliable analysis. Take a diagnostic quiz or an adaptive session first.";
             if (report.topics.isEmpty()) {
                 ranked.stream().limit(3).forEach(t -> report.topics.add(new WeakTopic(t.concept.getId(), t.concept.getName(),
                         0.0, t.priority, "Suggested next: " + t.reason, ActivityType.READ)));

@@ -8,6 +8,7 @@ import ca.yorku.eecs3311.studyagent.integration.retrieval.*;
 import ca.yorku.eecs3311.studyagent.persistence.sqlite.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -33,6 +34,21 @@ class CourseMaterialServicesTest {
         assertDoesNotThrow(() -> courses.createCourse("s2", "EECS3311", "Other student", null));
         assertEquals(c.getId(), courses.resolve("s1", "Eecs3311").getId());
         assertEquals(c.getId(), courses.resolve("s1", c.getId()).getId());
+    }
+
+    @Test
+    void pastExamDatesAreRejectedButAnUnchangedOneIsKept() {
+        assertThrows(ValidationException.class, () -> courses.createCourse("s1", "EECS3311", "Design", LocalDate.now().minusDays(1)));
+        Course c = courses.createCourse("s1", "EECS3311", "Design", LocalDate.now());
+        c.setExamDate(LocalDate.now().minusDays(3));
+        ValidationException e = assertThrows(ValidationException.class, () -> courses.updateCourse(c));
+        assertTrue(e.getMessage().contains("in the past"));
+
+        // a course whose exam already passed can still be renamed
+        db.put("course", c.getId(), null, "s1", new Course(c.getId(), "s1", "EECS3311", "Design", LocalDate.now().minusDays(30)));
+        Course old = courses.find(c.getId());
+        old.setTitle("Design (done)");
+        assertEquals("Design (done)", courses.updateCourse(old).getTitle());
     }
 
     @Test

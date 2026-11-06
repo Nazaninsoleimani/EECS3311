@@ -141,6 +141,13 @@ class LearningAgentTest {
         ConceptMastery m = new ConceptMastery("s1", "c1", "k1", "Inheritance");
         for (int i = 0; i < 3; i++) m.applyResult(new GradeResult("q" + i, "k1", false, 0.1, ""));
         progress.saveMastery(m);
+        WeakTopicReport three = agent(new UnavailableLLMClient("none")).diagnoseWeakTopics("s1", "c1");
+        assertFalse(three.sufficientData, "Stage 1: at least 5 graded answers");
+        assertTrue(three.message.contains("3 of the 5"));
+
+        ConceptMastery other = new ConceptMastery("s1", "c1", "k2", "Polymorphism");
+        for (int i = 0; i < 2; i++) other.applyResult(new GradeResult("p" + i, "k2", true, 1.0, ""));
+        progress.saveMastery(other);
         WeakTopicReport report = agent(new UnavailableLLMClient("none")).diagnoseWeakTopics("s1", "c1");
         assertTrue(report.sufficientData);
         assertEquals("Inheritance", report.topics.get(0).conceptName);
