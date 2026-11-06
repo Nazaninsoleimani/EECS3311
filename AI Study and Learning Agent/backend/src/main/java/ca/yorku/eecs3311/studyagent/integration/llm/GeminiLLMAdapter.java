@@ -6,12 +6,22 @@ import com.google.gson.JsonObject;
 
 /** Adapter: translates LLMRequest/LLMResponse to and from the Gemini generateContent format. */
 public class GeminiLLMAdapter implements LLMClient {
+    /** Pauses before each retry of a temporary failure. */
+    static final long[] DEFAULT_RETRY_DELAYS_MS = {2000, 5000, 10000};
+
     private final GeminiSdkClient sdk;
     private final String model;
+    private final long[] retryDelaysMs;
 
     public GeminiLLMAdapter(GeminiSdkClient sdk, String model) {
+        this(sdk, model, DEFAULT_RETRY_DELAYS_MS);
+    }
+
+    /** Tests pass short delays. */
+    public GeminiLLMAdapter(GeminiSdkClient sdk, String model, long[] retryDelaysMs) {
         this.sdk = sdk;
         this.model = model;
+        this.retryDelaysMs = retryDelaysMs.clone();
     }
 
     @Override
@@ -29,13 +39,18 @@ public class GeminiLLMAdapter implements LLMClient {
     @Override
     public String getModelName() { return "gemini:" + model; }
 
+    /**
+     * Calls the model, retrying temporary failures (HTTP 429/5xx, timeouts) with growing pauses: the free
+     * tier often answers "high demand" for a few seconds.
+     */
     private LLMResponse call(JsonObject body) {
-        try {
-            return fromGemini(sdk.generateContent(model, body));
-        } catch (LLMException e) {
-            if (!e.isRetryable()) throw e;
-            pause();
-            return fromGemini(sdk.generateContent(model, body));
+        for (int attempt = 0; ; attempt++) {
+            try {
+                return fromGemini(sdk.generateContent(model, body));
+            } catch (LLMException e) {
+                if (!e.isRetryable() || attempt >= retryDelaysMs.length) throw e;
+                pause(retryDelaysMs[attempt]);
+            }
         }
     }
 
@@ -92,9 +107,9 @@ public class GeminiLLMAdapter implements LLMClient {
         return content;
     }
 
-    private static void pause() {
+    private static void pause(long millis) {
         try {
-            Thread.sleep(1500);
+            Thread.sleep(millis);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

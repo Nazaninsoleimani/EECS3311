@@ -18,7 +18,7 @@ public final class LLMClientFactory {
         }
         if (!config.hasKey("GEMINI_API_KEY")) return missing("GEMINI_API_KEY");
         GeminiSdkClient sdk = new GeminiSdkClient(config.get("GEMINI_API_KEY", ""), timeout);
-        return new GeminiLLMAdapter(sdk, config.get("GEMINI_MODEL", "gemini-2.5-flash"));
+        return new GeminiLLMAdapter(sdk, config.get("GEMINI_MODEL", "gemini-3.8-flash"));
     }
 
     private static LLMClient missing(String key) {

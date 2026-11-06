@@ -57,6 +57,44 @@ class LLMAdapterTest {
     }
 
     @Test
+    void geminiRetriesHighDemandWithBackoffButNotPermanentErrors() {
+        int[] calls = {0};
+        GeminiSdkClient busyTwice = new GeminiSdkClient("k", Duration.ofSeconds(1)) {
+            @Override
+            public JsonObject generateContent(String model, JsonObject contents) {
+                if (calls[0]++ < 2) throw new LLMException("HTTP 503: high demand", true);
+                return JsonParser.parseString("""
+                    {"candidates":[{"content":{"parts":[{"text":"ok"}]},"finishReason":"STOP"}]}""").getAsJsonObject();
+            }
+        };
+        long[] fast = {1, 1, 1};
+        assertEquals("ok", new GeminiLLMAdapter(busyTwice, "m", fast).generate(LLMRequest.of("", "hi")).text);
+        assertEquals(3, calls[0]);
+
+        calls[0] = 0;
+        GeminiSdkClient alwaysBusy = new GeminiSdkClient("k", Duration.ofSeconds(1)) {
+            @Override
+            public JsonObject generateContent(String model, JsonObject contents) {
+                calls[0]++;
+                throw new LLMException("HTTP 503", true);
+            }
+        };
+        assertThrows(LLMException.class, () -> new GeminiLLMAdapter(alwaysBusy, "m", fast).generate(LLMRequest.of("", "hi")));
+        assertEquals(4, calls[0], "first call plus three retries");
+
+        calls[0] = 0;
+        GeminiSdkClient badKey = new GeminiSdkClient("k", Duration.ofSeconds(1)) {
+            @Override
+            public JsonObject generateContent(String model, JsonObject contents) {
+                calls[0]++;
+                throw new LLMException("HTTP 400: API key not valid", false);
+            }
+        };
+        assertThrows(LLMException.class, () -> new GeminiLLMAdapter(badKey, "m", fast).generate(LLMRequest.of("", "hi")));
+        assertEquals(1, calls[0], "permanent errors are not retried");
+    }
+
+    @Test
     void geminiEmptyCandidatesIsAnError() {
         GeminiSdkClient fake = new GeminiSdkClient("k", Duration.ofSeconds(1)) {
             @Override
