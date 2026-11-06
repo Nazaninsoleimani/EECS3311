@@ -7,6 +7,7 @@ import ca.yorku.eecs3311.studyagent.domain.ActivityType;
 import ca.yorku.eecs3311.studyagent.domain.AdaptiveLearningSession;
 import ca.yorku.eecs3311.studyagent.domain.Answer;
 import ca.yorku.eecs3311.studyagent.domain.ConceptGraph;
+import ca.yorku.eecs3311.studyagent.domain.ConceptMastery;
 import ca.yorku.eecs3311.studyagent.domain.Course;
 import ca.yorku.eecs3311.studyagent.domain.CourseMaterial;
 import ca.yorku.eecs3311.studyagent.domain.DifficultyLevel;
@@ -71,6 +72,7 @@ public class LearningFacade {
     private final FlashcardRepository flashcards;
     private final StudentRepository students;
     private final UsageMeter usage;
+    private final QuestionBank questionBank;
 
     public LearningFacade(CourseService courseService, MaterialService materialService, GradingService grading,
                           ProgressTracker tracker, ReminderScheduler reminders, ConceptMapService conceptMaps,
@@ -90,6 +92,7 @@ public class LearningFacade {
         this.flashcards = flashcards;
         this.students = students;
         this.usage = usage;
+        this.questionBank = new QuestionBank(quizzes);
     }
 
     // ------------------------------------------------------------------ F01 courses
@@ -322,10 +325,35 @@ public class LearningFacade {
     public AdaptiveLearningSession startAdaptiveSession(String studentId, String courseId) {
         DifficultyLevel start = students.findById(studentId).map(s -> s.getProfile().getPreferredDifficulty()).orElse(DifficultyLevel.FOUNDATION);
         AdaptiveLearningSession s = new AdaptiveLearningSession(Ids.newId("as"), studentId, courseId, DifficultyState.initial(start));
-        agent.nextAdaptiveActivity(s);
+        nextActivity(s);
         activeSessions.put(s.getId(), s);
         record(studentId, courseId, EventType.SESSION_STARTED, "Adaptive session at " + s.getLevel(), s.getId());
         return s;
+    }
+
+    private record ActivityPick(Question question, String notice) {}
+
+    /**
+     * The agent generates the next activity; if it cannot (LLM down or invalid output), a question from
+     * an earlier quiz of the course is reused. With neither, the session cannot continue.
+     */
+    private ActivityPick nextActivity(AdaptiveLearningSession s) {
+        try {
+            return new ActivityPick(agent.nextAdaptiveActivity(s), null);
+        } catch (AgentException | LLMException e) {
+            Question stored = questionBank.pick(s, conceptMaps.buildGraph(s.getStudentId(), s.getCourseId()).mastery);
+            if (stored == null) {
+                throw new AgentException("No new question could be generated (" + e.getMessage()
+                        + ") and no unused stored question is left for this course.");
+            }
+            s.setCurrentQuestion(stored);
+            return new ActivityPick(stored, "The AI could not generate a new question, so one from an earlier quiz was reused.");
+        }
+    }
+
+    private boolean allConceptsMastered(String studentId, String courseId) {
+        ConceptGraph g = conceptMaps.buildGraph(studentId, courseId);
+        return !g.isEmpty() && g.nodes.stream().allMatch(c -> g.mastery.getOrDefault(c.getId(), 0.0) >= ConceptMastery.MASTERED_THRESHOLD);
     }
 
     /** Grades the answer, lets the session's DifficultyState react, records progress, then asks for the next question. */
@@ -340,10 +368,15 @@ public class LearningFacade {
         Question next = null;
         String notice = null;
         try {
-            next = agent.nextAdaptiveActivity(s);
+            ActivityPick pick = nextActivity(s);
+            next = pick.question();
+            notice = pick.notice();
         } catch (AgentException e) {
             s.setCurrentQuestion(null);
-            notice = "Could not generate the next question: " + e.getMessage();
+            notice = "The session has to end: " + e.getMessage();
+        }
+        if (allConceptsMastered(s.getStudentId(), s.getCourseId())) {
+            notice = (notice == null ? "" : notice + " ") + "Every concept of this course is mastered; a mixed review quiz is the best next step.";
         }
         return new ActivityOutcome(result, before, s.getLevel(), next, notice);
     }

@@ -16,6 +16,7 @@ public class AdaptiveLearningSession extends LearningSession {
     private int correct;
     private final List<String> levelHistory = new ArrayList<>();
     private final List<String> recentConceptIds = new ArrayList<>();
+    private final List<String> askedQuestionIds = new ArrayList<>();
 
     public AdaptiveLearningSession(String id, String studentId, String courseId, DifficultyState initial) {
         super(id, studentId, courseId, SessionType.ADAPTIVE);
@@ -49,9 +50,14 @@ public class AdaptiveLearningSession extends LearningSession {
     public DifficultyLevel getLevel() { return state.getLevel(); }
     public int getStreak() { return streak; }
     public Question getCurrentQuestion() { return currentQuestion; }
-    public void setCurrentQuestion(Question q) { this.currentQuestion = q; }
+    public void setCurrentQuestion(Question q) {
+        this.currentQuestion = q;
+        if (q != null && !askedQuestionIds.contains(q.getId())) askedQuestionIds.add(q.getId());
+    }
     public int getAnswered() { return answered; }
     public int getCorrect() { return correct; }
     public List<String> getLevelHistory() { return levelHistory; }
     public List<String> getRecentConceptIds() { return recentConceptIds; }
+    /** Every question shown in this session, so a stored question is never repeated. */
+    public List<String> getAskedQuestionIds() { return askedQuestionIds; }
 }
