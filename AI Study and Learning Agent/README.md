@@ -92,7 +92,7 @@ cp .env.example .env
 ./gradlew :frontend:gui:run
 ```
 
-Create a course in **Courses**, upload notes in **Materials** (PDF, DOCX, TXT or Markdown), then use the other tabs: Tutor, Study Plan, Quiz, Flashcards, Learning Session, Progress, Concept Map, Reminders and History. The window shows "AI: connected" when a key is configured.
+The app opens on a sign-in screen: click **Create an account** (name, email, password of at least 8 characters), or sign in. Each account has its own courses and progress. Then create a course in **Courses**, upload notes in **Materials** (PDF, DOCX, TXT or Markdown), then use the other tabs: Tutor, Study Plan, Quiz, Flashcards, Learning Session, Progress, Concept Map, Reminders and History. The window shows "AI: connected" when a key is configured.
 
 ### CLI
 
@@ -101,6 +101,7 @@ Create a course in **Courses**, upload notes in **Materials** (PDF, DOCX, TXT or
 alias study="$PWD/frontend/cli/build/install/study/bin/study"
 
 study help
+study account create            # or: study account login --email you@example.com (same account as the GUI)
 study course create --code EECS3311 --title "Software Design" --exam 2026-12-15
 study material upload --course EECS3311 notes/week5.pdf
 study material list --course EECS3311
