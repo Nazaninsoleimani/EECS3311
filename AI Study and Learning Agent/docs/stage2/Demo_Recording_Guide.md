@@ -33,6 +33,8 @@ Plan: 17 short videos (N01 + F01-F16), 1-2 minutes each, recorded in the order b
 
 Tips: speak slowly; it is fine to pause while the AI is "thinking" (say "the agent is retrieving my notes and generating..."). If a step fails because Google says "high demand", wait a minute and click again; you can keep it in the video and explain that the app retries automatically.
 
+**AI quota:** the free Gemini tier allows only about 20 AI requests per day, and recording all videos needs more (every summary, tutor question, quiz, explanation, flashcard deck and plan is one or more requests). If the app says "The AI provider's daily free quota is used up", either wait until it resets or use an OpenAI key: in `.env` set `LLM_PROVIDER=openai` and `OPENAI_API_KEY=...` (each on its own line), then restart the app. Check the header badge says **AI connected** before you record.
+
 ---
 
 ## Part 2 - The videos
@@ -58,51 +60,51 @@ Each video: **say the feature ID and name first**, then do the steps, then the e
 
 ### F02 - Learning Material Upload (GUI + CLI)
 
-**Do:** Sidebar **Materials**. Click **Upload file...**, open `sample-data/EECS3311` in the project folder, select all three `.md` files, **Open**. Show the table: status **INDEXED** and the number of chunks.
+**Do:** Sidebar **Materials**. Click **Upload file...**, open `sample-data/EECS3311` in the project folder, select all three `.md` files, **Open**. The files appear in the table within seconds: status **INDEXED** and the number of chunks. The panel below shows a green "Uploaded ..." card and "Extracting key concepts in the background...".
 **Error case (CLI):** `study material upload --course EECS3311 ~/Desktop/lecture-slides.pptx` shows "Unsupported file type; use PDF, DOCX, TXT or Markdown".
 **CLI:** `study material list --course EECS3311`.
 
-**Say:** "F02, Material Upload. I upload my own lecture notes. The system extracts the text, splits it into chunks and indexes them for search. Unsupported files are rejected. The embedding step is deterministic; right after indexing the AI also extracts concepts, which is F04."
+**Say:** "F02, Material Upload. I upload my own lecture notes. The system extracts the text, splits it into chunks and indexes them for search. Unsupported files are rejected. The embedding step is deterministic. Right after indexing, the AI extracts the concepts in the background, which is F04, so I can keep working while it runs."
 
 ### F04 - Concept Extraction (GUI + CLI)
 
-**Do:** In **Materials**, point at the output text under the table after an upload: "N concept(s) and M relation(s) from ..." with the list of concepts. Select `week07-factory-method-adapter-facade.md` and click **Extract concepts** to re-run it. Then sidebar **Concept Map** briefly to show the extracted concepts.
+**Do:** In **Materials**, when the background extraction finishes the panel under the table shows the **KEY CONCEPTS** page: one card per concept with its definition and a **Quiz me** link. Select `week07-factory-method-adapter-facade.md` and click **Extract concepts** to re-run it. Then click **See how these concepts connect on the Concept Map** to show them on the map.
 **CLI:** `study material list --course EECS3311`, copy one material id, then `study material extract-concepts <id>`.
 
 **Say:** "F04, Concept Extraction. This is AI-based: the language model reads my notes and returns the key concepts and their relations as JSON. The agent validates the output, merges duplicates and drops relations to unknown concepts. Concepts are the unit the system uses to track my mastery."
 
 ### F03 - Document Summarization (GUI)
 
-**Do:** In **Materials**, select `week05-observer-pattern.md`, choose Summary length **BRIEF**, click **Summarize**. Read the key points. Then choose **DETAILED** and summarize again.
+**Do:** In **Materials**, select `week05-observer-pattern.md`, choose Summary length **BRIEF**, click **Summarize**. Point at the header (reading time, number of key points and sources), the numbered **Key points to remember** and the **Where this comes from** sources. Then choose **DETAILED** and summarize again: the summary is split into numbered topic cards, with code and terms highlighted. At the bottom, **Ready to lock this in?** links straight to a quiz, flashcards, the tutor and the concept map.
 **Alternative case:** say that long documents are summarised section by section and then combined (map-reduce), and if the AI is busy it shows "Summary unavailable, retry later" instead of a partial summary.
 
 **Say:** "F03, Summarization. AI-based. The agent's planner checks the size of the material: short notes are summarised in one pass, long ones section by section and then combined. The output is validated before it is shown and stored."
 
 ### F05 - Question Answering (GUI + CLI)
 
-**Do:** Sidebar **Tutor**. Tick **Show agent plan**. Ask: `What is the difference between the Strategy and State patterns?` Point at the citations [1] and the **Sources** list, and the agent plan below the answer. Then ask the follow-up `Why is that useful?`.
-**Error case:** Ask `What is photosynthesis?`: the tutor says the course material does not cover this (it does not invent an answer).
+**Do:** Sidebar **Tutor**. Tick **Show agent plan**. Ask: `What is the difference between the Strategy and State patterns?` Point at the green **Grounded in your notes** badge, the purple citation tags [1], the **Sources** chips and the **AGENT PLAN** box below the answer. Then ask the follow-up `Why is that useful?`.
+**Error case:** Ask `What is photosynthesis?`: the answer card turns amber with **Not found in your material**, and the tutor says the course material does not cover this (it does not invent an answer).
 **CLI:** `study ask --course EECS3311 "What does the Facade pattern do?"`
 
 **Say:** "F05, Question Answering. Hybrid. The agent plans the steps: it retrieves the most relevant chunks of my notes, then the AI answers only from them and must cite them. A validator checks the citations and regenerates the answer if they are missing. Follow-up questions use the conversation memory. For an unrelated question nothing is found, so the AI is not even called."
 
 ### F08 - Quiz Generation (GUI)
 
-**Do:** Sidebar **Quiz**. Questions **5**, Difficulty **INTERMEDIATE**, keep all three types ticked, Concepts empty. Click **Generate quiz**. Scroll through the questions (multiple choice, true/false, short answer).
+**Do:** Sidebar **Quiz**. Questions **5**, Difficulty **INTERMEDIATE**, keep all three types ticked, Concepts empty. Click **Generate quiz**. Scroll through the question cards: each shows its number, type, difficulty and concept (multiple choice, true/false, short answer).
 **Error case:** untick all three types and click **Generate quiz**: "Select at least one question type". Tick them again.
 
 **Say:** "F08, Quiz Generation. AI-based. The AI writes question specifications from my notes; each one is turned into a question object by a factory for its type, the Factory Method pattern, which rejects invalid questions, for example a multiple-choice question whose answer is not one of the options."
 
 ### F09 - Automatic Quiz Grading (GUI + CLI)
 
-**Do:** Answer the questions of the quiz from F08: get some right and **some wrong on purpose**, and leave one question empty. Click **Submit answers**: a dialog warns that one question is unanswered; click **Yes**. Show the score and the green and red feedback.
+**Do:** Answer the questions of the quiz from F08 (click anywhere on an option row): get some right and **some wrong on purpose**, and leave one question empty. Point at the "N of 5 answered" bar next to **Submit answers**. Click **Submit answers**: a dialog warns that one question is unanswered; click **Yes**. Show the score card at the top, the correct option in green ("Correct answer"), your wrong choice in red ("Your answer"), and the result banner under each question.
 **CLI:** `study quiz list --course EECS3311`, then `study quiz take <quizId>` and answer in the terminal (type `true`, `A`, or a sentence).
 
 **Say:** "F09, Automatic Grading. Hybrid. Multiple-choice and true/false are graded exactly by the question objects; short answers are graded by the AI against the model answer and rubric. Unanswered questions score zero. The results update my concept mastery."
 
 ### F10 - Answer Explanation (GUI + CLI)
 
-**Do:** On the graded quiz, click **Explain** next to a question you got wrong. Read part of the explanation and its sources.
+**Do:** On the graded quiz, click **Explain why** in the red banner of a question you got wrong. Read part of the explanation and its sources.
 **Error case (CLI):** `study quiz explain <attemptId> 9` shows "Question number must be 1-5" (the attempt id is printed at the end of `quiz take`).
 
 **Say:** "F10, Answer Explanation. AI-based. The agent retrieves the relevant part of my notes and the AI explains why the correct answer is correct and what my mistake suggests, citing the source."
@@ -116,7 +118,7 @@ Each video: **say the feature ID and name first**, then do the steps, then the e
 
 ### F11 - Weak-Topic Identification (GUI + CLI)
 
-**Do:** In **Progress**, click **Analyze weak topics**. Read the weak concepts, the diagnosis and the recommended activity.
+**Do:** In **Progress**, click **Analyze weak topics**. Each weak concept is a card: **#1 MOST URGENT**, its mastery bar, **WHAT IS GOING WRONG** (the AI's diagnosis) and a purple button for the recommended activity. Click that button to show it opens the right screen (for example **Start a learning session**).
 **Alternative case:** first show it on a new empty course, or explain the message "Not enough graded practice yet: ... of the 5 graded answers needed".
 **CLI:** `study weak-topics show --course EECS3311`.
 
@@ -131,7 +133,7 @@ Each video: **say the feature ID and name first**, then do the steps, then the e
 
 ### F06 - Personalized Study Plan (GUI + CLI)
 
-**Do:** Sidebar **Study Plan**. Minutes per day **60**, Focus topics `State Pattern`, click **Generate plan**. Read the strategy and rationale. Select the first task and click **Mark selected task done**. Then go to **Dashboard**: today's tasks and the plan progress card.
+**Do:** Sidebar **Study Plan**. Minutes per day **60**, Focus topics `State Pattern`, click **Generate plan**. Point at the overview card: the strategy tag, days to the exam, the rationale and **Today**'s tasks. Tick the **Done** box of the first task: the % complete goes up. Select a **Quiz** task and click **Start selected task**: the quiz opens on that concept. Then go to **Dashboard**: today's tasks and the plan progress card.
 **Alternative case:** explain that the strategy depends on the time left: under a week is "Exam cram", over three weeks "Spaced repetition", otherwise "Balanced review". If you have time, change the course exam date to 5 days from now and generate again to show "Exam cram".
 **CLI:** `study study-plan show --course EECS3311`.
 
@@ -140,14 +142,14 @@ Each video: **say the feature ID and name first**, then do the steps, then the e
 ### F07 - Flashcards (CLI + GUI)
 
 **Do (CLI):** `study flashcards generate --course EECS3311 --topic "observer pattern" --count 5`. Then `study flashcards review --course EECS3311`: press Enter to reveal, type `3` (good) or `1` (again); show the next review date.
-**GUI:** sidebar **Flashcards**: click **Show answer**, then **Good** or **Again**.
+**GUI:** sidebar **Flashcards**: point at "Card 1 of N" and the memory level dots. Click the card (or press **Space**): it flips to the green **ANSWER** side. Rate it with **Good** or **Again** (or keys **3** / **1**). After the last card, "All caught up!" appears.
 **Error case:** in the GUI, clear the Topic and click **Generate deck**: "Enter a topic for the cards".
 
 **Say:** "F07, Flashcards. Hybrid. The AI writes the cards from my notes; empty or duplicate cards are dropped. Reviews are deterministic, Leitner boxes: a good answer moves the card to a longer interval, a wrong one resets it to tomorrow."
 
 ### F14 - Study Reminders (GUI + CLI)
 
-**Do:** Sidebar **Reminders**. Set When to **2 minutes from now** (format `2026-11-09 18:42`), Repeat **NONE**, Message `Review the Observer pattern`, **Add reminder**. Add a second one with Repeat **DAILY**. Select one and click **Cancel selected**. Wait for the desktop notification of the first one (or click **Send due reminders now** after the time).
+**Do:** Sidebar **Reminders**. Set When to **2 minutes from now** (format `2026-11-09 18:42`), Repeat **Once**, Message `Review the Observer pattern`, **Add reminder**. Add a second one with the quick pick **Tomorrow 18:00** and Repeat **Every day**. Point at the summary line ("2 upcoming, next in 2 min") and the status tags. Select one and click **Cancel selected**. Wait for the desktop notification of the first one (or click **Send due reminders now** after the time): its tag changes to **Sent** (tick **Show sent and cancelled**).
 **Error case:** set When to yesterday and click **Add reminder**: "Reminder time is in the past".
 **CLI:** `study reminder list`.
 
@@ -157,7 +159,7 @@ Each video: **say the feature ID and name first**, then do the steps, then the e
 
 ### F15 - Concept Relationship Visualization (GUI + CLI)
 
-**Do:** Sidebar **Concept Map**: explain the colours (grey not practised, red weak, amber learning, green mastered). Click a concept: the panel on the right shows its definition, mastery and related concepts. Click **Quiz me on this**: the app opens the Quiz with that concept.
+**Do:** Sidebar **Concept Map**: explain the layout (prerequisites on the left, the concepts they lead to on the right), the line styles in the legend (prerequisite, part of, related) and the colours (grey not practised, red weak, amber learning, green mastered). Hover over a concept: its connections are highlighted. Click it: the panel on the right shows its definition, mastery and related concepts. Click **Quiz me on this**: the app opens the Quiz with that concept.
 **CLI:** `study concept-map show --course EECS3311` and `study concept-map show --course EECS3311 --format mermaid`.
 **Alternative case:** create a second course in **Courses** and open the map: "No concepts yet".
 
@@ -165,8 +167,8 @@ Each video: **say the feature ID and name first**, then do the steps, then the e
 
 ### F16 - Learning Session History (GUI + CLI)
 
-**Do:** Sidebar **History**: all activities, newest first. Change **Activity** to `QUIZ_COMPLETED`, change **Period**.
-**Error case:** set Period **Today** and Activity `REMINDER_SENT` (or anything unused): "0 event(s)".
+**Do:** Sidebar **History**: the summary cards (activities, quizzes taken, cards reviewed, tutor questions, tasks done) and the timeline grouped by day, newest first. Change **Activity** to **Quiz completed**, change **Period**.
+**Error case:** set Period **Today** and Activity **Reminder sent** (or anything unused): "0 event(s)" and "Nothing here yet".
 **CLI:** `study history show --course EECS3311 --last 7d --type quiz_completed`.
 
 **Say:** "F16, History. Deterministic. Every action is recorded; the agent also reads my recent history as context when it plans and answers."
