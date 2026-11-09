@@ -46,6 +46,7 @@ public class AuthPanel extends JPanel {
     private final JLabel switchLink = new JLabel();
     private final JPanel nameRow;
     private final JPanel confirmRow;
+    private final JPanel form = new JPanel();
     private boolean createMode;
 
     public AuthPanel(LearningFacade facade, Consumer<Student> onSuccess) {
@@ -75,7 +76,6 @@ public class AuthPanel extends JPanel {
         });
         for (JTextField f : new JTextField[]{name, email, password, confirm}) f.addActionListener(e -> submit());
 
-        JPanel form = new JPanel();
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         form.setOpaque(false);
         nameRow = field("Name", name);
@@ -130,6 +130,7 @@ public class AuthPanel extends JPanel {
             onSuccess.accept(s);
         } catch (RuntimeException e) {
             error.setText(e.getMessage() == null ? "Something went wrong" : e.getMessage());
+            Animations.shake(form);
         } finally {
             Arrays.fill(pw, '\0');
             Arrays.fill(pw2, '\0');

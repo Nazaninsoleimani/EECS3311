@@ -59,7 +59,10 @@ public class StudyAgentGui {
         this.views = createViews(ctx);
         views.forEach(v -> tabs.addTab(" " + v.title(), NavIcon.forTitle(v.title()), v));
         styleSidebar();
-        tabs.addChangeListener(e -> renderSelected());
+        tabs.addChangeListener(e -> {
+            renderSelected();
+            Animations.fadeIn(SwingUtilities.getRootPane(tabs), Theme.background(), 220);
+        });
         courseBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean sel, boolean focus) {
@@ -164,11 +167,11 @@ public class StudyAgentGui {
             @Override public void mouseClicked(MouseEvent e) { showAiHelp(bar); }
         });
         themeButton.putClientProperty("JButton.buttonType", "roundRect");
-        themeButton.addActionListener(e -> {
+        themeButton.addActionListener(e -> Animations.crossFade(SwingUtilities.getRootPane(bar), () -> {
             Theme.toggle();
             updateThemeButton();
             renderSelected();
-        });
+        }, 380));
         updateThemeButton();
         right.add(aiPill);
         right.add(themeButton);
@@ -274,6 +277,7 @@ public class StudyAgentGui {
         window.setMinimumSize(new Dimension(860, 560));
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+        Animations.fadeIn(window.getRootPane(), Theme.background(), 400);
     }
 
     /** The main window for the signed-in student; Sign out returns to the sign-in window. */
@@ -296,6 +300,7 @@ public class StudyAgentGui {
             }
         });
         frame.setVisible(true);
+        Animations.fadeIn(frame.getRootPane(), Theme.background(), 400);
     }
 
     /** Views that observe progress must stop listening when their window closes. */

@@ -32,6 +32,11 @@ public class TutorChatView extends BaseView {
     private final JCheckBox showTrace = new JCheckBox("Show agent plan");
     private final JButton send = accentButton("Ask", () -> sendQuestion(input.getText()));
     private boolean thinking;
+    private int dots;
+    private final javax.swing.Timer thinkingTimer = new javax.swing.Timer(400, e -> {
+        dots = (dots + 1) % 4;
+        refresh();
+    });
     private String sessionId;
 
     public TutorChatView(GuiContext ctx) {
@@ -91,6 +96,8 @@ public class TutorChatView extends BaseView {
 
     private void setThinking(boolean on) {
         thinking = on;
+        dots = 0;
+        if (on) thinkingTimer.start(); else thinkingTimer.stop();
         send.setEnabled(!on);
         refresh();
     }
@@ -150,7 +157,7 @@ public class TutorChatView extends BaseView {
                 sb.append("</td></tr></table></td></tr></table><br>");
             }
         }
-        if (thinking) sb.append("<span style='color:").append(muted).append("'><i>Tutor is thinking...</i></span>");
+        if (thinking) sb.append("<span style='color:").append(muted).append("'><i>Tutor is thinking" + ".".repeat(dots) + "</i></span>");
         return sb.append("</body></html>").toString();
     }
 

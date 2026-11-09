@@ -166,6 +166,7 @@ public class DashboardView extends BaseView {
         c.add(Box.createVerticalStrut(4));
         c.add(v);
         c.add(s);
+        Animations.countUp(v, 700);
         return c;
     }
 
@@ -205,6 +206,7 @@ public class DashboardView extends BaseView {
             bar.setStringPainted(true);
             bar.setString(bar.getValue() + "%");
             bar.setForeground(Theme.forMastery(m.getMastery()));
+            Animations.fill(bar, 800);
             row.add(name, BorderLayout.WEST);
             row.add(bar, BorderLayout.CENTER);
             row.setAlignmentX(Component.LEFT_ALIGNMENT);
