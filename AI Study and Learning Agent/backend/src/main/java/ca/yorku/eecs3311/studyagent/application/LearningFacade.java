@@ -142,10 +142,7 @@ public class LearningFacade {
      * An extraction failure never undoes the upload; the material stays usable and extraction can be re-run.
      */
     public MaterialUpload uploadMaterial(String courseId, Path file) {
-        Course c = courseService.find(courseId);
-        CourseMaterial m = materialService.upload(courseId, file);
-        record(c.getStudentId(), courseId, EventType.MATERIAL_UPLOADED, "Uploaded " + m.getTitle() + " (" + m.getStatus()
-                + (m.isIndexed() ? ", " + m.getChunkCount() + " chunks" : ": " + m.getFailureReason()) + ")", m.getId());
+        CourseMaterial m = storeMaterial(courseId, file);
         if (!m.isIndexed()) return new MaterialUpload(m, null, null);
         if (!agent.isLlmAvailable()) {
             return new MaterialUpload(m, null, "Concepts were not extracted because no AI model is configured.");
@@ -155,6 +152,18 @@ public class LearningFacade {
         } catch (AgentException | LLMException | ValidationException e) {
             return new MaterialUpload(m, null, "Concept extraction failed (" + e.getMessage() + "); retry it from the material.");
         }
+    }
+
+    /**
+     * Fast upload: parses, chunks and indexes the file without calling the AI, so the material is
+     * usable at once. Concepts can be extracted afterwards with extractConcepts(materialId).
+     */
+    public CourseMaterial storeMaterial(String courseId, Path file) {
+        Course c = courseService.find(courseId);
+        CourseMaterial m = materialService.upload(courseId, file);
+        record(c.getStudentId(), courseId, EventType.MATERIAL_UPLOADED, "Uploaded " + m.getTitle() + " (" + m.getStatus()
+                + (m.isIndexed() ? ", " + m.getChunkCount() + " chunks" : ": " + m.getFailureReason()) + ")", m.getId());
+        return m;
     }
 
     public List<CourseMaterial> listMaterials(String courseId) {
