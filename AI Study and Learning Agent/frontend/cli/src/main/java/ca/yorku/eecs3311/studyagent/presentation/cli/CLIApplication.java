@@ -9,6 +9,7 @@ import ca.yorku.eecs3311.studyagent.domain.Answer;
 import ca.yorku.eecs3311.studyagent.domain.ConceptGraph;
 import ca.yorku.eecs3311.studyagent.domain.Course;
 import ca.yorku.eecs3311.studyagent.domain.CourseMaterial;
+import ca.yorku.eecs3311.studyagent.domain.Student;
 import ca.yorku.eecs3311.studyagent.domain.Summary;
 import ca.yorku.eecs3311.studyagent.domain.SummaryLength;
 import ca.yorku.eecs3311.studyagent.domain.SummaryOptions;
@@ -22,11 +23,13 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -46,16 +49,28 @@ public class CLIApplication {
     private final CommandParser parser = new CommandParser();
     private final Map<String, Command> commands = new LinkedHashMap<>();
     final LearningFacade facade;
-    final String studentId;
+    /** The student commands act for: the signed-in account, or the local profile when nobody signed in. */
+    String studentId;
+    private final String localStudentId;
+    private final Path sessionFile;
+    private boolean useConsoleForPasswords;
     final BufferedReader in;
     final PrintStream out;
 
     public CLIApplication(LearningFacade facade, String studentId, BufferedReader in, PrintStream out) {
+        this(facade, studentId, null, in, out);
+    }
+
+    /** sessionFile remembers the signed-in account between commands (null: nothing is remembered). */
+    public CLIApplication(LearningFacade facade, String localStudentId, Path sessionFile, BufferedReader in, PrintStream out) {
         this.facade = facade;
-        this.studentId = studentId;
+        this.localStudentId = localStudentId;
+        this.sessionFile = sessionFile;
+        this.studentId = signedInStudent().orElse(localStudentId);
         this.in = in;
         this.out = out;
         registerCoreCommands();
+        registerAccountCommands();
         new StudyCommands(this).registerAll();
     }
 
@@ -63,7 +78,9 @@ public class CLIApplication {
         PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         try (AppContext app = AppContext.create(AppConfig.load(), new ConsoleNotificationGateway(out))) {
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-            CLIApplication cli = new CLIApplication(app.facade(), app.studentId(), in, out);
+            Path session = app.config().databasePath().toAbsolutePath().resolveSibling("cli-session");
+            CLIApplication cli = new CLIApplication(app.facade(), app.studentId(), session, in, out);
+            cli.useConsoleForPasswords = System.console() != null;
             app.facade().dispatchDueReminders();
             try {
                 app.facade().retryPendingIndexing(app.studentId());
@@ -239,6 +256,71 @@ public class CLIApplication {
                         }
                     }
                 });
+    }
+
+    // ------------------------------------------------------------------ accounts
+
+    private void registerAccountCommands() {
+        register("account create", "study account create", "Create an account (the same account works in the GUI) and sign in", cmd -> {
+            String name = prompt("Name: ");
+            String email = prompt("Email: ");
+            char[] pw = secret("Password (at least 8 characters): ");
+            char[] pw2 = secret("Repeat password: ");
+            try {
+                return signedIn(facade.createAccount(name, email, pw, pw2), "Account created. ");
+            } finally {
+                java.util.Arrays.fill(pw, '\0');
+                java.util.Arrays.fill(pw2, '\0');
+            }
+        });
+        register("account login", "study account login [--email <email>]", "Sign in so commands use your account's courses", cmd -> {
+            String email = cmd.options.containsKey("email") ? cmd.require("email") : prompt("Email: ");
+            char[] pw = secret("Password: ");
+            try {
+                return signedIn(facade.signIn(email, pw), "");
+            } finally {
+                java.util.Arrays.fill(pw, '\0');
+            }
+        });
+        register("account logout", "study account logout", "Sign out (commands use the local profile again)", cmd -> {
+            if (sessionFile != null) Files.deleteIfExists(sessionFile);
+            studentId = localStudentId;
+            return "Signed out.";
+        });
+        register("account whoami", "study account whoami", "Show who commands are running as", cmd -> {
+            Student s = facade.getStudent(studentId);
+            return s.hasAccount() ? "Signed in as " + s.getName() + " <" + s.getEmail() + ">"
+                    : "Not signed in: using the local profile. Sign in with 'study account login'.";
+        });
+    }
+
+    private String signedIn(Student s, String prefix) throws IOException {
+        studentId = s.getId();
+        if (sessionFile != null) {
+            Files.createDirectories(sessionFile.getParent());
+            Files.writeString(sessionFile, s.getId());
+        }
+        return prefix + "Signed in as " + s.getName() + ". Your courses: " + facade.listCourses(s.getId()).size();
+    }
+
+    private Optional<String> signedInStudent() {
+        try {
+            if (sessionFile == null || !Files.isRegularFile(sessionFile)) return Optional.empty();
+            String id = Files.readString(sessionFile).trim();
+            return facade.getStudent(id).hasAccount() ? Optional.of(id) : Optional.empty();
+        } catch (IOException | RuntimeException e) {
+            return Optional.empty();
+        }
+    }
+
+    /** Passwords are read without echo in a real terminal, and as a plain line otherwise (tests, pipes). */
+    private char[] secret(String label) {
+        if (useConsoleForPasswords) {
+            char[] pw = System.console().readPassword(label);
+            return pw == null ? new char[0] : pw;
+        }
+        String line = prompt(label);
+        return line == null ? new char[0] : line.toCharArray();
     }
 
     private String help() {

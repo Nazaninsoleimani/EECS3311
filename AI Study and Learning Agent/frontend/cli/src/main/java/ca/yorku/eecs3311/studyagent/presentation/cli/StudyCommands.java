@@ -54,12 +54,10 @@ class StudyCommands {
 
     private final CLIApplication cli;
     private final LearningFacade facade;
-    private final String me;
 
     StudyCommands(CLIApplication cli) {
         this.cli = cli;
         this.facade = cli.facade;
-        this.me = cli.studentId;
     }
 
     void registerAll() {
@@ -67,12 +65,12 @@ class StudyCommands {
                 "F06: AI study plan up to the exam (strategy depends on the time left)", cmd -> {
                     Course c = cli.course(cmd);
                     LocalDate exam = cmd.options.containsKey("exam") ? cmd.dateOption("exam") : c.getExamDate();
-                    StudyPlan plan = facade.generateStudyPlan(new StudyPlanRequest(me, c.getId(), exam,
+                    StudyPlan plan = facade.generateStudyPlan(new StudyPlanRequest(cli.studentId, c.getId(), exam,
                             cmd.intOption("minutes", 60), cmd.listOption("focus")));
                     return formatPlan(plan, 7);
                 });
         cli.register("study-plan show", "study study-plan show --course <c> [--all]", "F06: show the active plan (next 7 days, or --all)", cmd -> {
-            StudyPlan plan = facade.getActivePlan(me, cli.course(cmd).getId());
+            StudyPlan plan = facade.getActivePlan(cli.studentId, cli.course(cmd).getId());
             return plan == null ? "No active study plan. Create one with 'study study-plan generate'." : formatPlan(plan, cmd.has("all") ? 10_000 : 7);
         });
         cli.register("study-plan done", "study study-plan done <taskId>", "F06: mark a study task as completed", cmd -> {
@@ -82,7 +80,7 @@ class StudyCommands {
 
         cli.register("flashcards generate", "study flashcards generate --course <c> --topic <t> [--count n] [--concepts a,b]",
                 "F07: AI flashcards from your material", cmd -> {
-                    FlashcardDeck d = facade.generateFlashcards(new FlashcardRequest(me, cli.course(cmd).getId(),
+                    FlashcardDeck d = facade.generateFlashcards(new FlashcardRequest(cli.studentId, cli.course(cmd).getId(),
                             cmd.listOption("concepts"), cmd.option("topic", null), cmd.intOption("count", 10)));
                     StringBuilder sb = new StringBuilder(d.getTitle() + " (" + d.getCards().size() + " cards, deck " + d.getId() + ")\n");
                     d.getCards().forEach(card -> sb.append("  Q: ").append(card.getFront()).append("\n  A: ").append(card.getBack()).append("\n\n"));
@@ -103,7 +101,7 @@ class StudyCommands {
         cli.register("quiz generate", "study quiz generate --course <c> [--concepts a,b] [--count n] [--types mcq,tf,short] [--difficulty foundation|intermediate|advanced] [--take]",
                 "F08: AI quiz validated question by question", cmd -> {
                     List<QuestionType> types = cmd.listOption("types").stream().map(StudyCommands::questionType).toList();
-                    Quiz quiz = facade.generateQuiz(new QuizRequest(me, cli.course(cmd).getId(), cmd.listOption("concepts"),
+                    Quiz quiz = facade.generateQuiz(new QuizRequest(cli.studentId, cli.course(cmd).getId(), cmd.listOption("concepts"),
                             cmd.intOption("count", 5), types, cmd.enumOption("difficulty", DifficultyLevel.class, null)));
                     String header = "Quiz " + quiz.getId() + ": " + quiz.getQuestions().size() + " " + quiz.getDifficulty().name().toLowerCase()
                             + " question(s)." + (quiz.getNotice() == null ? "" : "\n" + quiz.getNotice());
@@ -136,22 +134,22 @@ class StudyCommands {
                 });
 
         cli.register("weak-topics show", "study weak-topics show --course <c>", "F11: weakest concepts with diagnosis and next activity",
-                cmd -> formatWeakTopics(facade.analyzeWeakTopics(me, cli.course(cmd).getId())));
+                cmd -> formatWeakTopics(facade.analyzeWeakTopics(cli.studentId, cli.course(cmd).getId())));
         cli.register("learning-session start", "study learning-session start --course <c>",
                 "F12: adaptive practice; difficulty rises after 3 correct and falls after 2 wrong", cmd -> learningSession(cli.course(cmd)));
         cli.register("progress show", "study progress show --course <c>", "F13: mastery per concept, quiz average and plan completion",
-                cmd -> formatProgress(facade.getProgress(me, cli.course(cmd).getId())));
+                cmd -> formatProgress(facade.getProgress(cli.studentId, cli.course(cmd).getId())));
 
         cli.register("reminder add", "study reminder add --at \"yyyy-mm-dd hh:mm\" [--repeat daily|weekly] [--course <c>] \"<message>\"",
                 "F14: schedule a study reminder", cmd -> {
                     String courseId = cmd.options.containsKey("course") ? cli.course(cmd).getId() : null;
-                    Reminder r = facade.scheduleReminder(new Reminder(Ids.newId("r"), me, courseId, cmd.text("message"),
+                    Reminder r = facade.scheduleReminder(new Reminder(Ids.newId("r"), cli.studentId, courseId, cmd.text("message"),
                             dateTime(cmd.require("at")), cmd.enumOption("repeat", Recurrence.class, Recurrence.NONE)));
                     return "Reminder " + r.getId() + " set for " + r.getDueAt().format(WHEN)
                             + (r.getRecurrence() == Recurrence.NONE ? "" : ", repeating " + r.getRecurrence().name().toLowerCase());
                 });
         cli.register("reminder list", "study reminder list [--all]", "F14: pending reminders (--all includes sent and cancelled)", cmd -> {
-            List<Reminder> list = facade.listReminders(me).stream()
+            List<Reminder> list = facade.listReminders(cli.studentId).stream()
                     .filter(r -> cmd.has("all") || r.getStatus() == ReminderStatus.PENDING).toList();
             if (list.isEmpty()) return "No reminders.";
             return list.stream().map(r -> String.format("%-12s %s  %-9s %-7s %s", r.getId(), r.getDueAt().format(WHEN),
@@ -166,7 +164,7 @@ class StudyCommands {
 
         cli.register("concept-map show", "study concept-map show --course <c> [--format text|mermaid]",
                 "F15: concepts, relations and your mastery of each", cmd -> {
-                    ConceptGraph g = facade.getConceptMap(me, cli.course(cmd).getId());
+                    ConceptGraph g = facade.getConceptMap(cli.studentId, cli.course(cmd).getId());
                     return "mermaid".equalsIgnoreCase(cmd.option("format", "text")) && !g.isEmpty() ? g.toMermaid() : ConceptMapService.renderText(g);
                 });
         cli.register("history show", "study history show [--course <c>] [--last 7d|2w] [--type quiz_completed,...]",
@@ -174,7 +172,7 @@ class StudyCommands {
                     String courseId = cmd.options.containsKey("course") ? cli.course(cmd).getId() : null;
                     List<EventType> types = cmd.listOption("type").stream()
                             .map(t -> ParsedCommand.parseEnum(t, EventType.class, "--type")).toList();
-                    List<LearningEvent> events = facade.getHistory(me, new HistoryFilter(courseId, since(cmd.option("last", null)), null, types));
+                    List<LearningEvent> events = facade.getHistory(cli.studentId, new HistoryFilter(courseId, since(cmd.option("last", null)), null, types));
                     if (events.isEmpty()) return "No matching history.";
                     return events.stream().map(e -> String.format("%s  %-20s %s", e.getTimestamp().format(WHEN), e.getType(), e.getSummary()))
                             .collect(Collectors.joining("\n"));
@@ -230,7 +228,7 @@ class StudyCommands {
     }
 
     private String learningSession(Course c) {
-        AdaptiveLearningSession s = facade.startAdaptiveSession(me, c.getId());
+        AdaptiveLearningSession s = facade.startAdaptiveSession(cli.studentId, c.getId());
         cli.print("Adaptive session for " + c.getCode() + " at " + s.getLevel() + " level. Type q to finish.");
         Question q = s.getCurrentQuestion();
         int n = 1;
