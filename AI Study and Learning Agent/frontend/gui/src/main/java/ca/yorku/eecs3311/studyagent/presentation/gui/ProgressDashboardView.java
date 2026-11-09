@@ -16,7 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
+import javax.swing.BorderFactory;
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
+import javax.swing.event.HyperlinkEvent;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -32,7 +35,8 @@ public class ProgressDashboardView extends BaseView implements ProgressObserver 
         @Override public boolean isCellEditable(int r, int c) { return false; }
     };
     private final JTable table = new JTable(model);
-    private final JTextArea weak = readOnlyArea();
+    private final JEditorPane weak = new JEditorPane("text/html", "");
+    private WeakTopicReport report;
 
     public ProgressDashboardView(GuiContext ctx) {
         super(ctx);
@@ -41,9 +45,18 @@ public class ProgressDashboardView extends BaseView implements ProgressObserver 
         top.add(heading("Progress"), BorderLayout.NORTH);
         top.add(summary, BorderLayout.CENTER);
         top.add(live, BorderLayout.SOUTH);
-        JPanel weakPanel = new JPanel(new BorderLayout());
-        weakPanel.add(row(accentButton("Analyze weak topics", this::loadWeakTopics)), BorderLayout.NORTH);
-        weakPanel.add(scroll(weak), BorderLayout.CENTER);
+        weak.setEditable(false);
+        weak.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+        weak.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) StudyNotesHtml.follow(ctx, e.getDescription());
+        });
+        JScrollPane weakScroll = new JScrollPane(weak);
+        weakScroll.setBorder(BorderFactory.createLineBorder(Theme.border()));
+        weakScroll.getVerticalScrollBar().setUnitIncrement(16);
+        JPanel weakPanel = new JPanel(new BorderLayout(0, 6));
+        weakPanel.add(row(accentButton("Analyze weak topics", this::loadWeakTopics),
+                hint("  The agent diagnoses your mistakes and suggests what to do next.")), BorderLayout.NORTH);
+        weakPanel.add(weakScroll, BorderLayout.CENTER);
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scroll(table), weakPanel);
         split.setResizeWeight(0.55);
         add(top, BorderLayout.NORTH);
@@ -56,6 +69,13 @@ public class ProgressDashboardView extends BaseView implements ProgressObserver 
     @Override
     public void render() {
         loadProgress();
+        showWeak();
+    }
+
+    private void showWeak() {
+        if (report != null && (ctx.course() == null || !report.courseId.equals(ctx.course().getId()))) report = null;
+        weak.setText(report == null ? StudyNotesHtml.weakTopicsIntro(ctx.course() != null) : StudyNotesHtml.weakTopics(report));
+        weak.setCaretPosition(0);
     }
 
     public void loadProgress() {
@@ -84,7 +104,10 @@ public class ProgressDashboardView extends BaseView implements ProgressObserver 
     public void loadWeakTopics() {
         Course c = requireCourse();
         if (c == null) return;
-        runAsync("Analyzing weak topics", () -> facade.analyzeWeakTopics(ctx.studentId, c.getId()), r -> weak.setText(describe(r)));
+        runAsync("Analyzing weak topics", () -> facade.analyzeWeakTopics(ctx.studentId, c.getId()), r -> {
+            report = r;
+            showWeak();
+        });
     }
 
     static String describe(WeakTopicReport r) {

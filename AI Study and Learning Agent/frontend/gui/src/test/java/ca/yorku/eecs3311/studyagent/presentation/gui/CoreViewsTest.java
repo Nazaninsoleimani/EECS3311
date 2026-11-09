@@ -45,7 +45,8 @@ class CoreViewsTest {
         assertEquals(MaterialStatus.INDEXED, view.table().getValueAt(0, 2));
         String id = t.app.facade().listMaterials(t.ctx.course().getId()).get(0).getId();
         view.displaySummary(t.app.facade().summarizeMaterial(id, new SummaryOptions(SummaryLength.BRIEF)));
-        assertTrue(view.output().getText().contains("• Subjects notify"));
+        assertTrue(view.outputText().contains("Subjects notify"));
+        assertTrue(view.outputText().contains("Key points to remember".toUpperCase()));
         assertTrue(MaterialView.describe(t.app.facade().getConceptMap(t.app.studentId(), t.ctx.course().getId()), "x")
                 .contains("Observer Pattern - subjects notify observers"));
     }

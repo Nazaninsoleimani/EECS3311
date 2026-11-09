@@ -58,7 +58,8 @@ class PracticeViewsTest {
         StudyPlan plan = t.app.facade().generateStudyPlan(new StudyPlanRequest(t.app.studentId(), c.getId(), c.getExamDate(), 60, List.of()));
         t.app.facade().completeStudyTask(plan.getTasks().get(0).getId());
         view.render();
-        assertTrue(view.rationaleArea().getText().startsWith("Exam cram strategy"));
+        assertTrue(view.strategyLabel().getText().startsWith("EXAM CRAM STRATEGY"), view.strategyLabel().getText());
+        assertFalse(view.rationaleArea().getText().isBlank());
         assertEquals(plan.getTasks().size(), view.table().getRowCount());
         assertEquals(Boolean.TRUE, view.table().getValueAt(0, 0));
     }
