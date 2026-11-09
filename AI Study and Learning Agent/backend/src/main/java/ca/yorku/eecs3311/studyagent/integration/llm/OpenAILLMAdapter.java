@@ -44,14 +44,29 @@ public class OpenAILLMAdapter implements LLMClient {
         if (!request.systemPrompt.isBlank()) messages.add(message("system", request.systemPrompt));
         messages.add(message("user", request.userText()));
         params.add("messages", messages);
-        params.addProperty("temperature", request.temperature);
-        params.addProperty("max_tokens", request.maxTokens);
+        if (isReasoningModel(model)) {
+            // Newer OpenAI models (o-series, gpt-5 and later) reject max_tokens and custom temperatures, and count
+            // hidden reasoning against the output budget; low effort keeps answers fast, the headroom keeps them whole.
+            params.addProperty("max_completion_tokens", request.maxTokens + 1024);
+            params.addProperty("reasoning_effort", "low");
+        } else {
+            params.addProperty("temperature", request.temperature);
+            params.addProperty("max_tokens", request.maxTokens);
+        }
         if (json) {
             JsonObject format = new JsonObject();
             format.addProperty("type", "json_object");
             params.add("response_format", format);
         }
         return params;
+    }
+
+    /** o1/o3/o4... and gpt-5 or later; classic chat models (gpt-3.5, gpt-4, gpt-4o, gpt-4.1) and non-OpenAI models are not. */
+    static boolean isReasoningModel(String model) {
+        String m = model.toLowerCase();
+        if (m.matches("^o\\d.*")) return true;
+        java.util.regex.Matcher g = java.util.regex.Pattern.compile("^gpt-(\\d+)").matcher(m);
+        return g.find() && Integer.parseInt(g.group(1)) >= 5;
     }
 
     LLMResponse fromOpenAI(JsonObject resp) {
