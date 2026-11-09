@@ -55,7 +55,7 @@
   <tr><td>Stage 1 design</td><td><code>docs/stage1/Stage1_Report.pdf</code></td></tr>
   <tr><td>Implementation period</td><td>October 20 - November 10, 2026</td></tr>
   <tr><td>Language and build</td><td>Java 21, Gradle multi-module (<code>backend</code>, <code>frontend:cli</code>, <code>frontend:gui</code>)</td></tr>
-  <tr><td>LLM</td><td>Google Gemini (<code>gemini-3.8-flash</code>, free tier) through the <code>LLMClient</code> adapter; any OpenAI-compatible model by configuration</td></tr>
+  <tr><td>LLM</td><td>OpenAI (<code>gpt-6.1-sol</code>, default since November 9) through the <code>LLMClient</code> adapter; any OpenAI-compatible endpoint, or Google Gemini (<code>gemini-3.8-flash</code>), by configuration</td></tr>
 </table>
 
 <p class="small muted">How to read this report: section 2 traces every Stage 1 feature (F01-F16) to the classes, methods, patterns and demonstration video that realise it; section 3 explains the six design patterns with the updated class diagrams; section 4 lists every difference from the Stage 1 design with its reason; sections 5-7 cover AI collaboration, commits and verification, and the video index. Items highlighted <span class="todo">like this</span> are completed by the student before submission.</p>
@@ -436,7 +436,8 @@
 <tr><th>Tool / platform</th><th>LLM / model</th><th>Used for (features, classes, tasks)</th><th>Tokens and cost</th></tr>
 <tr><td><span class="todo">[week 1 tool, e.g. ...]</span></td><td><span class="todo">[model]</span></td><td>Week 1 (Oct 26) commits: domain model, persistence, LLM adapters, parsing and retrieval, agent core, strategies, factories, generation tools <span class="todo">[confirm]</span></td><td><span class="todo">[tokens / $]</span></td></tr>
 <tr><td>Claude Code (VS Code extension)</td><td>Claude Opus 5.5 (<code>claude-opus-5-5</code>)</td><td>Week 2: <code>LearningAgent</code>, application services and <code>LearningFacade</code>, <code>AppContext</code>, CLI (<code>CLIApplication</code>, <code>CommandParser</code>, <code>StudyCommands</code>), Swing GUI (12 views). Week 3: gap analysis against the Stage 1 specification and fixes C1-C6, F15 "Quiz me on this", sample data, demo script, class diagrams and this report draft. Tests for all of the above.</td><td><span class="todo">[tokens / $ from the Claude usage page]</span></td></tr>
-<tr><td>Google Gemini API (runtime, not a development tool)</td><td><code>gemini-3.8-flash</code></td><td>The application's own LLM at run time (free tier).</td><td><span class="todo">[$0 on the free tier / usage]</span></td></tr>
+<tr><td>Google Gemini API (runtime, not a development tool)</td><td><code>gemini-3.8-flash</code></td><td>The application's own LLM at run time until November 9 (free tier, 20 requests per day).</td><td><span class="todo">[$0 on the free tier / usage]</span></td></tr>
+<tr><td>OpenAI API (runtime, not a development tool)</td><td><code>gpt-6.1-sol</code></td><td>The application's own LLM at run time from November 9 (default provider).</td><td><span class="todo">[usage / $ from the OpenAI usage page]</span></td></tr>
 </table>
 
 <h3>5.2 Representative interactions</h3>
@@ -534,6 +535,7 @@
 <tr><td>A GUI upload waited for AI concept extraction and took minutes with a slow or quota-limited model</td><td>Manual use of the GUI</td><td>Upload stores and indexes only; concepts are extracted in the background (C1)</td></tr>
 <tr><td>An exhausted daily quota (HTTP 429) or a timeout was retried for about four minutes before an error appeared</td><td>Manual use of the GUI</td><td>Daily-quota errors and timeouts fail at once with a clear message; short "high demand" errors are still retried</td></tr>
 <tr><td>Newer OpenAI models rejected the request (HTTP 400: <code>max_tokens</code> and temperature not supported)</td><td>Manual run with an OpenAI key</td><td>For o-series and gpt-5+ models the adapter sends <code>max_completion_tokens</code> with headroom and low reasoning effort; classic models keep the old parameters</td></tr>
+<tr><td>The free Gemini tier (20 requests per day) was too small for normal use and for recording the demonstration</td><td>Manual use of the GUI</td><td>OpenAI made the default provider (<code>LLMClientFactory</code>, <code>.env.example</code>, setup help); Gemini kept as a configurable alternative, so the Adapter pattern is unchanged</td></tr>
 </table>
 
 <h3>6.4 Remaining limitations</h3>

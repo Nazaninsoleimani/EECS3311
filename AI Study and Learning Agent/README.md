@@ -62,14 +62,14 @@ scripts/render-diagrams.sh path/to/plantuml.jar
 
 ## Technology
 
-Java 21 (Gradle multi-module: `backend`, `frontend:cli`, `frontend:gui`), Swing desktop GUI, `study` CLI, local SQLite with a local embedding index, and an LLM accessed through the provider-independent `LLMClient` interface (Google Gemini by default, or any OpenAI-compatible endpoint).
+Java 21 (Gradle multi-module: `backend`, `frontend:cli`, `frontend:gui`), Swing desktop GUI, `study` CLI, local SQLite with a local embedding index, and an LLM accessed through the provider-independent `LLMClient` interface (OpenAI by default, any OpenAI-compatible endpoint, or Google Gemini as an alternative).
 
 ## Running the application
 
 ### Prerequisites
 
 - JDK 21 (`java -version` should print 21 or later). Gradle is not needed: the wrapper `./gradlew` downloads it.
-- Optional but recommended: a free Gemini API key from <https://aistudio.google.com/apikey>. Without a key, the deterministic parts still work (courses, upload and retrieval, grading of objective questions, scheduling, progress, reminders, history) and AI features use their fallbacks or report that the AI is unavailable.
+- Optional but recommended: an OpenAI API key from <https://platform.openai.com/api-keys>. Without a key, the deterministic parts still work (courses, upload and retrieval, grading of objective questions, scheduling, progress, reminders, history) and AI features use their fallbacks or report that the AI is unavailable.
 
 ### Local configuration (API key)
 
@@ -78,7 +78,7 @@ cp .env.example .env
 # edit .env and replace YOUR_LOCAL_API_KEY_HERE with your own key
 ```
 
-`.env` is listed in `.gitignore` and must never be committed. To use an OpenAI-compatible provider instead, set `LLM_PROVIDER=openai` and the `OPENAI_*` values. Retrieval uses local embeddings by default; set `EMBEDDING_PROVIDER=gemini` to use Gemini embeddings instead. Data is stored in `~/.study-agent/study-agent.db` (change it with `STUDY_AGENT_DB`).
+`.env` is listed in `.gitignore` and must never be committed. OpenAI is the default provider (`LLM_PROVIDER=openai`, model `gpt-6.1-sol`); any OpenAI-compatible endpoint works by changing `OPENAI_BASE_URL` and `OPENAI_MODEL`. Google Gemini is still supported as an alternative: set `LLM_PROVIDER=gemini` and `GEMINI_API_KEY`. Retrieval uses local embeddings by default; set `EMBEDDING_PROVIDER=gemini` to use Gemini embeddings instead. Data is stored in `~/.study-agent/study-agent.db` (change it with `STUDY_AGENT_DB`).
 
 ### Build and test
 

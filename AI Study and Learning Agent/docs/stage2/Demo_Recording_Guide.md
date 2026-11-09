@@ -31,9 +31,9 @@ Plan: 17 short videos (N01 + F01-F16), 1-2 minutes each, recorded in the order b
 5. **Recording tool**: press **Cmd + Shift + 5**, choose "Record Selected Portion" (or entire screen), click **Options > Microphone > MacBook Microphone**, then **Record**. Stop with the stop button in the menu bar. The video is saved to your Desktop.
 6. Do a **10-second test recording** and play it back to check the sound.
 
-Tips: speak slowly; it is fine to pause while the AI is "thinking" (say "the agent is retrieving my notes and generating..."). If a step fails because Google says "high demand", wait a minute and click again; you can keep it in the video and explain that the app retries automatically.
+Tips: speak slowly; it is fine to pause while the AI is "thinking" (say "the agent is retrieving my notes and generating..."). If a step fails because the AI provider is busy, wait a moment and click again; you can keep it in the video and explain that the app retries automatically.
 
-**AI quota:** the free Gemini tier allows only about 20 AI requests per day, and recording all videos needs more (every summary, tutor question, quiz, explanation, flashcard deck and plan is one or more requests). If the app says "The AI provider's daily free quota is used up", either wait until it resets or use an OpenAI key: in `.env` set `LLM_PROVIDER=openai` and `OPENAI_API_KEY=...` (each on its own line), then restart the app. Check the header badge says **AI connected** before you record.
+**AI provider:** the app uses OpenAI. Before recording, check that `.env` has `LLM_PROVIDER=openai` and your `OPENAI_API_KEY=...` (each on its own line), and that the header badge says **AI connected**.
 
 ---
 

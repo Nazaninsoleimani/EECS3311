@@ -116,7 +116,7 @@ public class DashboardView extends BaseView {
     private JComponent aiBanner() {
         Card c = new Card(new BorderLayout(12, 0), Theme.WARNING);
         JLabel text = new JLabel("<html><b>AI features are off.</b> Summaries, quizzes, flashcards, study plans and tutor answers "
-                + "need a free Gemini key. Everything else already works.</html>");
+                + "need an OpenAI API key. Everything else already works.</html>");
         c.add(text, BorderLayout.CENTER);
         c.add(button("How to switch on", () -> StudyAgentGui.showAiHelp(this)), BorderLayout.EAST);
         return c;

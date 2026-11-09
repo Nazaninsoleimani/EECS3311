@@ -206,9 +206,9 @@ public class StudyAgentGui {
                 <html><body style='width:380px'>
                 <h3>Switching the AI on</h3>
                 <ol>
-                <li>Get a free key at <b>aistudio.google.com/apikey</b> (sign in with Google, then "Create API key").</li>
+                <li>Create an OpenAI API key at <b>platform.openai.com/api-keys</b>.</li>
                 <li>In the project folder, open the file <b>.env</b> (copy <b>.env.example</b> to <b>.env</b> if it does not exist).</li>
-                <li>Replace <b>YOUR_LOCAL_API_KEY_HERE</b> on the <b>GEMINI_API_KEY=</b> line with your key and save.</li>
+                <li>Replace <b>YOUR_LOCAL_API_KEY_HERE</b> on the <b>OPENAI_API_KEY=</b> line with your key and save.</li>
                 <li>Close and restart Study Agent. The badge turns green.</li>
                 </ol>
                 <p>The key stays on your computer: <b>.env</b> is never committed to GitHub.</p>

@@ -107,10 +107,14 @@ class LLMAdapterTest {
 
     @Test
     void factoryFallsBackWhenKeyIsPlaceholder() {
-        LLMClient c = LLMClientFactory.create(new AppConfig(Map.of("GEMINI_API_KEY", "YOUR_LOCAL_API_KEY_HERE")));
+        LLMClient c = LLMClientFactory.create(new AppConfig(Map.of("OPENAI_API_KEY", "YOUR_LOCAL_API_KEY_HERE")));
         assertFalse(c.isAvailable());
         assertThrows(LLMException.class, () -> c.generate(LLMRequest.of("", "x")));
-        assertTrue(LLMClientFactory.create(new AppConfig(Map.of("GEMINI_API_KEY", "abc"))).isAvailable());
+        LLMClient openai = LLMClientFactory.create(new AppConfig(Map.of("OPENAI_API_KEY", "abc")));
+        assertTrue(openai.isAvailable());
+        assertTrue(openai.getModelName().startsWith("openai:"), "OpenAI is the default provider");
+        LLMClient gemini = LLMClientFactory.create(new AppConfig(Map.of("LLM_PROVIDER", "gemini", "GEMINI_API_KEY", "abc")));
+        assertTrue(gemini.getModelName().startsWith("gemini:"), "Gemini stays available by configuration");
     }
 
     @Test
