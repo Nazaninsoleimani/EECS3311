@@ -140,7 +140,7 @@ public abstract class BaseView extends JPanel {
     /** The main action of a view, drawn in the accent colour. */
     protected static JButton accentButton(String text, Runnable action) {
         JButton b = button(text, action);
-        b.putClientProperty("FlatLaf.style", "background: #4F6BED; foreground: #FFFFFF; borderWidth: 0; focusWidth: 0; font: bold");
+        b.putClientProperty("FlatLaf.style", "background: #7C3AED; foreground: #FFFFFF; borderWidth: 0; focusWidth: 0; font: bold");
         return b;
     }
 

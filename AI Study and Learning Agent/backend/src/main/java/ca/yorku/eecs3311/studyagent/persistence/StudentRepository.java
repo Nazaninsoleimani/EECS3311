@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface StudentRepository {
     Optional<Student> findById(String id);
     void save(Student s);
+    /** The student with this email (case-insensitive), if one has an account. */
+    Optional<Student> findByEmail(String email);
 }

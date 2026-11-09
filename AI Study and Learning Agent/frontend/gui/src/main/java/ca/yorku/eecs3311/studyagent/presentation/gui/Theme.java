@@ -16,7 +16,7 @@ import javax.swing.UIManager;
  * installed (headless tests), so views can always ask for them.
  */
 final class Theme {
-    static final Color ACCENT = new Color(0x4F6BED);
+    static final Color ACCENT = new Color(0x7C3AED);
     static final Color SUCCESS = new Color(0x2E9E5B);
     static final Color WARNING = new Color(0xD99A00);
     static final Color DANGER = new Color(0xD64545);
@@ -33,7 +33,7 @@ final class Theme {
     }
 
     static void install(boolean dark) {
-        FlatLaf.setGlobalExtraDefaults(Map.of("@accentColor", "#4F6BED"));
+        FlatLaf.setGlobalExtraDefaults(Map.of("@accentColor", "#7C3AED"));
         if (dark) FlatDarkLaf.setup(); else FlatLightLaf.setup();
         UIManager.put("Component.arc", 10);
         UIManager.put("Button.arc", 10);

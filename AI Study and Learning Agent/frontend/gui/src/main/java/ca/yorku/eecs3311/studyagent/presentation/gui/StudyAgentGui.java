@@ -3,6 +3,7 @@ package ca.yorku.eecs3311.studyagent.presentation.gui;
 import ca.yorku.eecs3311.studyagent.config.AppConfig;
 import ca.yorku.eecs3311.studyagent.config.AppContext;
 import ca.yorku.eecs3311.studyagent.domain.Course;
+import ca.yorku.eecs3311.studyagent.domain.Student;
 import ca.yorku.eecs3311.studyagent.integration.notification.DesktopNotificationGateway;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -44,10 +45,17 @@ public class StudyAgentGui {
     private final JLabel status = new JLabel("Ready");
     private final Card.Pill aiPill = new Card.Pill("", Theme.WARNING);
     private final JButton themeButton = new JButton();
+    private final Runnable onSignOut;
     private boolean updatingBox;
 
     public StudyAgentGui(GuiContext ctx) {
+        this(ctx, null);
+    }
+
+    /** onSignOut is run by the header's Sign out button (null hides it). */
+    public StudyAgentGui(GuiContext ctx, Runnable onSignOut) {
         this.ctx = ctx;
+        this.onSignOut = onSignOut;
         this.views = createViews(ctx);
         views.forEach(v -> tabs.addTab(" " + v.title(), NavIcon.forTitle(v.title()), v));
         styleSidebar();
@@ -164,6 +172,16 @@ public class StudyAgentGui {
         updateThemeButton();
         right.add(aiPill);
         right.add(themeButton);
+        if (onSignOut != null) {
+            JLabel user = new JLabel(ctx.facade.getStudent(ctx.studentId).getName());
+            user.setFont(user.getFont().deriveFont(Font.BOLD));
+            user.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+            JButton signOut = new JButton("Sign out");
+            signOut.putClientProperty("JButton.buttonType", "roundRect");
+            signOut.addActionListener(e -> onSignOut.run());
+            right.add(user);
+            right.add(signOut);
+        }
 
         bar.add(brand, BorderLayout.WEST);
         bar.add(center, BorderLayout.CENTER);
@@ -233,18 +251,62 @@ public class StudyAgentGui {
                 // still unavailable; the Materials view has a Retry indexing button
             }
         }, "pending-indexing").start();
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new StudyAgentGui(new GuiContext(app.facade(), app.studentId())).buildFrame();
-            frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            frame.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    app.close();
-                    System.exit(0);
-                }
-            });
-            frame.setVisible(true);
+        SwingUtilities.invokeLater(() -> showSignIn(app));
+    }
+
+    /** The sign-in window; closing it without signing in quits the application. */
+    static void showSignIn(AppContext app) {
+        JFrame window = new JFrame("Study Agent - Sign in");
+        boolean[] signedIn = {false};
+        window.setContentPane(new AuthPanel(app.facade(), student -> {
+            signedIn[0] = true;
+            window.dispose();
+            openMain(app, student);
+        }));
+        window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        window.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (!signedIn[0]) quit(app);
+            }
         });
+        window.setSize(960, 600);
+        window.setMinimumSize(new Dimension(860, 560));
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);
+    }
+
+    /** The main window for the signed-in student; Sign out returns to the sign-in window. */
+    static void openMain(AppContext app, Student student) {
+        boolean[] signingOut = {false};
+        JFrame[] holder = new JFrame[1];
+        StudyAgentGui gui = new StudyAgentGui(new GuiContext(app.facade(), student.getId()), () -> {
+            signingOut[0] = true;
+            holder[0].dispose();
+        });
+        JFrame frame = gui.buildFrame();
+        holder[0] = frame;
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                gui.detachObservers();
+                if (signingOut[0]) showSignIn(app);
+                else quit(app);
+            }
+        });
+        frame.setVisible(true);
+    }
+
+    /** Views that observe progress must stop listening when their window closes. */
+    void detachObservers() {
+        views.stream().filter(v -> v instanceof ProgressDashboardView)
+                .forEach(v -> ctx.facade.detachProgressObserver((ProgressDashboardView) v));
+    }
+
+    private static void quit(AppContext app) {
+        app.close();
+        System.exit(0);
     }
 
     List<BaseView> views() { return views; }

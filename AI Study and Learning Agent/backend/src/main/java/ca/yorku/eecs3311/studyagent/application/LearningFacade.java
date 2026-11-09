@@ -73,6 +73,7 @@ public class LearningFacade {
     private final StudentRepository students;
     private final UsageMeter usage;
     private final QuestionBank questionBank;
+    private final AccountService accounts;
 
     public LearningFacade(CourseService courseService, MaterialService materialService, GradingService grading,
                           ProgressTracker tracker, ReminderScheduler reminders, ConceptMapService conceptMaps,
@@ -93,6 +94,17 @@ public class LearningFacade {
         this.students = students;
         this.usage = usage;
         this.questionBank = new QuestionBank(quizzes);
+        this.accounts = new AccountService(students);
+    }
+
+    // ------------------------------------------------------------------ accounts (GUI sign-in)
+
+    public Student createAccount(String name, String email, char[] password, char[] confirmation) {
+        return accounts.register(name, email, password, confirmation);
+    }
+
+    public Student signIn(String email, char[] password) {
+        return accounts.signIn(email, password);
     }
 
     // ------------------------------------------------------------------ F01 courses
