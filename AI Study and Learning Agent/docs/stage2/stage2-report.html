@@ -115,7 +115,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/CourseView</code> (form, table, selection); <code>cli/CLIApplication</code> (course commands); <code>app/LearningFacade</code> (entry, history event); <code>app/CourseService</code> (unique code per student, exam-date check, cascading delete, resolve by id or code); <code>domain/Course</code>; <code>persist/CourseRepository</code> + <code>SqliteCourseRepository</code>; <code>agent/MemoryManager</code> (records <code>COURSE_*</code> events)</td></tr>
 <tr><td class="k">Key methods</td><td><code>createCourse()</code>, <code>updateCourse()</code>, <code>deleteCourse()</code>, <code>listCourses()</code>, <code>resolve()</code>, <code>requireUniqueCode()</code>, <code>requireFutureExam()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Facade</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 2:23</td></tr>
 </table>
 <p class="flow"><span class="pill det">Deterministic</span> The view or CLI passes code, title and exam date to <code>LearningFacade.createCourse()</code>; <code>CourseService</code> builds the <code>Course</code> (which normalises the code), rejects a duplicate code or a past exam date, and saves it; the facade records <code>COURSE_CREATED</code>. Deleting asks for confirmation in both front ends, then removes the course's materials, vectors, concepts, progress, quizzes, decks and plans.</p>
 </div>
@@ -128,7 +128,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/MaterialView</code> (file chooser, status table, Retry indexing); <code>app/MaterialService</code> (validation, parse, chunk, index, pending retry); <code>integ/parsing/DocumentParser</code> with <code>PdfParser</code> (PDFBox, per page), <code>DocxParser</code>, <code>PlainTextParser</code>; <code>integ/parsing/Chunker</code> (800-token chunks, 100 overlap, page refs); <code>integ/retrieval/RetrievalService</code>, <code>EmbeddingService</code>, <code>SqliteVectorStore</code>; <code>domain/CourseMaterial</code>, <code>DocumentChunk</code>; <code>app/MaterialUpload</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>uploadMaterial()</code>, <code>storeMaterial()</code>, <code>upload()</code>, <code>findParser()</code>, <code>supports()</code>, <code>parse()</code>, <code>chunk()</code>, <code>index()</code>, <code>embed()</code>, <code>upsert()</code>, <code>markIndexed()</code>, <code>markFailed()</code>, <code>markIndexingPending()</code>, <code>retryPendingIndexing()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Facade; parsers are interchangeable <code>DocumentParser</code> implementations</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 3:42</td></tr>
 </table>
 <p class="flow"><span class="pill det">Deterministic</span> <code>MaterialService.upload()</code> checks the file exists, its type has a parser and it is under 50 MB, then parses, chunks and saves the chunks, and indexes them (embed + upsert). Unsupported types are rejected before anything is stored; empty or unreadable files are stored as <code>FAILED</code> with the reason; an embedding outage leaves the material <code>UPLOADED</code> with its chunks so <code>retryPendingIndexing()</code> (run at start-up, <code>material reindex</code>, Retry indexing button) can finish later.</p>
 </div>
@@ -141,7 +141,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/MaterialView</code> (length choice, summary panel); <code>app/LearningFacade.summarizeMaterial()</code> (requires an indexed material, stores the summary); <code>agent/LearningAgent.summarize()</code>; <code>agent/Planner</code> (chooses single pass or map-reduce above 6,000 tokens); <code>tools/SummarizationTool</code> (map: one LLM call per group of chunks; reduce: structured JSON); <code>agent/ResponseValidator</code>; <code>domain/Summary</code>, <code>SummaryOptions</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>summarizeMaterial()</code>, <code>summarize()</code>, <code>createPlan()</code>, <code>execute()</code>, <code>mapSections()</code>, <code>generate()</code>, <code>generateStructured()</code>, <code>validate()</code>, <code>saveSummary()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Facade, Adapter</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 4:45</td></tr>
 </table>
 <p class="flow"><span class="pill ai">AI-based</span> The agent counts the material's tokens, the Planner picks the mode, and <code>SummarizationTool</code> produces <code>{summary, keyPoints, sourceRefs}</code>; invalid output is retried once; an LLM failure returns "Summary unavailable, retry later" and nothing partial is stored.</p>
 </div>
@@ -154,7 +154,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>app/LearningFacade.extractConcepts()</code> and <code>uploadMaterial()</code>; <code>agent/LearningAgent.extractConcepts()</code>; <code>tools/ConceptExtractionTool</code> (batches of chunks, reuses known course concepts, drops relations to unknown concepts and self-relations); <code>app/ConceptMapService.save()</code> (persists and remaps relation ids to stored concepts); <code>domain/Concept</code>, <code>ConceptRelation</code>, <code>ConceptGraph</code>; <code>persist/ConceptRepository</code> (merge by normalised name)</td></tr>
 <tr><td class="k">Key methods</td><td><code>extractConcepts()</code>, <code>execute()</code>, <code>generateStructured()</code>, <code>validate()</code>, <code>saveAll()</code>, <code>saveRelations()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Facade, Adapter</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 5:39</td></tr>
 </table>
 <p class="flow"><span class="pill ai">AI-based</span> with deterministic validation. The LLM proposes concepts and typed relations (<code>PREREQUISITE_OF</code>, <code>PART_OF</code>, <code>RELATED_TO</code>) per batch; validation merges duplicates and discards invalid relations, reporting how many were dropped. If the LLM is unavailable the upload still succeeds and the student is told extraction can be re-run.</p>
 </div>
@@ -167,7 +167,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/TutorChatView</code> (conversation, "Show agent plan"); <code>cli</code> <code>ask</code> and <code>ask -i</code>; <code>LearningAgent.answerQuestion()</code>; <code>MemoryManager</code>, <code>SessionMemory</code> (last 20 turns); <code>Planner.retrievalQuery()</code> (rewrites follow-ups); <code>tools/RetrievalTool</code> &rarr; <code>RetrievalService</code> (threshold); <code>ContextBuilder</code> (numbered sources, token budget); <code>ResponseValidator.checkGrounding()</code>; <code>domain/Answer</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>askQuestion()</code>, <code>answerQuestion()</code>, <code>generateGroundedAnswer()</code>, <code>extractiveAnswer()</code>, <code>retrieve()</code>, <code>build()</code>, <code>checkGrounding()</code>, <code>appendToSession()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Facade, Adapter</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 8:49 and 35:40</td></tr>
 </table>
 <p class="flow"><span class="pill hyb">Hybrid</span> Retrieval and the grounding check are deterministic; the LLM writes the answer only from the numbered sources. If no chunk passes the similarity threshold, the LLM is not called and the student is told the material does not cover the question. An answer whose citations are missing or point to non-existent sources is regenerated once with a stricter instruction; if it still fails it is returned with <code>grounded=false</code> and a warning.</p>
 </div>
@@ -180,7 +180,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/StudyPlannerView</code>; <code>cli</code> <code>study-plan</code>; <code>LearningAgent.generateStudyPlan()</code>, <code>prioritize()</code>, <code>revisePlan()</code>; <code>Planner</code> (analyze &rarr; retrieve &rarr; schedule &rarr; remind); <code>tools/ProgressAnalysisTool</code> (deterministic ranking); <code>tools/StudyScheduleTool</code> (Strategy context); <code>ExamCramStrategy</code>, <code>SpacedRepetitionStrategy</code>, <code>BalancedReviewStrategy</code>; <code>tools/ReminderTool</code>; <code>app/StudyPlanMonitor</code> (revision); <code>domain/StudyPlan</code>, <code>StudyTask</code>, <code>TopicPriority</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>generateStudyPlan()</code>, <code>createPlan()</code>, <code>rankTopics()</code>, <code>prioritize()</code>, <code>selectStrategy()</code>, <code>buildSchedule()</code>, <code>revisePlan()</code>, <code>needsRevision()</code>, <code>completeStudyTask()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Strategy, Observer (revision), Facade, Adapter</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 22:52</td></tr>
 </table>
 <p class="flow"><span class="pill hyb">Hybrid</span> <code>ProgressAnalysisTool</code> ranks concepts by priority = 0.6(1 - mastery) + 0.25 recency gap + 0.15 prerequisite weight; focus topics are boosted. The LLM may reorder the candidates and write a learning objective per topic and the rationale (names it invents are ignored; invalid output is retried once, then the deterministic ranking is used with a warning). The tool picks the strategy from the days left (&le; 7 cram, &ge; 21 spaced repetition, otherwise or without an exam balanced) and allocates 30-minute slots. Reminders are created for the first seven planned days. When a concept's mastery drops sharply or below 50% and the plan does not revisit it within three days, <code>StudyPlanMonitor</code> asks the agent for a revised plan and archives the old one.</p>
 </div>
@@ -193,7 +193,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/FlashcardView</code> (generate, flip, Again/Hard/Good/Easy); <code>cli</code> <code>flashcards generate|list|review</code> (<code>CommandParser</code>, <code>StudyCommands</code>); <code>LearningAgent.generateFlashcards()</code>; <code>tools/FlashcardGenerationTool</code> (drops empty and duplicate cards); <code>domain/FlashcardDeck</code>, <code>Flashcard</code> (Leitner boxes); <code>LearningFacade.reviewFlashcard()</code> &rarr; <code>ProgressTracker.recordResult()</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>run()</code>, <code>parse()</code>, <code>dispatch()</code>, <code>generateFlashcards()</code>, <code>execute()</code>, <code>saveDeck()</code>, <code>dueFlashcards()</code>, <code>reviewFlashcard()</code>, <code>recordReview()</code>, <code>toGradeResult()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Facade, Adapter, Observer (review results feed mastery)</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 27:35</td></tr>
 </table>
 <p class="flow"><span class="pill hyb">Hybrid</span> The LLM writes front/back pairs only from retrieved material (no matching material: an error, nothing generated); a shortfall is reported on the deck. Review is deterministic: Good/Easy move the card up a box, Again/Hard back to box 1; intervals 1, 2, 4, 8, 16 days. Each rating is also a graded result for the card's concept.</p>
 </div>
@@ -206,7 +206,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/QuizView</code> (count, difficulty, types, concepts); <code>cli</code> <code>quiz generate</code>; <code>LearningAgent.generateQuiz()</code>; <code>tools/QuizGenerationTool</code> (Factory Method client, up to three rounds); <code>QuestionFactory</code> + <code>MultipleChoiceQuestionFactory</code>, <code>TrueFalseQuestionFactory</code>, <code>ShortAnswerQuestionFactory</code>; <code>domain/Question</code> and subclasses, <code>QuestionSpec</code>, <code>Quiz</code>; <code>persist/QuizRepository</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>generateQuiz()</code>, <code>execute()</code>, <code>toSpec()</code>, <code>resolveConcept()</code>, <code>build()</code>, <code>createQuestion()</code>, <code>save()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Factory Method, Facade, Adapter</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 10:58</td></tr>
 </table>
 <p class="flow"><span class="pill ai">AI-based</span> The LLM returns question specifications as JSON; each is built by the factory registered for its type, which rejects invalid specs (wrong option count, unmatched answer, unknown concept, empty prompt). Rejection reasons are fed back for replacement questions; a quiz with fewer questions carries a notice. A whole-course quiz targets the course's known concepts so every answer updates mastery.</p>
 </div>
@@ -219,7 +219,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/QuizView</code> + <code>QuestionPanel</code> (inputs per type, feedback); <code>cli</code> <code>quiz take</code>; <code>LearningFacade.submitQuiz()</code>; <code>app/GradingService</code>; <code>Question.grade()</code> in each subclass; <code>domain/QuizAttempt</code>, <code>GradeResult</code>; <code>app/ProgressTracker.recordAttempt()</code>; <code>ConceptMastery</code>, <code>PerformanceRecord</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>submitQuiz()</code>, <code>grade()</code>, <code>gradeResponse()</code>, <code>Question.grade()</code>, <code>gradeWithRubric()</code>, <code>computeScore()</code>, <code>recordAttempt()</code>, <code>applyResult()</code>, <code>notifyObservers()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Observer, Facade, Factory Method products (polymorphic <code>grade()</code>)</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 13:35</td></tr>
 </table>
 <p class="flow"><span class="pill hyb">Hybrid</span> Multiple-choice and true/false are graded exactly by the question objects; unanswered questions score 0. Short answers are scored by the LLM against the model answer and rubric (validated 0-1 score); without an LLM the keyword grade is shown and flagged "needs review", which is stored but not applied to mastery. The attempt is saved and <code>ProgressTracker</code> updates mastery and notifies observers.</p>
 </div>
@@ -232,7 +232,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/QuizView</code> (Explain button per question); <code>cli</code> <code>quiz explain</code>; <code>LearningFacade.explainAnswer()</code>; <code>LearningAgent.explainAnswer()</code>; <code>RetrievalTool</code>, <code>ContextBuilder</code>; <code>domain/Explanation</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>requestExplanation()</code>, <code>explainAnswer()</code>, <code>findAttempt()</code>, <code>execute()</code>, <code>build()</code>, <code>generate()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Facade, Adapter</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 14:20</td></tr>
 </table>
 <p class="flow"><span class="pill ai">AI-based</span> The explanation is generated from the question, the correct answer, the student's answer and retrieved sources, citing them as [n]; it is marked not source-backed when it cites none. Without an LLM the stored correct answer, the grading feedback and the most relevant passage are shown.</p>
 </div>
@@ -245,7 +245,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/ProgressDashboardView</code> (Analyze weak topics); <code>cli</code> <code>weak-topics show</code>; <code>LearningAgent.diagnoseWeakTopics()</code>, <code>diagnoseWithLlm()</code>; <code>tools/ProgressAnalysisTool.rankTopics()</code>; <code>domain/WeakTopicReport</code>, <code>WeakTopic</code>, <code>ConceptMastery</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>analyzeWeakTopics()</code>, <code>diagnoseWeakTopics()</code>, <code>rankTopics()</code>, <code>recommendedActivity()</code>, <code>generateStructured()</code>, <code>validate()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Facade, Adapter</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 16:38 and 20:52</td></tr>
 </table>
 <p class="flow"><span class="pill hyb">Hybrid</span> Deterministic: a concept is weak when its mastery is below 50% after at least three attempts; with fewer than five graded answers in the course the report says the data is insufficient and suggests where to start. With enough data the LLM reads the student's wrong answers and the relevant material and writes the likely misconception and a recommended activity; on failure the deterministic report is returned.</p>
 </div>
@@ -258,7 +258,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/LearningSessionView</code>; <code>cli</code> <code>learning-session start</code>; <code>LearningFacade.startAdaptiveSession()</code>, <code>submitActivityResult()</code>, <code>endAdaptiveSession()</code>; <code>GradingService</code>; <code>ProgressTracker.recordActivity()</code>; <code>domain/AdaptiveLearningSession</code> (State context) with <code>FoundationState</code>, <code>IntermediateState</code>, <code>AdvancedState</code>; <code>LearningAgent.nextAdaptiveActivity()</code>; <code>QuizGenerationTool</code>; <code>app/QuestionBank</code>; <code>app/ActivityOutcome</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>startAdaptiveSession()</code>, <code>submitActivityResult()</code>, <code>gradeResponse()</code>, <code>recordOutcome()</code>, <code>onResult()</code>, <code>setState()</code>, <code>preferredQuestionTypes()</code>, <code>nextAdaptiveActivity()</code>, <code>pickConcept()</code>, <code>QuestionBank.pick()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>State, Observer, Factory Method, Facade</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 11:05</td></tr>
 </table>
 <p class="flow"><span class="pill hyb">Hybrid</span> The state machine decides difficulty (three correct in a row: up one level; two wrong: down one level); the agent picks the most urgent concept not asked in the last two activities and asks the LLM for one question of a type preferred by the current state. If generation fails, an unused stored question from the course's earlier quizzes is reused (same level and preferred type first); with none left the session ends gracefully, and when every concept is mastered it suggests a mixed review quiz.</p>
 </div>
@@ -271,7 +271,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/ProgressDashboardView</code> (ProgressObserver; table with mastery bars, live update line), <code>gui/DashboardView</code> (summary); <code>cli</code> <code>progress show</code>; <code>app/ProgressTracker</code> (Subject), <code>ProgressObserver</code>; <code>domain/ConceptMastery</code> (EMA, alpha 0.3), <code>PerformanceRecord</code>, <code>LearningProgress</code>, <code>ProgressEvent</code>; <code>persist/ProgressRepository</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>getProgress()</code>, <code>recordAttempt()</code>, <code>recordResult()</code>, <code>applyResult()</code>, <code>attach()</code>, <code>notifyObservers()</code>, <code>onProgressChanged()</code>, <code>loadProgress()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Observer, Facade</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 18:10</td></tr>
 </table>
 <p class="flow"><span class="pill det">Deterministic</span> Quizzes, adaptive answers and flashcard reviews all go through <code>ProgressTracker</code>, which stores a performance record, updates the concept's mastery (m &larr; 0.7m + 0.3s) and notifies observers; the dashboard refreshes without the grading code knowing it exists. The empty state suggests a first activity.</p>
 </div>
@@ -284,7 +284,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/ReminderView</code>; <code>cli</code> <code>reminder add|list|cancel|dispatch</code>; <code>app/ReminderScheduler</code> (store, background dispatch every 60 s, ProgressObserver); <code>domain/Reminder</code> (recurrence); <code>integ/notification/NotificationGateway</code> with <code>DesktopNotificationGateway</code> (GUI, macOS notification / system tray) and <code>ConsoleNotificationGateway</code> (CLI); <code>tools/ReminderTool</code> (plan reminders)</td></tr>
 <tr><td class="k">Key methods</td><td><code>scheduleReminder()</code>, <code>schedule()</code>, <code>cancel()</code>, <code>dispatchDue()</code>, <code>findDue()</code>, <code>isDue()</code>, <code>markDelivered()</code>, <code>send()</code>, <code>onProgressChanged()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Observer, Facade</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 31:25</td></tr>
 </table>
 <p class="flow"><span class="pill det">Deterministic</span> One-off reminders in the past are rejected; daily and weekly ones move to their next occurrence after delivery; a failed delivery stays pending and is retried. Overdue reminders are delivered when the application next starts. Reminders are also created by the agent for planned days and by the scheduler when a concept falls below the weak threshold (once per concept).</p>
 </div>
@@ -297,7 +297,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/ConceptMapView</code> (drawn graph coloured by mastery, details on click, Copy as Mermaid, Quiz me on this); <code>gui/GuiContext.requestQuizOn()</code> &rarr; <code>QuizView.prepareFor()</code>; <code>cli</code> <code>concept-map show [--format text|mermaid]</code>; <code>app/ConceptMapService.buildGraph()</code>, <code>renderText()</code>; <code>domain/ConceptGraph</code> (<code>neighbours()</code>, <code>prerequisitesOf()</code>, <code>toMermaid()</code>)</td></tr>
 <tr><td class="k">Key methods</td><td><code>loadConceptMap()</code>, <code>getConceptMap()</code>, <code>buildGraph()</code>, <code>selectConcept()</code>, <code>neighbours()</code>, <code>prerequisitesOf()</code>, <code>requestQuizOn()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Facade</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 6:06</td></tr>
 </table>
 <p class="flow"><span class="pill hyb">Hybrid</span> Relations were proposed by the LLM during F04; viewing is deterministic and makes no LLM call. Grey = not practised, red = below 50%, amber = learning, green = at least 80%.</p>
 </div>
@@ -310,7 +310,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/HistoryView</code> (course, period and activity filters); <code>cli</code> <code>history show [--course] [--last 7d|2w] [--type]</code>; <code>LearningFacade</code> (records an event for every operation); <code>agent/MemoryManager.recordEvent()</code>, <code>getHistory()</code>; <code>domain/LearningEvent</code>, <code>HistoryFilter</code>, <code>LearningHistory</code>; <code>persist/LearningHistoryRepository</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>loadHistory()</code>, <code>getHistory()</code>, <code>recordEvent()</code>, <code>append()</code>, <code>find()</code>, <code>matches()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Facade</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 37:50</td></tr>
 </table>
 <p class="flow"><span class="pill det">Deterministic</span> 21 event types are recorded; the agent also reads the last two weeks of events as learner context when planning and answering.</p>
 </div>
@@ -544,25 +544,26 @@
 <!-- ================================================================== 7 -->
 <h2 class="pagebreak">7. Demonstration index</h2>
 <p>Each segment shows the feature ID and name, how it is invoked and its input, the running result, where AI is involved, and an error or alternative case. Together the recordings show both the GUI and the CLI. No API key appears in any recording. Sample data: <code>sample-data/EECS3311/</code>.</p>
+<p><b>Recording:</b> all features are shown in one recording in this Google Drive folder (anyone with the link can view): <a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing</a>. The timestamps below are positions in that recording.</p>
 <table>
 <tr><th style="width:23%">Feature</th><th style="width:11%">Interface</th><th style="width:38%">What the segment shows (incl. error / alternative case)</th><th>Video link and timestamp</th></tr>
-<tr><td>F01 Course Management</td><td>GUI + CLI</td><td>Create, edit, delete with confirmation; duplicate code and past exam date rejected</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F02 Material Upload</td><td>GUI + CLI</td><td>Upload the three sample notes, status table; <code>.pptx</code> rejected; empty file FAILED</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F03 Summarization</td><td>GUI</td><td>Brief and detailed summary with key points</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F04 Concept Extraction</td><td>GUI + CLI</td><td>Concepts listed after upload; re-extract</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F05 Question Answering</td><td>GUI + CLI <code>ask -i</code></td><td>Cited answer, follow-up "why is that?", "Show agent plan"; unrelated question &rarr; not covered</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F06 Study Plan</td><td>GUI</td><td>Generate with exam date and minutes; strategy and rationale; mark task done; plan revision after a poor quiz</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F07 Flashcards</td><td>CLI + GUI</td><td>Generate a deck, review with ratings, next-review dates</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F08 Quiz Generation</td><td>GUI</td><td>Choose types, difficulty, concepts; notice when fewer questions pass validation</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F09 Quiz Grading</td><td>GUI + CLI <code>quiz take</code></td><td>Submit with an unanswered question; per-question feedback; short answer graded by AI</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F10 Answer Explanation</td><td>GUI + CLI</td><td>Explain a wrong answer with sources</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F11 Weak Topics</td><td>GUI + CLI</td><td>Insufficient-data message first; after practice, weak topics with AI diagnosis</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F12 Adaptive Difficulty</td><td>CLI + GUI</td><td>Three correct answers &rarr; level up; two wrong &rarr; level down</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F13 Progress Tracking</td><td>GUI + CLI</td><td>Progress tab updating live after a quiz (Observer); <code>progress show</code></td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F14 Reminders</td><td>GUI + CLI</td><td>Add a reminder two minutes ahead and receive the notification; past time rejected; cancel</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F15 Concept Map</td><td>GUI + CLI</td><td>Coloured map, click a concept, Quiz me on this; Mermaid output in the CLI</td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F01 Course Management</td><td>GUI + CLI</td><td>Create, edit, delete with confirmation; duplicate code and past exam date rejected</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">2:23</a></td></tr>
+<tr><td>F02 Material Upload</td><td>GUI + CLI</td><td>Upload the three sample notes, status table; <code>.pptx</code> rejected; empty file FAILED</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">3:42</a></td></tr>
+<tr><td>F03 Summarization</td><td>GUI</td><td>Brief and detailed summary with key points</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">4:45</a></td></tr>
+<tr><td>F04 Concept Extraction</td><td>GUI + CLI</td><td>Concepts listed after upload; re-extract</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">5:39</a></td></tr>
+<tr><td>F05 Question Answering</td><td>GUI + CLI <code>ask -i</code></td><td>Cited answer, follow-up "why is that?", "Show agent plan"; unrelated question &rarr; not covered</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">8:49 and 35:40</a></td></tr>
+<tr><td>F06 Study Plan</td><td>GUI</td><td>Generate with exam date and minutes; strategy and rationale; mark task done; plan revision after a poor quiz</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">22:52</a></td></tr>
+<tr><td>F07 Flashcards</td><td>CLI + GUI</td><td>Generate a deck, review with ratings, next-review dates</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">27:35</a></td></tr>
+<tr><td>F08 Quiz Generation</td><td>GUI</td><td>Choose types, difficulty, concepts; notice when fewer questions pass validation</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">10:58</a></td></tr>
+<tr><td>F09 Quiz Grading</td><td>GUI + CLI <code>quiz take</code></td><td>Submit with an unanswered question; per-question feedback; short answer graded by AI</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">13:35</a></td></tr>
+<tr><td>F10 Answer Explanation</td><td>GUI + CLI</td><td>Explain a wrong answer with sources</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">14:20</a></td></tr>
+<tr><td>F11 Weak Topics</td><td>GUI + CLI</td><td>Insufficient-data message first; after practice, weak topics with AI diagnosis</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">16:38 and 20:52</a></td></tr>
+<tr><td>F12 Adaptive Difficulty</td><td>CLI + GUI</td><td>Three correct answers &rarr; level up; two wrong &rarr; level down</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">11:05</a></td></tr>
+<tr><td>F13 Progress Tracking</td><td>GUI + CLI</td><td>Progress tab updating live after a quiz (Observer); <code>progress show</code></td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">18:10</a></td></tr>
+<tr><td>F14 Reminders</td><td>GUI + CLI</td><td>Add a reminder two minutes ahead and receive the notification; past time rejected; cancel</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">31:25</a></td></tr>
+<tr><td>F15 Concept Map</td><td>GUI + CLI</td><td>Coloured map, click a concept, Quiz me on this; Mermaid output in the CLI</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">6:06</a></td></tr>
 <tr><td>N01 Student Accounts</td><td>GUI + CLI</td><td>Create an account, sign out, wrong password rejected, sign in; <code>study account login</code> and <code>whoami</code></td><td><span class="todo">[link @ mm:ss]</span></td></tr>
-<tr><td>F16 History</td><td>GUI + CLI</td><td>Filters by course, period and activity type; <code>history show --last 7d --type quiz_completed</code></td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>F16 History</td><td>GUI + CLI</td><td>Filters by course, period and activity type; <code>history show --last 7d --type quiz_completed</code></td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">37:50</a></td></tr>
 </table>
 
 <h3>Appendix - running the submission</h3>
