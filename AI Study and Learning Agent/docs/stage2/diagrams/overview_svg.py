@@ -153,12 +153,14 @@ def view_a():
                                                          "ProgressDashboardView <<ConcreteObserver>>"]),
         B("gctx", 30, 185, "GuiContext", "", ["+ selectCourse(c)", "+ fireDataChanged()", "+ requestQuizOn(concept)"], new=True),
         B("qpanel", 830, 75, "QuestionPanel", "", ["+ answer() : String", "+ showResult(r)"], new=True),
+        B("notes", 830, 170, "StudyNotesHtml", "", ["+ summary(s, title) : String", "+ weakTopics(report) : String"], new=True),
         B("scmd", 30, 290, "StudyCommands", "", ["~ registerAll()", "- takeQuiz(q)", "- learningSession(c)"], new=True),
         B("cli", 210, 290, "CLIApplication", "", ["+ run(args) : int", "+ shell() : int", "- dispatch(cmd) : String"]),
         B("parser", 450, 290, "CommandParser", "", ["+ parse(args) : ParsedCommand", "+ tokenize(line) : String[]"]),
         B("pcmd", 700, 290, "ParsedCommand", "", ["+ group, action, args, options"]),
         B("appctx", 30, 420, "AppContext", "<<composition root>>", ["+ create(config, gateway)", "+ facade() : LearningFacade"], new=True),
         B("facade", 330, 415, "LearningFacade", "<<Facade>>", ["+ uploadMaterial(courseId, file) : MaterialUpload",
+                                                               "+ storeMaterial(courseId, file) : CourseMaterial",
                                                                "+ askQuestion(session, course, q) : Answer",
                                                                "+ generateStudyPlan(req) : StudyPlan",
                                                                "+ submitQuiz(quizId, responses) : QuizAttempt",
@@ -180,7 +182,7 @@ def view_a():
     ]
     edges = [
         ("gui", "base", "comp", "tabs", "1", "12"), ("views", "base", "inh"), ("base", "gctx", "assoc"),
-        ("views", "qpanel", "dep", "uses"), ("base", "facade", "assoc", "uses"),
+        ("views", "qpanel", "dep", "uses"), ("views", "notes", "dep", "uses"), ("base", "facade", "assoc", "uses"),
         ("cli", "scmd", "comp"), ("cli", "parser", "assoc"), ("parser", "pcmd", "dep", "<<create>>"),
         ("cli", "facade", "assoc", "uses"), ("scmd", "facade", "dep", "", "", "", [(120, 400), (330, 440)]),
         ("appctx", "facade", "dep", "<<create>>"),
@@ -259,8 +261,9 @@ def view_c():
         B("gsdk", 150, 320, "GeminiSdkClient", "<<Adaptee>>", ["+ generateContent(...)"]),
         B("osdk", 380, 320, "OpenAISdkClient", "<<Adaptee>>", ["+ createChatCompletion(...)"]),
         B("ngw", 960, 65, "NotificationGateway", "<<interface>>", ["+ send(title, body, to)"]),
-        B("desk", 900, 170, "DesktopNotificationGateway", "", ["(GUI)"]),
+        B("desk", 900, 170, "DesktopNotificationGateway", "", ["(macOS / tray)"]),
         B("cons", 1110, 170, "ConsoleNotificationGateway", "", ["(CLI)"], new=True),
+        B("rnot", 900, 270, "ReminderNotifier", "", ["(GUI) + in-app pop-up", "+ signedIn(student, open)"], new=True),
         B("retr", 30, 450, "RetrievalService", "", ["+ index(material, chunks)", "+ retrieve(query, course, k)"]),
         B("emb", 330, 430, "EmbeddingService", "<<interface>>", ["+ embed(texts)"]),
         B("local", 280, 530, "LocalHashEmbeddingService", "", ["(default, offline)"], new=True),
@@ -282,7 +285,7 @@ def view_c():
         ("meter", "llm", "assoc", "wraps", "", "", [(700, 40), (420, 40)]),
         ("retr", "emb", "assoc"), ("retr", "vs", "assoc"), ("local", "emb", "real"), ("gemb", "emb", "real"), ("svs", "vs", "real"),
         ("parsers", "parser", "real"), ("parser", "pdoc", "dep", "<<create>>"), ("chunker", "pdoc", "dep"),
-        ("desk", "ngw", "real"), ("cons", "ngw", "real"),
+        ("desk", "ngw", "real"), ("cons", "ngw", "real"), ("rnot", "desk", "assoc", "delegates"), ("rnot", "ngw", "real", "", "", "", [(1080, 300), (1080, 140)]),
         ("srepos", "repos", "real"), ("srepos", "db", "assoc"), ("svs", "db", "assoc"),
     ]
     layers = [("AI / integration layer (Adapter)", 40, 705), ("Persistence layer", 725, 880)]

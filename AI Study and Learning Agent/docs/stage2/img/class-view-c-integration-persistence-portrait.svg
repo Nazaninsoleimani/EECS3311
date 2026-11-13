@@ -44,6 +44,10 @@
 <polyline points="1110.6,540.0 1127.3,478.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#open)"/>
 <polyline points="1006.1,170.0 1028.1,127.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
 <polyline points="1164.6,170.0 1094.5,127.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
+<polyline points="991.5,270.0 993.1,218.0" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#open)"/>
+<rect x="964.2" y="235.0" width="56.2" height="12" fill="white" opacity="0.9"/>
+<text x="992.3" y="244.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" font-weight="normal" font-style="italic" fill="#333">delegates</text>
+<polyline points="1081.0,300.0 1080.0,300.0 1080.0,140.0 1069.3,127.0" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
 <polyline points="400.0,804.3 310.0,804.6" stroke="#333" stroke-width="1.1" fill="none" stroke-dasharray="5,3" marker-end="url(#tri)"/>
 <polyline points="627.2,806.4 720.0,808.3" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#open)"/>
 <polyline points="428.4,651.0 768.4,780.0" stroke="#333" stroke-width="1.1" fill="none" marker-end="url(#open)"/>
@@ -92,11 +96,16 @@
 <rect x="900.0" y="170.0" width="187.6" height="48.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
 <text x="993.8" y="187.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">DesktopNotificationGateway</text>
 <line x1="900.0" y1="192.0" x2="1087.6" y2="192.0" stroke="#444444" stroke-width="0.8"/>
-<text x="908.0" y="206.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">(GUI)</text>
+<text x="908.0" y="206.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">(macOS / tray)</text>
 <rect x="1110.0" y="170.0" width="187.6" height="48.0" rx="3" fill="#DCEBFF" stroke="#1F5FBF" stroke-width="1.2"/>
 <text x="1203.8" y="187.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">ConsoleNotificationGateway</text>
 <line x1="1110.0" y1="192.0" x2="1297.6" y2="192.0" stroke="#1F5FBF" stroke-width="0.8"/>
 <text x="1118.0" y="206.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">(CLI)</text>
+<rect x="900.0" y="270.0" width="181.0" height="62.0" rx="3" fill="#DCEBFF" stroke="#1F5FBF" stroke-width="1.2"/>
+<text x="990.5" y="287.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">ReminderNotifier</text>
+<line x1="900.0" y1="292.0" x2="1081.0" y2="292.0" stroke="#1F5FBF" stroke-width="0.8"/>
+<text x="908.0" y="306.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">(GUI) + in-app pop-up</text>
+<text x="908.0" y="320.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="start" font-weight="normal" font-style="normal" fill="#111">+ signedIn(student, open)</text>
 <rect x="30.0" y="450.0" width="200.8" height="62.0" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
 <text x="130.4" y="467.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" text-anchor="middle" font-weight="bold" font-style="normal" fill="#111">RetrievalService</text>
 <line x1="30.0" y1="472.0" x2="230.8" y2="472.0" stroke="#444444" stroke-width="0.8"/>
