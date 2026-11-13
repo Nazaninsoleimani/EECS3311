@@ -153,9 +153,11 @@ Each video: **say the feature ID and name first**, then do the steps, then the e
 **Error case:** set When to yesterday and click **Add reminder**: "Reminder time is in the past".
 **CLI:** `study reminder list`.
 
-**Say:** "F14, Reminders. Deterministic. Reminders are delivered as desktop notifications, daily and weekly ones repeat. The agent also creates reminders for my plan, and the reminder scheduler observes my progress to remind me when a concept becomes weak."
+**Say:** "F14, Reminders. Deterministic. Reminders are delivered as a pop-up in the app and as a desktop notification, daily and weekly ones repeat, and I can be reminded before the time or before my exam. The agent also creates reminders for my plan, and the reminder scheduler observes my progress to remind me when a concept becomes weak."
 
-(If no notification appears: System Settings > Notifications > allow notifications for "Script Editor".)
+When a reminder is due, a pop-up card appears in the top-right corner of the screen (with a sound), as well as the macOS notification. **Also show:** set **Also remind me** to **15 minutes before** when adding a reminder (two rows appear, one "In 15 min: ..."), and click **Remind me before the exam** (reminders 7, 3 and 1 days before the exam).
+
+(The pop-up appears even if macOS hides the system notification; to allow those too: System Settings > Notifications > "Script Editor".)
 
 ### F15 - Concept Relationship Visualization (GUI + CLI)
 
