@@ -4,7 +4,6 @@ import ca.yorku.eecs3311.studyagent.config.AppConfig;
 import ca.yorku.eecs3311.studyagent.config.AppContext;
 import ca.yorku.eecs3311.studyagent.domain.Course;
 import ca.yorku.eecs3311.studyagent.domain.Student;
-import ca.yorku.eecs3311.studyagent.integration.notification.DesktopNotificationGateway;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -241,7 +240,7 @@ public class StudyAgentGui {
         Theme.install(Theme.isDark());
         AppContext app;
         try {
-            app = AppContext.create(AppConfig.load(), new DesktopNotificationGateway());
+            app = AppContext.create(AppConfig.load(), new ReminderNotifier());
         } catch (RuntimeException e) {
             JOptionPane.showMessageDialog(null, "Cannot start: " + e.getMessage(), "Study Agent", JOptionPane.ERROR_MESSAGE);
             return;
@@ -295,12 +294,21 @@ public class StudyAgentGui {
             @Override
             public void windowClosed(WindowEvent e) {
                 gui.detachObservers();
+                ReminderNotifier.signedIn(null, null);
                 if (signingOut[0]) showSignIn(app);
                 else quit(app);
             }
         });
+        ReminderNotifier.signedIn(student.getId(), () -> {
+            frame.setState(java.awt.Frame.NORMAL);
+            frame.toFront();
+            frame.requestFocus();
+            gui.show(ReminderView.class);
+        });
         frame.setVisible(true);
         Animations.fadeIn(frame.getRootPane(), Theme.background(), 400);
+        // Deliver anything that fell due while this student was signed out.
+        new Thread(() -> app.facade().dispatchDueReminders(), "reminders-on-sign-in").start();
     }
 
     /** Views that observe progress must stop listening when their window closes. */

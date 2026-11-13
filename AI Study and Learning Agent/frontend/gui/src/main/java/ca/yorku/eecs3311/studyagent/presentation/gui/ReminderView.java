@@ -48,6 +48,10 @@ public class ReminderView extends BaseView {
     private final JTextField when = new JTextField(14);
     private final JComboBox<Recurrence> repeat = new JComboBox<>(Recurrence.values());
     private final JTextField message = new JTextField(30);
+    /** How long before the reminder time an extra early reminder goes off (minutes; 0 = none). */
+    private static final int[] LEAD_MINUTES = {0, 5, 15, 30, 60, 24 * 60};
+    private final JComboBox<String> before = new JComboBox<>(new String[]{"No early reminder", "5 minutes before",
+            "15 minutes before", "30 minutes before", "1 hour before", "1 day before"});
     private final JCheckBox showAll = new JCheckBox("Show sent and cancelled");
     private final DefaultTableModel model = new DefaultTableModel(new String[]{"When", "Repeats", "Status", "Message"}, 0) {
         @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -83,18 +87,23 @@ public class ReminderView extends BaseView {
     private JPanel header() {
         JLabel newTitle = new JLabel("New reminder");
         newTitle.setFont(newTitle.getFont().deriveFont(Font.BOLD, 14f));
-        JPanel fields = row(new JLabel("When"), when, new JLabel("   Repeat"), repeat, new JLabel("   Message"), message,
-                accentButton("Add reminder", this::createReminder));
+        JPanel fields = row(new JLabel("When"), when, new JLabel("   Repeat"), repeat, new JLabel("   Also remind me"), before);
+        JPanel messageRow = row(new JLabel("Message"), message, accentButton("Add reminder", this::createReminder),
+                new JLabel("   "), button("Remind me before the exam", this::createExamReminders));
         JPanel quick = row(hint("Quick pick:"), quick("In 1 hour", () -> LocalDateTime.now().plusHours(1)),
                 quick("Tonight 20:00", () -> LocalDate.now().atTime(20, 0)),
                 quick("Tomorrow 09:00", () -> LocalDate.now().plusDays(1).atTime(9, 0)),
                 quick("Tomorrow 18:00", () -> LocalDate.now().plusDays(1).atTime(18, 0)));
-        for (JPanel p : List.of(fields, quick)) p.setOpaque(false);
+        for (JPanel p : List.of(fields, messageRow, quick)) p.setOpaque(false);
+        JPanel rows = new JPanel(new BorderLayout(0, 4));
+        rows.setOpaque(false);
+        rows.add(fields, BorderLayout.NORTH);
+        rows.add(messageRow, BorderLayout.CENTER);
+        rows.add(quick, BorderLayout.SOUTH);
         JPanel form = new JPanel(new BorderLayout(0, 6));
         form.setOpaque(false);
         form.add(newTitle, BorderLayout.NORTH);
-        form.add(fields, BorderLayout.CENTER);
-        form.add(quick, BorderLayout.SOUTH);
+        form.add(rows, BorderLayout.CENTER);
         Card card = new Card(new BorderLayout());
         card.setBorder(BorderFactory.createEmptyBorder(12, 14, 10, 14));
         card.add(form, BorderLayout.CENTER);
@@ -192,12 +201,67 @@ public class ReminderView extends BaseView {
     public void createReminder() {
         attempt(() -> {
             Course c = ctx.course();
-            facade.scheduleReminder(new Reminder(Ids.newId("r"), ctx.studentId, c == null ? null : c.getId(), message.getText(),
-                    parseWhen(when.getText()), (Recurrence) repeat.getSelectedItem()));
+            LocalDateTime at = parseWhen(when.getText());
+            Recurrence rec = (Recurrence) repeat.getSelectedItem();
+            String text = message.getText();
+            facade.scheduleReminder(new Reminder(Ids.newId("r"), ctx.studentId, c == null ? null : c.getId(), text, at, rec));
+            String status = "Reminder added";
+            int lead = LEAD_MINUTES[before.getSelectedIndex()];
+            if (lead > 0) {
+                LocalDateTime early = at.minusMinutes(lead);
+                if (early.isAfter(LocalDateTime.now())) {
+                    facade.scheduleReminder(new Reminder(Ids.newId("r"), ctx.studentId, c == null ? null : c.getId(),
+                            earlyMessage(lead, text), early, rec));
+                    status = "Reminder added, with an early reminder " + leadLabel(lead) + " before";
+                } else {
+                    status = "Reminder added (the early reminder would be in the past, so it was skipped)";
+                }
+            }
             message.setText("");
             render();
-            ctx.status("Reminder added");
+            ctx.status(status);
         });
+    }
+
+    /** "In 15 min: Review the observer pattern". */
+    static String earlyMessage(int leadMinutes, String text) {
+        return "In " + leadLabel(leadMinutes) + ": " + text;
+    }
+
+    static String leadLabel(int minutes) {
+        return minutes >= 24 * 60 ? (minutes / (24 * 60)) + (minutes == 24 * 60 ? " day" : " days")
+                : minutes >= 60 ? (minutes / 60) + (minutes == 60 ? " hour" : " hours") : minutes + " min";
+    }
+
+    /** Reminders 7, 3 and 1 days before the selected course's exam (18:00), skipping past and duplicate ones. */
+    public void createExamReminders() {
+        Course c = requireCourse();
+        if (c == null) return;
+        if (c.getExamDate() == null) {
+            showError("This course has no exam date. Set it in the Courses tab first.");
+            return;
+        }
+        attempt(() -> {
+            List<String> existing = facade.listReminders(ctx.studentId).stream()
+                    .filter(r -> r.getStatus() == ReminderStatus.PENDING).map(Reminder::getMessage).toList();
+            int added = 0;
+            for (int days : new int[]{7, 3, 1}) {
+                LocalDateTime at = c.getExamDate().minusDays(days).atTime(18, 0);
+                if (!at.isAfter(LocalDateTime.now())) continue;
+                String text = examMessage(c.getCode(), days);
+                if (existing.contains(text)) continue;
+                facade.scheduleReminder(new Reminder(Ids.newId("r"), ctx.studentId, c.getId(), text, at, Recurrence.NONE));
+                added++;
+            }
+            render();
+            ctx.status(added == 0 ? "Exam reminders are already set (or the exam is too close)"
+                    : added + " exam reminder(s) added before " + c.getExamDate());
+        });
+    }
+
+    static String examMessage(String courseCode, int daysBefore) {
+        return courseCode + " exam " + (daysBefore == 1 ? "tomorrow" : "in " + daysBefore + " days")
+                + (daysBefore == 1 ? ": a light review of your weak topics, then rest." : ": review your weak topics and take a practice quiz.");
     }
 
     public void cancelReminder(String reminderId) {
@@ -362,4 +426,5 @@ public class ReminderView extends BaseView {
     JTable table() { return table; }
     JTextField whenField() { return when; }
     JTextField messageField() { return message; }
+    JComboBox<String> beforeBox() { return before; }
 }
