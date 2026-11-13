@@ -324,7 +324,7 @@
 <tr><td class="k">Classes / files and responsibilities</td><td><code>gui/AuthPanel</code> (sign-in and create-account screen), <code>gui/StudyAgentGui</code> (opens the main window for the signed-in student; Sign out returns to the sign-in screen); <code>cli/CLIApplication</code> (<code>account</code> commands, session file next to the database); <code>app/AccountService</code> (validation, salted PBKDF2 hashing, sign-in); <code>app/LearningFacade.createAccount()</code>, <code>signIn()</code>; <code>domain/Student</code> (password hash and salt); <code>persist/StudentRepository.findByEmail()</code></td></tr>
 <tr><td class="k">Key methods</td><td><code>createAccount()</code>, <code>signIn()</code>, <code>register()</code>, <code>hash()</code>, <code>findByEmail()</code>, <code>AuthPanel.submit()</code>, <code>showSignIn()</code>, <code>openMain()</code></td></tr>
 <tr><td class="k">Design patterns</td><td>Facade (both front ends sign in through <code>LearningFacade</code>)</td></tr>
-<tr><td class="k">Video</td><td><span class="todo">[link + timestamp]</span></td></tr>
+<tr><td class="k">Video</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">Demonstration recording</a> at 0:01</td></tr>
 </table>
 <p class="flow"><span class="pill det">Deterministic</span> Creating an account checks the name, a valid email, a password of at least 8 characters, the confirmation and that the email is unused; only a salted PBKDF2 hash is stored. Signing in gives the same message for an unknown email and a wrong password. The signed-in student's id is passed to every facade call, so each account sees only its own data.</p>
 </div>
@@ -563,7 +563,7 @@
 <tr><td>F13 Progress Tracking</td><td>GUI + CLI</td><td>Progress tab updating live after a quiz (Observer); <code>progress show</code></td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">18:10</a></td></tr>
 <tr><td>F14 Reminders</td><td>GUI + CLI</td><td>Add a reminder two minutes ahead and receive the notification; past time rejected; cancel</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">31:25</a></td></tr>
 <tr><td>F15 Concept Map</td><td>GUI + CLI</td><td>Coloured map, click a concept, Quiz me on this; Mermaid output in the CLI</td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">6:06</a></td></tr>
-<tr><td>N01 Student Accounts</td><td>GUI + CLI</td><td>Create an account, sign out, wrong password rejected, sign in; <code>study account login</code> and <code>whoami</code></td><td><span class="todo">[link @ mm:ss]</span></td></tr>
+<tr><td>N01 Student Accounts</td><td>GUI + CLI</td><td>Create an account, sign out, wrong password rejected, sign in; <code>study account login</code> and <code>whoami</code></td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">0:01</a></td></tr>
 <tr><td>F16 History</td><td>GUI + CLI</td><td>Filters by course, period and activity type; <code>history show --last 7d --type quiz_completed</code></td><td><a href="https://drive.google.com/drive/folders/1Sj4A20Df--es6EPU7HE_Hc7r9qLsdl4l?usp=sharing">37:58</a></td></tr>
 </table>
 
